@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:smithing_transform",
+  "addition": {
+    "item": "runes:fire_stone"
+  },
+  "base": {
+    "item": "minecraft:copper_block"
+  },
+  "result": {
+    "item": "spellbladenext:runeblaze_ingot"
+  },
+  "template": {
+    "item": "minecraft:coal"
+  }
+}

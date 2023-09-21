@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:smithing_transform",
+  "addition": {
+    "item": "spellbladenext:runeblaze_ingot"
+  },
+  "base": {
+    "item": "spellbladenext:fire_blade"
+  },
+  "result": {
+    "item": "spellbladenext:flaming_falchion"
+  },
+  "template": {
+    "item": "runes:fire_stone"
+  }
+}

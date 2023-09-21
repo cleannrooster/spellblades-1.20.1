@@ -1,0 +1,78 @@
+{
+  "school": "FROST",
+  "range": 8.0,
+  "learn": {
+    "tier": 3
+  },
+  "cast": {
+    "duration": 999,
+    "channel_ticks": 4,
+    "sound": {
+      "id": "minecraft:entity.player.attack.sweep",
+      "randomness": 0,
+      "pitch": 1.5
+    },
+    "particles": [
+      {
+        "particle_id": "spell_engine:frost_hit",
+        "shape": "SPHERE",
+        "origin": "CENTER",
+        "count": 5.0,
+        "min_speed": 0.2,
+        "max_speed": 0.6
+      },
+      {
+        "particle_id": "spell_engine:snowflake",
+        "shape": "SPHERE",
+        "origin": "CENTER",
+        "count": 6.0,
+        "min_speed": 0.2,
+        "max_speed": 0.4
+      }
+    ]
+  },
+  "release": {
+    "custom_impact": true,
+    "target": {
+      "type": "AREA",
+      "area": {
+        "vertical_range_multiplier": 0.5
+      }
+    }
+  },
+  "impact": [
+    {
+      "action": {
+        "type": "DAMAGE",
+        "damage": {
+          "knockback": 0.5,
+          "spell_power_coefficient": 2.5
+        }
+      },
+      "particles": [
+        {
+          "particle_id": "spell_engine:frost_hit",
+          "shape": "SPHERE",
+          "origin": "CENTER",
+          "count": 20.0,
+          "min_speed": 0.2,
+          "max_speed": 0.6
+        },
+        {
+          "particle_id": "spell_engine:snowflake",
+          "shape": "SPHERE",
+          "origin": "CENTER",
+          "count": 30.0,
+          "min_speed": 0.2,
+          "max_speed": 0.4
+        }
+      ],
+      "sound": {
+        "id": "minecraft:entity.player.attack.sweep"
+      }
+    }
+  ],
+  "cost": {
+    "cooldown_duration": 8
+  }
+}

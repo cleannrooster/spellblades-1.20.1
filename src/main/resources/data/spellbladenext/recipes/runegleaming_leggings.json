@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:smithing_transform",
+  "addition": {
+    "item": "spellbladenext:runegleam_ingot"
+  },
+  "base": {
+    "item": "minecraft:iron_leggings"
+  },
+  "result": {
+    "item": "spellbladenext:runegleaming_legs"
+  },
+  "template": {
+    "item": "runes:arcane_stone"
+  }
+}

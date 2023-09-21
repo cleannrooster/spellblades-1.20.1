@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:smithing_transform",
+  "addition": {
+    "item": "spellbladenext:runeblaze_ingot"
+  },
+  "base": {
+    "item": "minecraft:iron_helmet"
+  },
+  "result": {
+    "item": "spellbladenext:runeblazing_head"
+  },
+  "template": {
+    "item": "runes:fire_stone"
+  }
+}

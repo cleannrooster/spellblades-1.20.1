@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:smithing_transform",
+  "addition": {
+    "item": "spellbladenext:runeblaze_ingot"
+  },
+  "base": {
+    "item": "minecraft:iron_boots"
+  },
+  "result": {
+    "item": "spellbladenext:runeblazing_feet"
+  },
+  "template": {
+    "item": "runes:fire_stone"
+  }
+}

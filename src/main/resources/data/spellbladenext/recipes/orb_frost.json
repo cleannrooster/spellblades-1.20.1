@@ -1,0 +1,25 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "A": {
+      "item": "minecraft:glass"
+    },
+    "G": {
+      "item": "minecraft:prismarine_shard"
+    },
+    "D": {
+      "item": "minecraft:quartz"
+    },
+    "S": {
+      "item": "minecraft:prismarine_crystals"
+    }
+  },
+  "pattern": [
+    "AGA",
+    "SDS",
+    "AGA"
+  ],
+  "result": {
+    "item": "spellbladenext:frost_orb"
+  }
+}

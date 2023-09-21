@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:smithing_transform",
+  "addition": {
+    "item": "spellbladenext:runefrost_ingot"
+  },
+  "base": {
+    "item": "minecraft:iron_boots"
+  },
+  "result": {
+    "item": "spellbladenext:runefrosted_feet"
+  },
+  "template": {
+    "item": "runes:frost_stone"
+  }
+}

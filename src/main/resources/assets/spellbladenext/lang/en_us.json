@@ -1,0 +1,92 @@
+{
+  "itemGroup.spellbladenext.general": "Spellblades and Such",
+  "item.spellbladenext.arcane_blade": "Arcane Spellblade",
+   "item.spellbladenext.frost_blade": "Frost Spellblade",
+    "item.spellbladenext.fire_blade": "Fire Spellblade",
+  "item.spellbladenext.glacial_gladius": "Glacial Gladius",
+  "item.spellbladenext.crystal_cutlass": "Crystal Cutlass",
+  "item.spellbladenext.flaming_falchion": "Flaming Falchion",
+  "item.spellbladenext.arcane_claymore": "Arcane Claymore",
+    "item.spellbladenext.frost_claymore": "Frost Claymore",
+      "item.spellbladenext.fire_claymore": "Fire Claymore",
+  "item.spellbladenext.arcane_orb": "Arcane Orb",
+    "item.spellbladenext.frost_orb": "Frost Orb",
+      "item.spellbladenext.fire_orb": "Fire Orb",
+  "item.spellbladenext.spelloil": "Spell Oil",
+  "item.spellbladenext.whirlwindoil": "Whirlwind Oil",
+  "item.spellbladenext.smiteoil": "Smite Oil",
+  "item.spellbladenext.fire_battlemage_spell_book": "Fire Techniques",
+  "item.spellbladenext.frost_battlemage_spell_book": "Frost Techniques",
+  "item.spellbladenext.arcane_battlemage_spell_book": "Arcane Techniques",
+
+  "spell.spellbladenext.finalstrike.name": "Sonic Strike",
+  "spell.spellbladenext.finalstrike.description": "Charge up a deadly attack against all enemies in a line, teleporting behind the last one and dealing 3x melee damage plus an additional {damage} arcane spell damage.",
+
+  "spell.spellbladenext.eviscerate.name": "Massacre",
+  "spell.spellbladenext.eviscerate.description": "Become intangible, attacking the nearest enemy up to 5 times, dealing 2.5x melee dps plus an additional {damage} frost dps, scaling with attack speed. Refreshes on kill, jumping onto the nearest enemy.",
+
+  "spell.spellbladenext.whirlingblades.name": "Riptide",
+  "spell.spellbladenext.whirlingblades.description": "Aim and launch yourself as if with a riptide-enchanted trident",
+
+  "spell.spellbladenext.flicker_strike.name": "Flickering Flame",
+  "spell.spellbladenext.flicker_strike.description": "Jump onto nearby enemies equally, dealing 1x melee dps plus an additional {damage} fire dps. Focuses on one target if there is only one target.",
+
+  "spell.spellbladenext.frostblink.name": "Arcane Flicker",
+  "spell.spellbladenext.frostblink.description": "Teleport behind an enemy, dealing 1.5x melee damage plus an additional {damage} arcane damage.",
+
+  "spell.spellbladenext.frostvert.name": "Rising Dragon Strike",
+  "spell.spellbladenext.frostvert.description": "Attack enemies in front of you, dealing 1.5x melee damage plus an additional {damage} fire damage, gaining upwards momentum.",
+
+  "spell.spellbladenext.smite.name": "Divine Smite",
+  "spell.spellbladenext.smite.description": "Smite enemies in front of you in an area, dealing 1.5x attack damage and {damage} extra healing damage to each enemy hit, twice as much against undead.",
+
+  "spell.spellbladenext.maelstrom.name": "Maelstrom",
+  "spell.spellbladenext.maelstrom.description": "Spin continuously, dealing 1.5x your attack DPS, plus {damage} arcane DPS, multiplied by attack speed",
+
+  "spell.spellbladenext.inferno.name": "Inferno",
+  "spell.spellbladenext.inferno.description": "Spin continuously, dealing 1.5x your attack DPS, plus {damage} fire DPS, multiplied by attack speed",
+
+  "spell.spellbladenext.tempest.name": "Tempest",
+  "spell.spellbladenext.tempest.description": "Spin continuously, dealing 1.5x your attack DPS, plus {damage} frost DPS, multiplied by attack speed",
+
+  "spell.spellbladenext.whirlwind.name": "Whirlwind",
+  "spell.spellbladenext.whirlwind.description": "Spin continuously, dealing 1.5x your attack DPS.",
+
+  "spell.spellbladenext.arcaneflourish.name": "Arcane Flourish",
+  "spell.spellbladenext.arcaneflourish.description": "Spin rapidly, dealing 1.5x your attack damage, plus {damage} arcane damage.",
+
+  "spell.spellbladenext.fireflourish.name": "Fire Flourish",
+  "spell.spellbladenext.fireflourish.description": "Spin rapidly, dealing 1.5x your attack damage, plus {damage} fire damage.",
+
+  "spell.spellbladenext.frostflourish.name": "Frost Flourish",
+  "spell.spellbladenext.frostflourish.description": "Spin rapidly, dealing 1.5x your attack damage, plus {damage} frost damage.",
+  "item.spellbladenext.runegleam_ingot": "Runegleam Ingot",
+  "item.spellbladenext.runeblaze_ingot": "Runeblaze Ingot",
+  "item.spellbladenext.runefrost_ingot": "Runefrost Ingot",
+  "effect.spellbladenext.runicabsorption": "Runic Absorption",
+
+  "item.spellbladenext.runeblazing_head": "Runeblaze Helmet",
+  "item.spellbladenext.runeblazing_chest": "Runeblaze Chestplate",
+  "item.spellbladenext.runeblazing_legs": "Runeblaze Leggings",
+  "item.spellbladenext.runeblazing_feet": "Runeblaze Boots",
+  "item.spellbladenext.runefrosted_head": "Runefrost Helmet",
+  "item.spellbladenext.runefrosted_chest": "Runefrost Chestplate",
+  "item.spellbladenext.runefrosted_legs": "Runefrost Leggings",
+  "item.spellbladenext.runefrosted_feet": "Runefrost Boots",
+  "item.spellbladenext.runegleaming_head": "Runegleam Helmet",
+  "item.spellbladenext.runegleaming_chest": "Runegleam Chestplate",
+  "item.spellbladenext.runegleaming_legs": "Runegleam Leggings",
+  "item.spellbladenext.runegleaming_feet": "Runegleam Boots",
+  "item.spellbladenext.frozen_head": "Mageseeker Hat",
+  "item.spellbladenext.frozen_chest": "Deathchill Magister Chestplate",
+  "item.spellbladenext.frozen_legs":  "Deathchill Magister Leggings",
+  "item.spellbladenext.frozen_feet":  "Deathchill Magister Boots",
+  "item.spellbladenext.blazing_head": "Magebreaker Helmet",
+  "item.spellbladenext.blazing_chest": "Blazing Magister Chestplate",
+  "item.spellbladenext.blazing_legs":  "Blazing Magister Leggings",
+  "item.spellbladenext.blazing_feet":  "Blazing Magister Boots",
+  "item.spellbladenext.gleaming_head": "Magebane Crown",
+  "item.spellbladenext.gleaming_chest":"Gleaming Magister Chestplate",
+  "item.spellbladenext.gleaming_legs": "Gleaming Magister Leggings",
+  "item.spellbladenext.gleaming_feet": "Gleaming Magister Boots"
+}

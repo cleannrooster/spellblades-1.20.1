@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:smithing_transform",
+  "addition": {
+    "item": "spellbladenext:runefrost_ingot"
+  },
+  "base": {
+    "item": "spellbladenext:frost_blade"
+  },
+  "result": {
+    "item": "spellbladenext:glacial_gladius"
+  },
+  "template": {
+    "item": "runes:frost_stone"
+  }
+}

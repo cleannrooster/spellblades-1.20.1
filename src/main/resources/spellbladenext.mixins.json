@@ -1,0 +1,17 @@
+{
+	"required": true,
+	"package": "com.spellbladenext.mixin",
+	"compatibilityLevel": "JAVA_17",
+	"mixins": [
+		"PlayerMixin",
+		"LivingEntityMixin"
+
+	],
+	"client": [
+		"LivingEntityRendererMixin"
+
+	],
+	"injectors": {
+		"defaultRequire": 1
+	}
+}

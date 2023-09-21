@@ -1,0 +1,50 @@
+{
+  "school": "HEALING",
+  "range": 3,
+  "learn": {
+    "tier": 1
+  },
+  "cast": {
+    "duration": 0,
+    "animation": "spellbladenext:two_handed_slam_spellblade"
+  },
+  "release": {
+    "custom_impact": true,
+    "target": {
+      "type": "AREA",
+      "area": {
+        "angle_degrees": 90,
+        "vertical_range_multiplier": 1
+      }
+    },
+    "particles": [
+      {
+        "particle_id": "cloud",
+        "shape": "CIRCLE",
+        "origin": "CENTER",
+        "count": 130.0,
+        "min_speed": 0.5,
+        "max_speed": 0.9
+      }
+    ],
+    "sound": {
+      "id": "minecraft:entity.player.attack.knockback"
+    },
+    "animation": "spellbladenext:two_handed_slam_spellblade_2"
+  },
+  "impact": [
+    {
+      "action": {
+        "type": "DAMAGE",
+        "damage": {
+          "knockback": 1,
+          "spell_power_coefficient": 1.5
+        }
+      }
+    }
+  ],
+  "cost": {
+    "cooldown_duration": 2,
+    "cooldown_proportional": true
+  }
+}

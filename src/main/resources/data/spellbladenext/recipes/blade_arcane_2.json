@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:smithing_transform",
+  "addition": {
+    "item": "spellbladenext:runegleam_ingot"
+  },
+  "base": {
+    "item": "spellbladenext:arcane_blade"
+  },
+  "result": {
+    "item": "spellbladenext:crystal_cutlass"
+  },
+  "template": {
+    "item": "runes:arcane_stone"
+  }
+}

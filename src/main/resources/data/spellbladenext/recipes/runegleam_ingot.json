@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:smithing_transform",
+  "addition": {
+    "item": "runes:arcane_stone"
+  },
+  "base": {
+    "item": "minecraft:gold_block"
+  },
+  "result": {
+    "item": "spellbladenext:runegleam_ingot"
+  },
+  "template": {
+    "item": "minecraft:amethyst_shard"
+  }
+}

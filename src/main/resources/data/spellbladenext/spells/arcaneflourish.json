@@ -1,0 +1,51 @@
+{
+  "school": "ARCANE",
+  "range": 3,
+  "learn": {
+    "tier": 1
+  },
+  "cast": {
+    "duration": 0
+  },
+  "release": {
+    "custom_impact": true,
+    "target": {
+      "type": "AREA",
+      "area": {
+        "angle_degrees": 360,
+        "vertical_range_multiplier": 1
+      }
+    },
+    "sound": {
+      "id": "minecraft:entity.player.attack.knockback"
+    },
+    "animation": "spellbladenext:flourish"
+  },
+  "impact": [
+    {
+      "action": {
+        "type": "DAMAGE",
+        "damage": {
+          "knockback": 1,
+          "spell_power_coefficient": 1.5
+        }
+      },
+      "particles": [
+        {
+          "particle_id": "sweep_attack",
+          "shape": "SPHERE",
+          "origin": "CENTER",
+          "count": 1
+        }
+      ],
+      "sound": {
+        "id": "minecraft:entity.player.attack.sweep"
+      }
+    }
+
+  ],
+  "cost": {
+    "cooldown_duration": 1,
+    "cooldown_proportional": true
+  }
+}

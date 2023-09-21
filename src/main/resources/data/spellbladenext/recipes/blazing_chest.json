@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:smithing_transform",
+  "addition": {
+    "item": "spellbladenext:runeblaze_ingot"
+  },
+  "base": {
+    "item": "minecraft:netherite_chestplate"
+  },
+  "result": {
+    "item": "spellbladenext:blazing_chest"
+  },
+  "template": {
+    "item": "runes:fire_stone"
+  }
+}

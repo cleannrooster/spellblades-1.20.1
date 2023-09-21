@@ -1,0 +1,25 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "A": {
+      "item": "minecraft:magma_block"
+    },
+    "G": {
+      "item": "minecraft:nether_brick"
+    },
+    "D": {
+      "item": "spellbladenext:fire_blade"
+    },
+    "S": {
+      "item": "minecraft:blaze_rod"
+    }
+  },
+  "pattern": [
+    " SS",
+    "ADS",
+    "GA "
+  ],
+  "result": {
+    "item": "spellbladenext:fire_claymore"
+  }
+}
