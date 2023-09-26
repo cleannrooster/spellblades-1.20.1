@@ -18,18 +18,34 @@
   "item.spellbladenext.fire_battlemage_spell_book": "Fire Techniques",
   "item.spellbladenext.frost_battlemage_spell_book": "Frost Techniques",
   "item.spellbladenext.arcane_battlemage_spell_book": "Arcane Techniques",
+  "entity.spellbladenext.flamewaveprojectile": "Flame Wave",
+  "entity.spellbladenext.amethyst": "Amethyst",
+  "entity.spellbladenext.gladius": "Frost Blade",
+  "item.spellbladenext.monkeystaff": "Pillar of the Monkey King",
+  "spell.spellbladenext.monkeyreflect.name": "Rending Winds",
+  "spell.spellbladenext.monkeyreflect.description": "Spin up a gust of wind, dealing heavy knockback and {damage} physical damage per second to the target enemy.",
+  "spell.spellbladenext.monkeyslam.name": "Head in the Clouds",
+  "spell.spellbladenext.monkeyslam.description": "Leap into the clouds, becoming invulnerable while channeling.",
+
+
+  "spell.spellbladenext.flameslash.name": "Flaming Laceration",
+  "spell.spellbladenext.flameslash.description": "{damage} Fire DPS. Swing your weapon wildly, shooting flaming, exploding projectiles.",
+  "spell.spellbladenext.frostslash.name": "Blade Flurry",
+  "spell.spellbladenext.frostslash.description": "{damage} Frost DPS. Swing your weapon wildly, shooting bouncing, ricocheting blade projectiles.",
+  "spell.spellbladenext.amethystslash.name": "Amethyst Splash",
+  "spell.spellbladenext.amethystslash.description": "{damage} Arcane DPS. Swing your weapon wildly, shooting piercing amethyst projectiles.",
 
   "spell.spellbladenext.finalstrike.name": "Sonic Strike",
   "spell.spellbladenext.finalstrike.description": "Charge up a deadly attack against all enemies in a line, teleporting behind the last one and dealing 3x melee damage plus an additional {damage} arcane spell damage.",
 
   "spell.spellbladenext.eviscerate.name": "Massacre",
-  "spell.spellbladenext.eviscerate.description": "Become intangible, attacking the nearest enemy up to 5 times, dealing 2.5x melee dps plus an additional {damage} frost dps, scaling with attack speed. Refreshes on kill, jumping onto the nearest enemy.",
+  "spell.spellbladenext.eviscerate.description": "Become intangible, attacking the nearest multiple times over a second, dealing 2.5x melee dps plus an additional {damage} frost dps, scaling with attack speed. Refreshes on kill, jumping onto the nearest enemy.",
 
   "spell.spellbladenext.whirlingblades.name": "Riptide",
   "spell.spellbladenext.whirlingblades.description": "Aim and launch yourself as if with a riptide-enchanted trident",
 
   "spell.spellbladenext.flicker_strike.name": "Flickering Flame",
-  "spell.spellbladenext.flicker_strike.description": "Jump onto nearby enemies equally, dealing 1x melee dps plus an additional {damage} fire dps. Focuses on one target if there is only one target.",
+  "spell.spellbladenext.flicker_strike.description": "Jump onto nearby enemies equally, dealing 1x melee dps plus an additional {damage} fire dps, scaled by attack speed. Focuses on one target if there is only one target.",
 
   "spell.spellbladenext.frostblink.name": "Arcane Flicker",
   "spell.spellbladenext.frostblink.description": "Teleport behind an enemy, dealing 1.5x melee damage plus an additional {damage} arcane damage.",

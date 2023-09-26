@@ -2,7 +2,7 @@
   "school": "FROST",
   "range": 12,
   "learn": {
-    "tier": 1
+    "tier": 3
   },
   "cast": {
     "duration": 6,
@@ -27,7 +27,7 @@
         "client_data": {
           "travel_particles": [
             {
-              "particle_id": "spell_engine:frost_spell",
+              "particle_id": "spell_engine:frost_shard",
               "shape": "CIRCLE",
               "rotation": "LOOK",
               "origin": "CENTER",
@@ -57,7 +57,7 @@
       "action": {
         "type": "DAMAGE",
         "damage": {
-          "spell_power_coefficient": 1.5
+          "spell_power_coefficient": 1.8
         }
       },
       "particles": [
@@ -76,6 +76,9 @@
     }
   ],
   "cost": {
-    "cooldown_duration": 4
+    "cooldown_duration": 4,
+    "item_id": "runes:frost_stone",
+    "cooldown_proportional": true
+
   }
 }

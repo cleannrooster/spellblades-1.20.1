@@ -39,7 +39,8 @@ public class Default {
                 Items.fire_orb.id().toString(),
                 "spellblades:whirlwindoil",
                 "spellblades:spelloil",
-                "spellblades:smiteoil"
+                "spellblades:smiteoil",
+                "spellblades:monkeystaff"
 
 
 

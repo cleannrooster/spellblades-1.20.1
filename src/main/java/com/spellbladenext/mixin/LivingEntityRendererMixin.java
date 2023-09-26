@@ -12,12 +12,14 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import static com.spellbladenext.Spellblades.MOD_ID;
+
 @Mixin(LivingEntityRenderer.class)
 public class LivingEntityRendererMixin<T extends LivingEntity> {
     @Inject(at = @At("HEAD"), method = "render", cancellable = true)
     public void render(T entity, float f, float tickDelta, MatrixStack matrices, VertexConsumerProvider vertexConsumerProvider, int i, CallbackInfo info) {
         if(entity instanceof SpellCasterEntity caster){
-            if(caster.getCurrentSpellId() != null && caster.getCurrentSpellId().equals(new Identifier(Spellblades.MOD_ID,"eviscerate"))){
+            if(caster.getCurrentSpellId() != null && (caster.getCurrentSpellId().equals(new Identifier(Spellblades.MOD_ID,"eviscerate")) || (caster.getCurrentSpellId().equals(new Identifier(MOD_ID, "monkeyslam")) && caster.getCurrentCastProgress() > 17F / 160F))){
                 /*Spell spell = SpellRegistry.getSpell(new Identifier(InvokeMod.MODID,"greaterfireball"));
                 SpellProjectile spell_projectile = new SpellProjectile(entity.getWorld(),entity,entity.getX(),entity.getY(),entity.getZ(), SpellProjectile.Behaviour.FLY,
                         spell,null,new SpellHelper.ImpactContext(), new Spell.ProjectileData().perks);

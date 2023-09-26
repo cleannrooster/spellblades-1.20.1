@@ -85,6 +85,7 @@ public class Spellblades implements ModInitializer {
 	public static Item RUNEBLAZE = new Item(new FabricItemSettings().maxCount(64));
 	public static Item RUNEFROST = new Item(new FabricItemSettings().maxCount(64));
 	public static Item RUNEGLEAM = new Item(new FabricItemSettings().maxCount(64));
+	public static Item MONKEYSTAFF = new MonkeyStaff(0,0,new FabricItemSettings());
 	public static StatusEffect RunicAbsorption = new RunicAbsorption(StatusEffectCategory.BENEFICIAL, 0xff4bdd);
 	public static ConfigManager<ItemConfig> itemConfig = new ConfigManager<ItemConfig>
 			("items_v4", Default.itemConfig)
@@ -93,7 +94,7 @@ public class Spellblades implements ModInitializer {
 			.sanitize(true)
 			.build();
 	public static ConfigManager<LootConfig> lootConfig = new ConfigManager<LootConfig>
-			("loot_v4", Default.lootConfig)
+			("loot_v5", Default.lootConfig)
 			.builder()
 			.setDirectory(MOD_ID)
 			.sanitize(true)
@@ -111,6 +112,8 @@ public class Spellblades implements ModInitializer {
 		Registry.register(Registries.ITEM,new Identifier(MOD_ID,"runeblaze_ingot"),RUNEBLAZE);
 		Registry.register(Registries.ITEM,new Identifier(MOD_ID,"runefrost_ingot"),RUNEFROST);
 		Registry.register(Registries.ITEM,new Identifier(MOD_ID,"runegleam_ingot"),RUNEGLEAM);
+		Registry.register(Registries.ITEM,new Identifier(MOD_ID,"monkeystaff"),MONKEYSTAFF);
+
 		Registry.register(Registries.STATUS_EFFECT,new Identifier(MOD_ID,"runicabsorption"),RunicAbsorption);
 
 		Items.register(itemConfig.value.weapons);
@@ -134,6 +137,8 @@ public class Spellblades implements ModInitializer {
 			content.add(RUNEBLAZE);
 			content.add(RUNEGLEAM);
 			content.add(RUNEFROST);
+			content.add(MONKEYSTAFF);
+
 
 		});
 		SpellBooks.createAndRegister(new Identifier(MOD_ID,"frost_battlemage"),KEY);

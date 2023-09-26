@@ -32,7 +32,7 @@ public class LivingEntityMixin {
     @Inject(at = @At("HEAD"), method = "damage", cancellable = true)
     private void hurtreal(final DamageSource player, float f, final CallbackInfoReturnable<Boolean> info) {
         LivingEntity player2 = ((LivingEntity) (Object) this);
-        if (player2 instanceof SpellCasterEntity entity && entity.getCurrentSpellId() != null && entity.getCurrentSpellId().equals(new Identifier(MOD_ID, "eviscerate"))) {
+        if (player2 instanceof SpellCasterEntity entity && (entity.getCurrentSpellId() != null && (entity.getCurrentSpellId().equals(new Identifier(MOD_ID, "eviscerate")) || entity.getCurrentSpellId().equals(new Identifier(MOD_ID, "monkeyslam"))))) {
             info.setReturnValue(false);
         }
     }

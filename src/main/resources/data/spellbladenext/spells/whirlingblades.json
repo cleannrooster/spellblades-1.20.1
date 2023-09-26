@@ -55,7 +55,6 @@
 
   ],
   "cost": {
-    "cooldown_duration": 4,
-    "cooldown_proportional": true
+    "cooldown_duration": 4
   }
 }

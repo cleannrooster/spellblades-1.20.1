@@ -2,7 +2,7 @@
   "school": "FIRE",
   "range": 12,
   "learn": {
-    "tier": 1
+    "tier": 3
   },
   "cast": {
     "duration": 6,
@@ -59,7 +59,7 @@
       "action": {
         "type": "DAMAGE",
         "damage": {
-          "spell_power_coefficient": 1.5
+          "spell_power_coefficient": 1.8
         }
       },
       "particles": [
@@ -75,6 +75,9 @@
     }
   ],
   "cost": {
-    "cooldown_duration": 4
+    "cooldown_duration": 4,
+    "item_id": "runes:fire_stone",
+    "cooldown_proportional": true
+
   }
 }
