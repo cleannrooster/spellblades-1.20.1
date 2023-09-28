@@ -1,6 +1,7 @@
 package com.spellbladenext.entity.ai;
 
 import com.google.common.collect.ImmutableMap;
+import com.spellbladenext.entity.Magister;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.brain.MemoryModuleState;
 import net.minecraft.entity.ai.brain.MemoryModuleType;
@@ -25,7 +26,7 @@ public class MeleeAttack  extends MultiTickTask<MobEntity> {
     protected boolean shouldRun(ServerWorld serverLevel, MobEntity mob) {
         LivingEntity livingEntity = this.getAttackTarget(mob);
 
-        return !( mob.hasCustomName() &&mob.getCustomName().equals(Text.translatable("Caster"))) && LookTargetUtil.isVisibleInMemory(mob, livingEntity) && mob.isInAttackRange(livingEntity);
+        return !( mob instanceof Magister magister && magister.isCaster()) && LookTargetUtil.isVisibleInMemory(mob, livingEntity) && mob.isInAttackRange(livingEntity);
     }
 
     private boolean isHoldingUsableProjectileWeapon(MobEntity mob) {

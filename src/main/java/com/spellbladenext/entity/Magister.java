@@ -97,8 +97,8 @@ public class Magister extends PathAwareEntity implements InventoryOwner, GeoEnti
     public static final RawAnimation WALK2 = RawAnimation.begin().thenLoop("animation.hexblade.walk2");
     public static final RawAnimation IDLE = RawAnimation.begin().thenPlay("idle");
     public static final RawAnimation IDLE1 = RawAnimation.begin().thenPlay("idle");
-    protected static final ImmutableList<MemoryModuleType<?>> MEMORY_TYPES = ImmutableList.of(MemoryModuleType.LOOK_TARGET, MemoryModuleType.DOORS_TO_CLOSE, MemoryModuleType.MOBS, MemoryModuleType.VISIBLE_MOBS, MemoryModuleType.NEAREST_VISIBLE_PLAYER, MemoryModuleType.NEAREST_VISIBLE_TARGETABLE_PLAYER, MemoryModuleType.NEAREST_VISIBLE_ADULT_PIGLINS, MemoryModuleType.NEARBY_ADULT_PIGLINS, MemoryModuleType.NEAREST_VISIBLE_WANTED_ITEM, MemoryModuleType.HURT_BY, MemoryModuleType.HURT_BY_ENTITY, MemoryModuleType.WALK_TARGET, MemoryModuleType.CANT_REACH_WALK_TARGET_SINCE, MemoryModuleType.ATTACK_TARGET, MemoryModuleType.ATTACK_COOLING_DOWN, MemoryModuleType.INTERACTION_TARGET, MemoryModuleType.PATH, MemoryModuleType.ANGRY_AT, MemoryModuleType.UNIVERSAL_ANGER, MemoryModuleType.AVOID_TARGET, MemoryModuleType.ADMIRING_ITEM, MemoryModuleType.TIME_TRYING_TO_REACH_ADMIRE_ITEM, MemoryModuleType.ADMIRING_DISABLED, MemoryModuleType.DISABLE_WALK_TO_ADMIRE_ITEM, MemoryModuleType.CELEBRATE_LOCATION, MemoryModuleType.DANCING, MemoryModuleType.HUNTED_RECENTLY, MemoryModuleType.NEAREST_VISIBLE_BABY_HOGLIN, MemoryModuleType.NEAREST_VISIBLE_NEMESIS, MemoryModuleType.NEAREST_VISIBLE_ZOMBIFIED, MemoryModuleType.RIDE_TARGET, MemoryModuleType.VISIBLE_ADULT_PIGLIN_COUNT, MemoryModuleType.VISIBLE_ADULT_HOGLIN_COUNT, MemoryModuleType.NEAREST_VISIBLE_HUNTABLE_HOGLIN, MemoryModuleType.NEAREST_TARGETABLE_PLAYER_NOT_WEARING_GOLD, MemoryModuleType.NEAREST_PLAYER_HOLDING_WANTED_ITEM, MemoryModuleType.ATE_RECENTLY, MemoryModuleType.NEAREST_REPELLENT);
-    protected static final ImmutableList<SensorType<? extends Sensor<? super Magister>>> SENSOR_TYPES = ImmutableList.of(SensorType.NEAREST_LIVING_ENTITIES, SensorType.NEAREST_PLAYERS, SensorType.NEAREST_ITEMS, SensorType.HURT_BY, SensorType.PIGLIN_SPECIFIC_SENSOR);
+    protected static final ImmutableList<MemoryModuleType<?>> MEMORY_TYPES = ImmutableList.of(MemoryModuleType.LOOK_TARGET, MemoryModuleType.DOORS_TO_CLOSE, MemoryModuleType.MOBS, MemoryModuleType.VISIBLE_MOBS, MemoryModuleType.NEAREST_VISIBLE_PLAYER, MemoryModuleType.NEAREST_VISIBLE_TARGETABLE_PLAYER, MemoryModuleType.NEAREST_VISIBLE_ADULT_PIGLINS, MemoryModuleType.NEARBY_ADULT_PIGLINS, MemoryModuleType.NEAREST_VISIBLE_WANTED_ITEM, MemoryModuleType.HURT_BY, MemoryModuleType.HURT_BY_ENTITY, MemoryModuleType.WALK_TARGET, MemoryModuleType.CANT_REACH_WALK_TARGET_SINCE, MemoryModuleType.ATTACK_TARGET, MemoryModuleType.ATTACK_COOLING_DOWN, MemoryModuleType.INTERACTION_TARGET, MemoryModuleType.PATH, MemoryModuleType.ANGRY_AT, MemoryModuleType.UNIVERSAL_ANGER, MemoryModuleType.AVOID_TARGET, MemoryModuleType.ADMIRING_ITEM, MemoryModuleType.TIME_TRYING_TO_REACH_ADMIRE_ITEM, MemoryModuleType.ADMIRING_DISABLED, MemoryModuleType.DISABLE_WALK_TO_ADMIRE_ITEM, MemoryModuleType.CELEBRATE_LOCATION,MemoryModuleType.NEAREST_ATTACKABLE, MemoryModuleType.DANCING, MemoryModuleType.HUNTED_RECENTLY, MemoryModuleType.NEAREST_VISIBLE_BABY_HOGLIN, MemoryModuleType.NEAREST_HOSTILE, MemoryModuleType.NEAREST_VISIBLE_NEMESIS, MemoryModuleType.NEAREST_VISIBLE_ZOMBIFIED, MemoryModuleType.RIDE_TARGET, MemoryModuleType.VISIBLE_ADULT_PIGLIN_COUNT, MemoryModuleType.VISIBLE_ADULT_HOGLIN_COUNT, MemoryModuleType.NEAREST_VISIBLE_HUNTABLE_HOGLIN, MemoryModuleType.NEAREST_TARGETABLE_PLAYER_NOT_WEARING_GOLD, MemoryModuleType.NEAREST_PLAYER_HOLDING_WANTED_ITEM, MemoryModuleType.ATE_RECENTLY, MemoryModuleType.NEAREST_REPELLENT);
+    protected static final ImmutableList<SensorType<? extends Sensor<? super Magister>>> SENSOR_TYPES = ImmutableList.of(MagisterAI.MAGISTER_SENSOR_SENSOR_TYPE,SensorType.NEAREST_LIVING_ENTITIES, SensorType.NEAREST_PLAYERS, SensorType.NEAREST_ITEMS, SensorType.HURT_BY, SensorType.PIGLIN_SPECIFIC_SENSOR);
 
     @Override
     public void setEquipmentDropChance(EquipmentSlot equipmentSlot, float f) {
@@ -129,16 +129,11 @@ public class Magister extends PathAwareEntity implements InventoryOwner, GeoEnti
     private static Optional<? extends LivingEntity> findNearestValidAttackTarget(Magister piglin) {
         Brain<?> brain = piglin.getBrain();
         Optional<LivingEntity> optional = LookTargetUtil.getEntity(piglin, MemoryModuleType.ANGRY_AT);
-        if (optional.isPresent() && Sensor.testAttackableTargetPredicateIgnoreVisibility(piglin, (LivingEntity) optional.get())) {
+        if (optional.isPresent() && optional.get().distanceTo(piglin) < 32) {
             return optional;
         } else {
             Optional optional2;
-            if (brain.hasMemoryModule(MemoryModuleType.UNIVERSAL_ANGER)) {
-                optional2 = brain.getOptionalMemory(MemoryModuleType.NEAREST_VISIBLE_TARGETABLE_PLAYER);
-                if (optional2.isPresent()) {
-                    return optional2;
-                }
-            }
+
 
             optional2 = brain.getOptionalMemory(MemoryModuleType.NEAREST_VISIBLE_NEMESIS);
             return optional2;
@@ -294,9 +289,12 @@ public class Magister extends PathAwareEntity implements InventoryOwner, GeoEnti
 
     @Override
     protected void dropLoot(DamageSource damageSource, boolean bl) {
-        /*if(damageSource.getAttacker() instanceof PlayerEntity player && player.hasStatusEffect(Spellblades.HEX.get())){
-            player.removeStatusEffect(SpellbladesFabric.HEX.get());
-        }*/
+        if(damageSource.getAttacker() instanceof PlayerEntity player && player.hasStatusEffect(Spellblades.HEXED)){
+            player.removeStatusEffect(Spellblades.HEXED);
+        }
+        if(damageSource.getAttacker() instanceof PlayerEntity player && player.hasStatusEffect(Spellblades.MAGISTERFRIEND)){
+            player.removeStatusEffect(Spellblades.MAGISTERFRIEND);
+        }
         super.dropLoot(damageSource, bl);
     }
 
@@ -475,22 +473,26 @@ public class Magister extends PathAwareEntity implements InventoryOwner, GeoEnti
     @Override
     public TradeOfferList getOffers() {
         TradeOfferList offers = new TradeOfferList();
-        /*ItemStack offering = new ItemStack(Spellblades.OFFERING.get());
+        ItemStack offering = new ItemStack(Spellblades.OFFERING);
         offers.add(new TradeOffer(
-                new ItemStack(SpellbladeNext.RUNEBLAZEPLATING.get(),8),
-                offering,10,8,0.02F));
+                new ItemStack(Spellblades.RUNEBLAZE,2),
+                offering,10,8,1F));
         offers.add(new TradeOffer(
-                new ItemStack(SpellbladeNext.RUNEGLINTPLATING.get(),8),
-                offering,10,8,0.02F));
+                new ItemStack(Spellblades.RUNEGLEAM,2),
+                offering,10,8,1F));
         offers.add(new TradeOffer(
-                new ItemStack(SpellbladeNext.RUNEFROSTPLATING.get(),8),
-                offering,10,8,0.02F));
-        for(var entry : Spellblades.entries) {
-            offers.add(new TradeOffer(
-                    new ItemStack(entry.item(), 8),
-                    offering, 10, 8, 0.02F));
-        }
-*/
+                new ItemStack(Spellblades.RUNEFROST,2),
+                offering,10,8,1F));
+        offers.add(new TradeOffer(
+                new ItemStack(com.spellbladenext.items.Items.arcane_blade.item(),1),
+                offering,10,8,1F));
+        offers.add(new TradeOffer(
+                new ItemStack(com.spellbladenext.items.Items.fire_blade.item(),1),
+                offering,10,8,1F));
+        offers.add(new TradeOffer(
+                new ItemStack(com.spellbladenext.items.Items.frost_blade.item(),1),
+                offering,10,8,1F));
+
         return offers;
     }
 

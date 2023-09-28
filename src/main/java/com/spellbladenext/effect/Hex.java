@@ -2,6 +2,7 @@ package com.spellbladenext.effect;
 
 import com.spellbladenext.Spellblades;
 import com.spellbladenext.entity.Magister;
+import com.spellbladenext.invasions.attackevent;
 import com.spellbladenext.invasions.piglinsummon;
 import com.spellbladenext.items.Spellblade;
 import net.minecraft.entity.LivingEntity;
@@ -11,6 +12,7 @@ import net.minecraft.entity.ai.brain.WalkTarget;
 import net.minecraft.entity.attribute.AttributeContainer;
 import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.entity.effect.StatusEffectCategory;
+import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
@@ -20,11 +22,12 @@ import net.minecraft.stat.Stats;
 import net.minecraft.text.Text;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
+import net.spell_engine.api.spell.Spell;
 
 import java.util.Optional;
 import java.util.stream.StreamSupport;
 
-import static com.spellbladenext.Spellblades.HEXBLADE;
+import static com.spellbladenext.Spellblades.*;
 
 public class Hex extends StatusEffect {
     public Hex(StatusEffectCategory mobEffectCategory, int i) {
@@ -75,16 +78,20 @@ public class Hex extends StatusEffect {
             if(pos.isPresent()){
                 return;
             }
-            /*if(!player.getInventory().containsAny(itemStack -> itemStack.isOf(Spellblades.OFFERING))){
+            if(player.getInventory().containsAny(itemStack -> itemStack.isOf(HEXBLADEITEM))) {
+                return;
+            }
+            if(!player.getInventory().containsAny(itemStack -> itemStack.isOf(Spellblades.OFFERING))){
                 attackeventArrayList.add(new attackevent(player.getWorld(),player));
-            }*/
-            /*else{
+            }
+            else{
                 player.sendMessage(Text.translatable("Your patronage has saved you. For now."));
+                player.addStatusEffect(new StatusEffectInstance(Spellblades.MAGISTERFRIEND,20*60*5,0));
 
                 if(player instanceof ServerPlayerEntity player1) {
                     player1.getStatHandler().setStat(player1, Stats.CUSTOM.getOrCreateStat(SINCELASTHEX), 0);
                 }
-                if(player.getStackInHand(Hand.MAIN_HAND).isOf(SpellbladesFabric.OFFERING.get())) {
+                if(player.getStackInHand(Hand.MAIN_HAND).isOf(Spellblades.OFFERING)) {
                     ItemStack stack = player.getStackInHand(Hand.MAIN_HAND);
                     stack.decrement(1);
                     if (stack.isEmpty()) {
@@ -92,7 +99,7 @@ public class Hex extends StatusEffect {
 
                     }
                 }
-                else if(player.getStackInHand(Hand.OFF_HAND).isOf(SpellbladesFabric.OFFERING.get())) {
+                else if(player.getStackInHand(Hand.OFF_HAND).isOf(Spellblades.OFFERING)) {
                     ItemStack stack = player.getStackInHand(Hand.OFF_HAND);
                     stack.decrement(1);
 
@@ -101,7 +108,7 @@ public class Hex extends StatusEffect {
                 else {
                     for (int ii = 0; ii < player.getInventory().size(); ++ii) {
                         ItemStack stack = player.getInventory().getStack(ii);
-                        if (stack.isOf(SpellbladesFabric.OFFERING.get())) {
+                        if (stack.isOf(Spellblades.OFFERING)) {
                             stack.decrement(1);
                             if (stack.isEmpty()) {
                                 player.getInventory().removeOne(stack);
@@ -111,7 +118,7 @@ public class Hex extends StatusEffect {
                     }
 
                 }
-            }*/
+            }
         }
     }
 }

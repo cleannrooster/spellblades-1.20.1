@@ -52,16 +52,16 @@ public class SpellAttack<E extends MobEntity, T extends LivingEntity> extends Mu
                 livingEntity.getAttributeValue(SpellAttributes.POWER.get(MagicSchool.HEALING).attribute) > mob.getMaxHealth()/2){
             return false;
         }
-        return  mob instanceof Magister reaver && reaver.isCaster() && LookTargetUtil.isVisibleInMemory(mob, livingEntity) && mob.distanceTo(livingEntity) < 32;
+        return  mob instanceof Magister reaver && reaver.isCaster();
     }
 
     protected boolean shouldKeepRunning(ServerWorld serverLevel, E mob, long l) {
         return mob.getBrain().hasMemoryModule(MemoryModuleType.ATTACK_TARGET) && this.checkExtraStartConditions(serverLevel, mob);
     }
 
-    protected void run(ServerWorld serverLevel, E mob, long l) {
+    protected void keepRunning(ServerWorld serverLevel, E mob, long l) {
         LivingEntity livingEntity = getAttackTarget(mob);
-        //this.lookAtTarget(mob, livingEntity);
+        this.lookAtTarget(mob, livingEntity);
         this.crossbowAttack(mob, livingEntity);
     }
 
@@ -134,9 +134,7 @@ public class SpellAttack<E extends MobEntity, T extends LivingEntity> extends Mu
                 attackDelay = 40;
             }
         }
-        else{
             attackDelay--;
-        }
     }
 
     private void lookAtTarget(MobEntity mob, LivingEntity livingEntity) {

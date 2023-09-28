@@ -1,5 +1,6 @@
 package com.spellbladenext;
 
+import com.spellbladenext.client.entity.HexbladePortalRenderer;
 import com.spellbladenext.client.entity.MagisterRenderer;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
@@ -18,12 +19,14 @@ import net.spell_power.api.attributes.SpellAttributes;
 
 import java.util.Objects;
 
+import static com.spellbladenext.Spellblades.HEXBLADEPORTAL;
 import static com.spellbladenext.Spellblades.MOD_ID;
 
 public class SpellbladesClient implements ClientModInitializer {
     @Override
     public void onInitializeClient() {
         EntityRendererRegistry.register(Spellblades.REAVER, MagisterRenderer::new);
+        EntityRendererRegistry.register(HEXBLADEPORTAL, HexbladePortalRenderer::new);
 
         ClientTickEvents.START_CLIENT_TICK.register(server -> {
                     PlayerEntity player = server.player;

@@ -6,19 +6,26 @@ import com.mojang.datafixers.util.Pair;
 import com.spellbladenext.entity.Magister;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.ai.brain.Activity;
-import net.minecraft.entity.ai.brain.Brain;
-import net.minecraft.entity.ai.brain.MemoryModuleType;
+import net.minecraft.entity.ai.brain.*;
+import net.minecraft.entity.ai.brain.sensor.PiglinBruteSpecificSensor;
 import net.minecraft.entity.ai.brain.sensor.Sensor;
+import net.minecraft.entity.ai.brain.sensor.SensorType;
 import net.minecraft.entity.ai.brain.task.*;
-import net.minecraft.entity.mob.AbstractPiglinEntity;
-import net.minecraft.entity.mob.PiglinBrain;
+import net.minecraft.entity.mob.*;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.registry.Registries;
+import net.minecraft.registry.Registry;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.math.GlobalPos;
 import net.minecraft.world.GameRules;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Function;
+import java.util.function.Supplier;
+
+import static com.spellbladenext.Spellblades.MAGISTERFRIEND;
+import static com.spellbladenext.Spellblades.MOD_ID;
 
 public class MagisterAI {
     private static final int ANGER_DURATION = 600;
@@ -32,6 +39,10 @@ public class MagisterAI {
     private static final int HOME_TOO_FAR_DISTANCE = 100;
     private static final int HOME_STROLL_AROUND_DISTANCE = 5;
 
+    public static final SensorType<MagisterSensor> MAGISTER_SENSOR_SENSOR_TYPE = register("golem_detected", MagisterSensor::new);
+    private static <U extends Sensor<?>> SensorType<U> register(String p_26829_, Supplier<U> p_26830_) {
+        return Registry.register(Registries.SENSOR_TYPE, new Identifier(MOD_ID,p_26829_), new SensorType<>(p_26830_));
+    }
     public MagisterAI() {
     }
     public static Brain<?> makeBrain(Magister reaver, Brain<Magister> brain) {
@@ -54,15 +65,38 @@ public class MagisterAI {
     }
 
     private static void initIdleActivity(Magister reaver, Brain<Magister> brain) {
-        brain.setTaskList(Activity.IDLE, 10, ImmutableList.of(new WanderAroundTask(), UpdateAttackTargetTask.create(MagisterAI::findNearestValidAttackTarget), makeRandomFollowTask(),   FindInteractionTargetTask.create(EntityType.PLAYER, 4)));
+        brain.setTaskList(Activity.IDLE, 10, ImmutableList.of(new WanderAroundTask(), UpdateAttackTargetTask.create(MagisterAI::findNearestValidAttackTarget), makeRandomFollowTask(),   FindInteractionTargetTask.create(EntityType.PLAYER, 16)));
     }
 
     private static void initFightActivity(Magister reaver, Brain<Magister> brain) {
         brain.setTaskList(Activity.FIGHT, 10, ImmutableList.of( ForgetAttackTargetTask.create((livingEntity) -> {
             return !isNearestValidAttackTarget(reaver, (LivingEntity) livingEntity);
-        }),new BackUp<Magister>(10, 0.75F),   RangedApproachTask.create(1.0F),  new MeleeAttack(20),new SpellAttack<Magister, LivingEntity>()), MemoryModuleType.ATTACK_TARGET);
+        }),new BackUp<Magister>(8, 0.75F),   create(1.25F),new SpellAttack<Magister, LivingEntity>(),  new MeleeAttack(20)), MemoryModuleType.ATTACK_TARGET);
+    }
+    public static Task<MobEntity> create(float speed) {
+        return create((entity) -> {
+            return speed;
+        });
     }
 
+    public static Task<MobEntity> create(Function<LivingEntity, Float> speed) {
+        return TaskTriggerer.task((context) -> {
+            return context.group(context.queryMemoryOptional(MemoryModuleType.WALK_TARGET), context.queryMemoryOptional(MemoryModuleType.LOOK_TARGET), context.queryMemoryValue(MemoryModuleType.ATTACK_TARGET), context.queryMemoryOptional(MemoryModuleType.VISIBLE_MOBS)).apply(context, (walkTarget, lookTarget, attackTarget, visibleMobs) -> {
+                return (world, entity, time) -> {
+                    LivingEntity livingEntity = (LivingEntity)context.getValue(attackTarget);
+                    Optional<LivingTargetCache> optional = context.getOptionalValue(visibleMobs);
+                    if (optional.isPresent() && ((LivingTargetCache)optional.get()).contains(livingEntity) && LookTargetUtil.isTargetWithinAttackRange(entity, livingEntity, 1) || (entity instanceof Magister magister && magister.isCaster() && magister.distanceTo(livingEntity) <= 16) ) {
+                        walkTarget.forget();
+                    } else {
+                        lookTarget.remember(new EntityLookTarget(livingEntity, true));
+                        walkTarget.remember(new WalkTarget(new EntityLookTarget(livingEntity, false), (Float)speed.apply(entity), 0));
+                    }
+
+                    return true;
+                };
+            });
+        });
+    }
 
     private static RandomTask<LivingEntity> makeRandomFollowTask() {
         return new RandomTask(ImmutableList.builder().addAll(makeFollowTasks()).add(Pair.of(new WaitTask(30, 60), 1)).build());
@@ -103,12 +137,13 @@ public class MagisterAI {
         } else {
             Optional<? extends LivingEntity> optional2 = getTargetIfWithinRange(abstractPiglin, MemoryModuleType.NEAREST_VISIBLE_TARGETABLE_PLAYER);
             return optional2.isPresent() ? optional2 : abstractPiglin.getBrain().getOptionalMemory(MemoryModuleType.NEAREST_VISIBLE_NEMESIS);
+
         }
     }
 
     private static Optional<? extends LivingEntity> getTargetIfWithinRange(Magister abstractPiglin, MemoryModuleType<? extends LivingEntity> memoryModuleType) {
         return abstractPiglin.getBrain().getOptionalMemory(memoryModuleType).filter((livingEntity) -> {
-            return livingEntity.isInRange(abstractPiglin, 36);
+            return livingEntity.isInRange(abstractPiglin, 36) && !livingEntity.hasStatusEffect(MAGISTERFRIEND) && !(livingEntity instanceof Magister);
         });
     }
 

@@ -3,9 +3,12 @@ package com.spellbladenext;
 import com.google.common.collect.ImmutableMultimap;
 import com.spellbladenext.block.Hexblade;
 import com.spellbladenext.block.HexbladeBlockItem;
+import com.spellbladenext.effect.CustomEffect;
 import com.spellbladenext.effect.Hex;
 import com.spellbladenext.effect.RunicAbsorption;
+import com.spellbladenext.entity.HexbladePortal;
 import com.spellbladenext.entity.Magister;
+import com.spellbladenext.invasions.attackevent;
 import com.spellbladenext.items.*;
 import com.spellbladenext.items.armor.Armors;
 import com.spellbladenext.items.attacks.AttackAll;
@@ -14,6 +17,9 @@ import com.spellbladenext.items.loot.Default;
 import net.fabricmc.api.ModInitializer;
 
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
+import net.fabricmc.fabric.api.gamerule.v1.GameRuleFactory;
+import net.fabricmc.fabric.api.gamerule.v1.GameRuleRegistry;
 import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
 import net.fabricmc.fabric.api.item.v1.FabricItemStack;
 import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroup;
@@ -33,6 +39,7 @@ import net.minecraft.entity.attribute.EntityAttributeModifier;
 import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.entity.effect.StatusEffectCategory;
+import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
@@ -41,15 +48,19 @@ import net.minecraft.item.TridentItem;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.registry.RegistryKey;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.sound.BlockSoundGroup;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.sound.SoundEvents;
+import net.minecraft.stat.Stats;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.hit.BlockHitResult;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.GameRules;
 import net.minecraft.world.RaycastContext;
 import net.spell_engine.api.item.ItemConfig;
 import net.spell_engine.api.item.trinket.SpellBooks;
@@ -58,6 +69,7 @@ import net.spell_engine.api.loot.LootConfig;
 import net.spell_engine.api.loot.LootHelper;
 import net.spell_engine.api.render.CustomModels;
 import net.spell_engine.api.spell.CustomSpellHandler;
+import net.spell_engine.api.spell.Spell;
 import net.spell_engine.client.render.SpellProjectileRenderer;
 import net.spell_engine.entity.SpellProjectile;
 import net.spell_engine.internals.SpellCasterEntity;
@@ -75,6 +87,7 @@ import org.slf4j.LoggerFactory;
 import java.util.*;
 
 import static net.minecraft.registry.Registries.ENTITY_TYPE;
+import static net.spell_engine.internals.SpellHelper.launchPoint;
 import static net.spell_power.api.SpellPower.getCriticalChance;
 
 public class Spellblades implements ModInitializer {
@@ -85,10 +98,15 @@ public class Spellblades implements ModInitializer {
 	public static ItemGroup SPELLBLADES;
 	public static String MOD_ID = "spellbladenext";
 	public static EntityType<Magister> REAVER;
+	public static EntityType<HexbladePortal> HEXBLADEPORTAL;
+
+	public static final Identifier SINCELASTHEX = new Identifier(MOD_ID, "threat");
+	public static final Identifier HEXRAID = new Identifier(MOD_ID, "hex");
 	public static final Block HEXBLADE = new Hexblade(FabricBlockSettings.copyOf(Blocks.IRON_BLOCK).strength(5.0F, 6.0F).requiresTool().requiresTool().sounds(BlockSoundGroup.METAL).nonOpaque());
 	public static final Item HEXBLADEITEM = new HexbladeBlockItem(HEXBLADE,new FabricItemSettings().maxCount(1));
+	public static ArrayList<attackevent> attackeventArrayList = new ArrayList<>();
 
-	public static final Item OFFERING = new Item(new FabricItemSettings());
+	public static final Item OFFERING = new Offering(new FabricItemSettings());
 	public static RegistryKey<ItemGroup> KEY = RegistryKey.of(Registries.ITEM_GROUP.getKey(),new Identifier(Spellblades.MOD_ID,"generic"));
 	public static Item spellOil = new SpellOil(new FabricItemSettings().maxCount(1));
 	public static Item whirlwindOil = new WhirlwindOil(new FabricItemSettings().maxCount(1));
@@ -97,10 +115,14 @@ public class Spellblades implements ModInitializer {
 	public static Item RUNEFROST = new Item(new FabricItemSettings().maxCount(64));
 	public static Item RUNEGLEAM = new Item(new FabricItemSettings().maxCount(64));
 	public static Item MONKEYSTAFF = new MonkeyStaff(0,0,new FabricItemSettings());
+	public static final GameRules.Key<GameRules.BooleanRule> SHOULD_INVADE = GameRuleRegistry.register("hexbladeInvade", GameRules.Category.MOBS, GameRuleFactory.createBooleanRule(true));
+
 	public static StatusEffect RunicAbsorption = new RunicAbsorption(StatusEffectCategory.BENEFICIAL, 0xff4bdd);
 	public static final Item NETHERDEBUG = new DebugNetherPortal(new FabricItemSettings().maxCount(1));
 
 	public static StatusEffect HEXED = new Hex(StatusEffectCategory.HARMFUL, 0xff4bdd);
+	public static StatusEffect MAGISTERFRIEND = new CustomEffect(StatusEffectCategory.BENEFICIAL, 0xff4bdd);
+
 	public static ConfigManager<ItemConfig> itemConfig = new ConfigManager<ItemConfig>
 			("items_v4", Default.itemConfig)
 			.builder()
@@ -120,6 +142,7 @@ public class Spellblades implements ModInitializer {
 				.icon(() -> new ItemStack(Items.arcane_blade.item()))
 				.displayName(Text.translatable("itemGroup.spellbladenext.general"))
 				.build();
+
 		Registry.register(Registries.ITEM,new Identifier(MOD_ID,"spelloil"),spellOil);
 		Registry.register(Registries.ITEM,new Identifier(MOD_ID,"whirlwindoil"),whirlwindOil);
 		Registry.register(Registries.ITEM,new Identifier(MOD_ID,"smiteoil"),smiteOil);
@@ -133,9 +156,11 @@ public class Spellblades implements ModInitializer {
 		Registry.register(Registries.ITEM, new Identifier(MOD_ID, "debug"), NETHERDEBUG);
 
 		Registry.register(Registries.STATUS_EFFECT,new Identifier(MOD_ID,"hexed"),HEXED);
+		Registry.register(Registries.STATUS_EFFECT,new Identifier(MOD_ID,"magisterfriend"),MAGISTERFRIEND);
 
 		Registry.register(Registries.STATUS_EFFECT,new Identifier(MOD_ID,"runicabsorption"),RunicAbsorption);
-
+		Registry.register(Registries.CUSTOM_STAT, "threat", SINCELASTHEX);
+		Registry.register(Registries.CUSTOM_STAT, "hex", HEXRAID);
 		Items.register(itemConfig.value.weapons);
 		Armors.register(itemConfig.value.armor_sets);
 		lootConfig.refresh();
@@ -239,7 +264,6 @@ public class Spellblades implements ModInitializer {
 			CustomSpellHandler.Data data1 = (CustomSpellHandler.Data) data;
 			float modifier = SpellRegistry.getSpell(new Identifier(MOD_ID,"finalstrike")).impact[0].action.damage.spell_power_coefficient;
 			List<Entity> list = TargetHelper.targetsFromRaycast(data1.caster(),SpellRegistry.getSpell(new Identifier(MOD_ID,"finalstrike")).range, Objects::nonNull);
-			System.out.println(list);
 			if(!data1.targets().isEmpty()) {
 				AttackAll.attackAll(data1.caster(), data1.targets(), (float) modifier);
 				for (Entity entity : data1.targets()) {
@@ -288,7 +312,6 @@ public class Spellblades implements ModInitializer {
 			CustomSpellHandler.Data data1 = (CustomSpellHandler.Data) data;
 			float modifier = SpellRegistry.getSpell(new Identifier(MOD_ID,"frostblink")).impact[0].action.damage.spell_power_coefficient;
 			List<Entity> list = TargetHelper.targetsFromRaycast(data1.caster(),SpellRegistry.getSpell(new Identifier(MOD_ID,"frostblink")).range, Objects::nonNull);
-			System.out.println(list);
 			if(!data1.targets().isEmpty()) {
 				AttackAll.attackAll(data1.caster(), data1.targets(), (float) modifier);
 				for (Entity entity : data1.targets()) {
@@ -332,6 +355,18 @@ public class Spellblades implements ModInitializer {
 			}
 			return true;
 		});
+
+		HEXBLADEPORTAL = Registry.register(
+				ENTITY_TYPE,
+				new Identifier(MOD_ID, "hexbladeportal"),
+				FabricEntityTypeBuilder.<HexbladePortal>create(SpawnGroup.MISC, HexbladePortal::new)
+						.dimensions(EntityDimensions.fixed(2F, 3F)) // dimensions in Minecraft units of the render
+						.trackRangeBlocks(128)
+						.trackedUpdateRate(1)
+						.build()
+		);
+		FabricDefaultAttributeRegistry.register(HEXBLADEPORTAL, HexbladePortal.createAttributes());
+
 		CustomSpellHandler.register(new Identifier(MOD_ID,"flicker_strike"),(data) -> {
 
 			CustomSpellHandler.Data data1 = (CustomSpellHandler.Data) data;
@@ -628,6 +663,38 @@ public class Spellblades implements ModInitializer {
 				}
 			}
 			return true;
+		});
+		ServerTickEvents.START_SERVER_TICK.register(server -> {
+			for (ServerPlayerEntity player : server.getPlayerManager().getPlayerList()) {
+
+
+				if (((int) (player.getWorld().getTimeOfDay() % 24000L)) % 1200 == 0 && server.getGameRules().getBoolean(SHOULD_INVADE)) {
+/*
+					if (player.getWorld().getRegistryKey().equals(DIMENSIONKEY) && !player.hasStatusEffect(PORTALSICKNESS.get())) {
+
+						attackeventArrayList.add(new attackevent(player.getWorld(), player));
+
+ */
+					if (player.getStatHandler().getStat(Stats.CUSTOM.getOrCreateStat(HEXRAID)) > 0 /*&& !player.hasStatusEffect(PORTALSICKNESS.get()*/) {
+
+						player.increaseStat(SINCELASTHEX, 1);
+						if (!player.hasStatusEffect(HEXED) && player.getStatHandler().getStat(Stats.CUSTOM.getOrCreateStat(SINCELASTHEX)) > 10 && player.getRandom().nextFloat() < 0.01 * (player.getStatHandler().getStat(Stats.CUSTOM.getOrCreateStat(HEXRAID)) / 100F) * Math.pow((1.02930223664), player.getStatHandler().getStat(Stats.CUSTOM.getOrCreateStat(SINCELASTHEX)))) {
+							Optional<BlockPos> pos2 = BlockPos.findClosest(player.getBlockPos(), 64, 128,
+									blockPos -> player.getWorld().getBlockState(blockPos).getBlock().equals(HEXBLADE));
+							if (pos2.isPresent() || player.getInventory().containsAny(item -> item.getItem() instanceof HexbladeBlockItem)) {
+							} else {
+								player.addStatusEffect(new StatusEffectInstance(HEXED, 20 * 60 * 3, 0, false, false));
+							}
+						}
+					}
+					player.getStatHandler().setStat(player, Stats.CUSTOM.getOrCreateStat(HEXRAID), 0);
+				}
+
+			}
+			attackeventArrayList.removeIf(attackevent -> attackevent.tickCount > 500 || attackevent.done);
+			for (attackevent attackEvent : attackeventArrayList) {
+				attackEvent.tick();
+			}
 		});
 		LootTableEvents.MODIFY.register((resourceManager, lootManager, id, tableBuilder, source) -> {
 			LootHelper.configure(id, tableBuilder, Spellblades.lootConfig.value, SpellbladeItems.entries);

@@ -21,6 +21,8 @@
   "entity.spellbladenext.flamewaveprojectile": "Flame Wave",
   "entity.spellbladenext.amethyst": "Amethyst",
   "entity.spellbladenext.gladius": "Frost Blade",
+  "entity.spellbladenext.magister": "Hexblade Magister",
+
   "item.spellbladenext.monkeystaff": "Pillar of the Monkey King",
   "spell.spellbladenext.monkeyreflect.name": "Rending Winds",
   "spell.spellbladenext.monkeyreflect.description": "Spin up a gust of wind, dealing heavy knockback and {damage} physical damage per second to the target enemy.",
@@ -80,7 +82,11 @@
   "item.spellbladenext.runeblaze_ingot": "Runeblaze Ingot",
   "item.spellbladenext.runefrost_ingot": "Runefrost Ingot",
   "effect.spellbladenext.runicabsorption": "Runic Absorption",
+  "effect.spellbladenext.magisterfriend": "Magisters' Approval",
+  "effect.spellbladenext.hexed": "Hexed",
 
+  "stat.spellbladenext.hex": "Hex",
+  "stat.spellbladenext.threat": "Threat",
   "item.spellbladenext.runeblazing_head": "Runeblaze Helmet",
   "item.spellbladenext.runeblazing_chest": "Runeblaze Chestplate",
   "item.spellbladenext.runeblazing_legs": "Runeblaze Leggings",
@@ -104,5 +110,12 @@
   "item.spellbladenext.gleaming_head": "Magebane Crown",
   "item.spellbladenext.gleaming_chest":"Gleaming Magister Chestplate",
   "item.spellbladenext.gleaming_legs": "Gleaming Magister Leggings",
-  "item.spellbladenext.gleaming_feet": "Gleaming Magister Boots"
+  "item.spellbladenext.gleaming_feet": "Gleaming Magister Boots",
+  "item.spellbladenext.debug": "Debug Item",
+  "item.spellbladenext.offering": "Hexblade Offering",
+  "item.spellbladenext.hexbladeitem": "The Hexblade",
+  "block.spellbladenext.hexblade": "The Hexblade"
+
+
+
 }

@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:smithing_transform",
+  "addition": {
+    "item": "minecraft:amethyst_block"
+  },
+  "base": {
+    "item": "minecraft:diamond_sword"
+  },
+  "result": {
+    "item": "spellbladenext:offering"
+  },
+  "template": {
+    "item": "minecraft:amethyst_shard"
+  }
+}

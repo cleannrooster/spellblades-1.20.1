@@ -32,7 +32,7 @@ public class Hexblade extends HorizontalFacingBlock {
 
     public Hexblade(Settings properties) {
         super(properties);
-        this.setDefaultState((BlockState)((BlockState)((BlockState)((BlockState)((BlockState)((BlockState)this.stateManager.getDefaultState()).with(NORTH, false)).with(EAST, false)).with(SOUTH, false)).with(WEST, false)));
+        this.setDefaultState((BlockState)((BlockState)((BlockState)((BlockState)((BlockState)((BlockState)this.stateManager.getDefaultState().with(FACING,Direction.NORTH)))))));
         this.occlusionByIndex = this.makeShapes(2.0F, 1.0F, 16.0F, 6.0F, 15.0F);
     }
 
@@ -60,7 +60,7 @@ public class Hexblade extends HorizontalFacingBlock {
         return voxelShapes;
     }
     public BlockState getPlacementState(ItemPlacementContext blockPlaceContext) {
-        return (BlockState)this.getDefaultState().with(FACING, blockPlaceContext.getPlayerLookDirection().getOpposite());
+        return (BlockState)this.getDefaultState().with(FACING, blockPlaceContext.getHorizontalPlayerFacing().getOpposite());
     }
     protected int getAABBIndex(BlockState blockState) {
         return this.stateToIndex.computeIfAbsent(blockState, (blockStatex) -> {
@@ -91,12 +91,11 @@ public class Hexblade extends HorizontalFacingBlock {
         SOUTH = ConnectingBlock.SOUTH;
         WEST = ConnectingBlock.WEST;
     }
-
     @Override
     public void appendTooltip(ItemStack itemStack, @Nullable BlockView blockGetter, List<Text> list, TooltipContext tooltipFlag) {
-        list.add(Text.translatable("You have triumphed over Magus. Place to ward off Hexblade invasions "));
-        list.add(Text.translatable("in a 64 block radius, or carry to prevent yourself from being Hexed."));
-        list.add(Text.translatable("Right Click on air to create a Hexblade Portal you can right click with this sword to enter the Glass Ocean"));
+        list.add(Text.translatable("Place to ward off Hexblade invasions in a 64 block radius, "));
+        list.add(Text.translatable("or carry to prevent yourself from being Hexed."));
+        //list.add(Text.translatable("Right Click on air to create a Hexblade Portal you can right click with this sword to enter the Glass Ocean"));
 
         super.appendTooltip(itemStack, blockGetter, list, tooltipFlag);
     }
@@ -115,6 +114,6 @@ public class Hexblade extends HorizontalFacingBlock {
         return this.getOutlineShape(blockState, blockGetter, blockPos, collisionContext);
     }
     protected void appendProperties(StateManager.Builder<Block, BlockState> p_53334_) {
-        p_53334_.add(FACING,NORTH, EAST, WEST, SOUTH);
+        p_53334_.add(FACING);
     }
 }

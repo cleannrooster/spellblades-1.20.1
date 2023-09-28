@@ -95,4 +95,5 @@ public class HexbladeBlockItem extends BlockItem {
         return TypedActionResult.success(itemStack,playerEntity.getWorld().isClient());
 
     }
+
 }

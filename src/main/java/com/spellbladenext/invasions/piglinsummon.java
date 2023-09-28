@@ -1,5 +1,7 @@
 package com.spellbladenext.invasions;
 
+import com.spellbladenext.Spellblades;
+import com.spellbladenext.entity.HexbladePortal;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.stat.Stats;
@@ -13,12 +15,13 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
 
+import static com.spellbladenext.Spellblades.SINCELASTHEX;
 import static java.lang.Math.sqrt;
 
 public interface piglinsummon {
      default void tick(){
      }
-  /*   public static Optional<HexbladePortal> summonNetherPortal(World level, LivingEntity player, boolean home){
+     public static Optional<HexbladePortal> summonNetherPortal(World level, LivingEntity player, boolean home){
           double xRand = -1+level.getRandom().nextDouble()*2;
           double zRand = -1+level.getRandom().nextDouble()*2;
           double d0 = sqrt(xRand*xRand+zRand*zRand);
@@ -47,7 +50,7 @@ public interface piglinsummon {
                          }
                          if (found) {
                               boolean bool = level.getRandom().nextBoolean();
-                              HexbladePortal portal = new HexbladePortal(SpellbladesFabric.HEXBLADEPORTAL,player.getWorld());
+                              HexbladePortal portal = new HexbladePortal(Spellblades.HEXBLADEPORTAL,player.getWorld());
                               float yaw = 360*level.getRandom().nextFloat();
                               portal.setPos(pos.getX(),pos.getY()+1,pos.getZ());
                                    portal.setYaw(yaw);
@@ -69,7 +72,7 @@ public interface piglinsummon {
                }
           }
           return Optional.empty();
-     }*/
+     }
 
      @Nullable
      public static BlockPos getSafePositionAroundPlayer(World level, BlockPos pos, int range)
