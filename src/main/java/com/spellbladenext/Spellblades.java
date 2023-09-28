@@ -1,7 +1,11 @@
 package com.spellbladenext;
 
 import com.google.common.collect.ImmutableMultimap;
+import com.spellbladenext.block.Hexblade;
+import com.spellbladenext.block.HexbladeBlockItem;
+import com.spellbladenext.effect.Hex;
 import com.spellbladenext.effect.RunicAbsorption;
+import com.spellbladenext.entity.Magister;
 import com.spellbladenext.items.*;
 import com.spellbladenext.items.armor.Armors;
 import com.spellbladenext.items.attacks.AttackAll;
@@ -15,11 +19,14 @@ import net.fabricmc.fabric.api.item.v1.FabricItemStack;
 import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroup;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
 import net.fabricmc.fabric.api.loot.v2.LootTableEvents;
+import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
+import net.fabricmc.fabric.api.object.builder.v1.entity.FabricDefaultAttributeRegistry;
+import net.fabricmc.fabric.api.object.builder.v1.entity.FabricEntityTypeBuilder;
+import net.minecraft.block.Block;
+import net.minecraft.block.Blocks;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.enchantment.Enchantments;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.MovementType;
+import net.minecraft.entity.*;
 import net.minecraft.entity.ai.TargetPredicate;
 import net.minecraft.entity.attribute.EntityAttribute;
 import net.minecraft.entity.attribute.EntityAttributeModifier;
@@ -34,6 +41,7 @@ import net.minecraft.item.TridentItem;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.registry.RegistryKey;
+import net.minecraft.sound.BlockSoundGroup;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.sound.SoundEvents;
@@ -63,11 +71,10 @@ import net.spell_power.api.SpellPower;
 import net.tinyconfig.ConfigManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import software.bernie.geckolib.animatable.SingletonGeoAnimatable;
-import software.bernie.geckolib.core.animatable.GeoAnimatable;
 
 import java.util.*;
 
+import static net.minecraft.registry.Registries.ENTITY_TYPE;
 import static net.spell_power.api.SpellPower.getCriticalChance;
 
 public class Spellblades implements ModInitializer {
@@ -77,7 +84,11 @@ public class Spellblades implements ModInitializer {
     public static final Logger LOGGER = LoggerFactory.getLogger("spellbladenext");
 	public static ItemGroup SPELLBLADES;
 	public static String MOD_ID = "spellbladenext";
+	public static EntityType<Magister> REAVER;
+	public static final Block HEXBLADE = new Hexblade(FabricBlockSettings.copyOf(Blocks.IRON_BLOCK).strength(5.0F, 6.0F).requiresTool().requiresTool().sounds(BlockSoundGroup.METAL).nonOpaque());
+	public static final Item HEXBLADEITEM = new HexbladeBlockItem(HEXBLADE,new FabricItemSettings().maxCount(1));
 
+	public static final Item OFFERING = new Item(new FabricItemSettings());
 	public static RegistryKey<ItemGroup> KEY = RegistryKey.of(Registries.ITEM_GROUP.getKey(),new Identifier(Spellblades.MOD_ID,"generic"));
 	public static Item spellOil = new SpellOil(new FabricItemSettings().maxCount(1));
 	public static Item whirlwindOil = new WhirlwindOil(new FabricItemSettings().maxCount(1));
@@ -87,6 +98,9 @@ public class Spellblades implements ModInitializer {
 	public static Item RUNEGLEAM = new Item(new FabricItemSettings().maxCount(64));
 	public static Item MONKEYSTAFF = new MonkeyStaff(0,0,new FabricItemSettings());
 	public static StatusEffect RunicAbsorption = new RunicAbsorption(StatusEffectCategory.BENEFICIAL, 0xff4bdd);
+	public static final Item NETHERDEBUG = new DebugNetherPortal(new FabricItemSettings().maxCount(1));
+
+	public static StatusEffect HEXED = new Hex(StatusEffectCategory.HARMFUL, 0xff4bdd);
 	public static ConfigManager<ItemConfig> itemConfig = new ConfigManager<ItemConfig>
 			("items_v4", Default.itemConfig)
 			.builder()
@@ -113,6 +127,12 @@ public class Spellblades implements ModInitializer {
 		Registry.register(Registries.ITEM,new Identifier(MOD_ID,"runefrost_ingot"),RUNEFROST);
 		Registry.register(Registries.ITEM,new Identifier(MOD_ID,"runegleam_ingot"),RUNEGLEAM);
 		Registry.register(Registries.ITEM,new Identifier(MOD_ID,"monkeystaff"),MONKEYSTAFF);
+		Registry.register(Registries.BLOCK,new Identifier(MOD_ID,"hexblade"),HEXBLADE);
+		Registry.register(Registries.ITEM, new Identifier(MOD_ID,"hexbladeitem"), HEXBLADEITEM);
+		Registry.register(Registries.ITEM, new Identifier(MOD_ID,"offering"), OFFERING);
+		Registry.register(Registries.ITEM, new Identifier(MOD_ID, "debug"), NETHERDEBUG);
+
+		Registry.register(Registries.STATUS_EFFECT,new Identifier(MOD_ID,"hexed"),HEXED);
 
 		Registry.register(Registries.STATUS_EFFECT,new Identifier(MOD_ID,"runicabsorption"),RunicAbsorption);
 
@@ -138,9 +158,23 @@ public class Spellblades implements ModInitializer {
 			content.add(RUNEGLEAM);
 			content.add(RUNEFROST);
 			content.add(MONKEYSTAFF);
+			content.add(HEXBLADEITEM);
+			content.add(OFFERING);
+			content.add(NETHERDEBUG);
 
 
 		});
+		REAVER = Registry.register(
+				ENTITY_TYPE,
+				new Identifier(MOD_ID, "magister"),
+				FabricEntityTypeBuilder.<Magister>create(SpawnGroup.MISC, Magister::new)
+						.dimensions(EntityDimensions.fixed(0.6F, 1.8F)) // dimensions in Minecraft units of the render
+						.trackRangeBlocks(128)
+						.trackedUpdateRate(1)
+						.build()
+		);
+		FabricDefaultAttributeRegistry.register(REAVER,Magister.createAttributes());
+
 		SpellBooks.createAndRegister(new Identifier(MOD_ID,"frost_battlemage"),KEY);
 		SpellBooks.createAndRegister(new Identifier(MOD_ID,"fire_battlemage"),KEY);
 		SpellBooks.createAndRegister(new Identifier(MOD_ID,"arcane_battlemage"),KEY);

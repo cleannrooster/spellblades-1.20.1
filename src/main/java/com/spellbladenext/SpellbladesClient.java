@@ -1,15 +1,11 @@
 package com.spellbladenext;
 
-import com.spellbladenext.client.item.renderer.OrbRenderer;
-import com.spellbladenext.items.Items;
+import com.spellbladenext.client.entity.MagisterRenderer;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
-import net.fabricmc.fabric.api.client.rendering.v1.BuiltinItemRenderer;
-import net.fabricmc.fabric.api.client.rendering.v1.BuiltinItemRendererRegistry;
-import net.minecraft.client.render.item.BuiltinModelItemRenderer;
+import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
 import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.HitResult;
@@ -27,6 +23,8 @@ import static com.spellbladenext.Spellblades.MOD_ID;
 public class SpellbladesClient implements ClientModInitializer {
     @Override
     public void onInitializeClient() {
+        EntityRendererRegistry.register(Spellblades.REAVER, MagisterRenderer::new);
+
         ClientTickEvents.START_CLIENT_TICK.register(server -> {
                     PlayerEntity player = server.player;
                     World level = server.world;

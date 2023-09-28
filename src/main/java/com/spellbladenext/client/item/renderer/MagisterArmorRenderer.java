@@ -4,8 +4,7 @@ import com.spellbladenext.client.item.model.MagisterArmorModel;
 import com.spellbladenext.client.item.model.OrbModel;
 import com.spellbladenext.items.Orb;
 import com.spellbladenext.items.armor.MagisterArmor;
-import software.bernie.geckolib.renderer.GeoArmorRenderer;
-import software.bernie.geckolib.renderer.GeoItemRenderer;
+import mod.azure.azurelib.renderer.GeoArmorRenderer;
 
 public class MagisterArmorRenderer  extends GeoArmorRenderer<MagisterArmor> {
 

@@ -2,6 +2,16 @@ package com.spellbladenext.items;
 
 import com.spellbladenext.Spellblades;
 import com.spellbladenext.client.item.renderer.OrbRenderer;
+import mod.azure.azurelib.animatable.GeoItem;
+import mod.azure.azurelib.animatable.client.RenderProvider;
+import mod.azure.azurelib.core.animatable.GeoAnimatable;
+import mod.azure.azurelib.core.animatable.instance.AnimatableInstanceCache;
+import mod.azure.azurelib.core.animation.AnimatableManager;
+import mod.azure.azurelib.core.animation.Animation;
+import mod.azure.azurelib.core.animation.AnimationController;
+import mod.azure.azurelib.core.animation.RawAnimation;
+import mod.azure.azurelib.core.object.PlayState;
+import mod.azure.azurelib.util.AzureLibUtil;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.block.BlockState;
@@ -13,16 +23,6 @@ import net.minecraft.registry.tag.BlockTags;
 import net.minecraft.util.Identifier;
 import net.spell_engine.api.item.weapon.SpellWeaponItem;
 import net.spell_power.api.MagicSchool;
-import software.bernie.geckolib.animatable.GeoItem;
-import software.bernie.geckolib.animatable.SingletonGeoAnimatable;
-import software.bernie.geckolib.animatable.client.RenderProvider;
-import software.bernie.geckolib.constant.DefaultAnimations;
-import software.bernie.geckolib.core.animatable.GeoAnimatable;
-import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
-import software.bernie.geckolib.core.animation.*;
-import software.bernie.geckolib.core.object.PlayState;
-import software.bernie.geckolib.model.DefaultedItemGeoModel;
-import software.bernie.geckolib.util.GeckoLibUtil;
 
 import java.awt.geom.Arc2D;
 import java.util.function.Consumer;
@@ -48,7 +48,7 @@ public class Orb extends SpellWeaponItem implements GeoItem {
             }
         });
     }
-    private AnimatableInstanceCache factory = GeckoLibUtil.createInstanceCache(this);
+    private AnimatableInstanceCache factory = AzureLibUtil.createInstanceCache(this);
     public static final RawAnimation IDLE = RawAnimation.begin().thenLoop("idle");
 
     public MagicSchool getSchool() {

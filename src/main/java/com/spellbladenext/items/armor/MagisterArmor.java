@@ -3,6 +3,11 @@ package com.spellbladenext.items.armor;
 import com.spellbladenext.client.item.renderer.MagisterArmorItemRenderer;
 import com.spellbladenext.client.item.renderer.MagisterArmorRenderer;
 import com.spellbladenext.client.item.renderer.OrbRenderer;
+import mod.azure.azurelib.animatable.GeoItem;
+import mod.azure.azurelib.animatable.client.RenderProvider;
+import mod.azure.azurelib.core.animatable.instance.AnimatableInstanceCache;
+import mod.azure.azurelib.core.animation.AnimatableManager;
+import mod.azure.azurelib.util.AzureLibUtil;
 import net.minecraft.client.render.entity.model.BipedEntityModel;
 import net.minecraft.client.render.item.BuiltinModelItemRenderer;
 import net.minecraft.entity.EquipmentSlot;
@@ -12,12 +17,6 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.spell_engine.api.item.armor.Armor;
 import net.spell_power.api.MagicSchool;
-import software.bernie.geckolib.animatable.GeoItem;
-import software.bernie.geckolib.animatable.client.RenderProvider;
-import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
-import software.bernie.geckolib.core.animation.AnimatableManager;
-import software.bernie.geckolib.renderer.GeoArmorRenderer;
-import software.bernie.geckolib.util.GeckoLibUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,7 +36,7 @@ public class MagisterArmor extends CustomArmor implements GeoItem {
     public List<MagicSchool> getMagicschool() {
         return magicschool;
     }
-    private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
+    private final AnimatableInstanceCache cache = AzureLibUtil.createInstanceCache(this);
     private final Supplier<Object> renderProvider = GeoItem.makeRenderer(this);
 
     @Override

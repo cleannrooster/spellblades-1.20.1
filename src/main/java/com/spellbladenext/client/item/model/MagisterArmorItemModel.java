@@ -2,10 +2,10 @@ package com.spellbladenext.client.item.model;
 
 import com.spellbladenext.Spellblades;
 import com.spellbladenext.items.armor.MagisterArmor;
+import mod.azure.azurelib.model.GeoModel;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.util.Identifier;
 import net.spell_power.api.MagicSchool;
-import software.bernie.geckolib.model.GeoModel;
 
 public class MagisterArmorItemModel extends GeoModel<MagisterArmor> {
     @Override

@@ -2,11 +2,11 @@ package com.spellbladenext.client.item.model;
 
 import com.spellbladenext.Spellblades;
 import com.spellbladenext.items.Orb;
+import mod.azure.azurelib.model.GeoModel;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.util.Identifier;
 import net.spell_power.api.MagicSchool;
-import software.bernie.geckolib.model.GeoModel;
 @Environment(EnvType.CLIENT)
 public class OrbModel extends GeoModel<Orb> {
 
