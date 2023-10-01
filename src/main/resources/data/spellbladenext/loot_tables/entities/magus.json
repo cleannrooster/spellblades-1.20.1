@@ -1,0 +1,43 @@
+{
+  "pools": [
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "spellbladenext:magus_legs"
+
+        },
+        {
+          "type": "minecraft:item",
+          "name": "spellbladenext:magus_feet"
+
+        },
+        {
+          "type": "minecraft:item",
+          "name": "spellbladenext:magus_head"
+
+        },
+        {
+          "type": "minecraft:item",
+          "name": "spellbladenext:magus_chest"
+        }
+      ]
+    },
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "spellbladenext:starforge",
+          "conditions": [
+            {
+              "condition": "minecraft:random_chance",
+              "chance": 0.25
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

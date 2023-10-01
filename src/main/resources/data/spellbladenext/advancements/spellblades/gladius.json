@@ -1,0 +1,33 @@
+{
+  "display": {
+    "icon": {
+      "item": "spellbladenext:glacial_gladius"
+    },
+    "title": "Glacial Profiling",
+    "description": "Obtain a Glacial Gladius",
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "parent": "spellbladenext:spellblades/spellblade",
+  "criteria": {
+    "arcane": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "spellbladenext:glacial_gladius"
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "arcane"
+      ]
+  ]
+}

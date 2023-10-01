@@ -1,6 +1,7 @@
 package com.spellbladenext.entity.ai;
 
 import com.google.common.collect.ImmutableMap;
+import com.spellbladenext.entity.Archmagus;
 import com.spellbladenext.entity.Magister;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.brain.MemoryModuleState;
@@ -39,10 +40,11 @@ public class MeleeAttack  extends MultiTickTask<MobEntity> {
     protected void run(ServerWorld serverLevel, MobEntity mob, long l) {
         LivingEntity livingEntity = this.getAttackTarget(mob);
         mob.lookAtEntity(livingEntity,90,90);
-/*
+
         if(!(mob instanceof Archmagus archmagus && archmagus.getDataTracker().get(Archmagus.BIDED))) {
-*/
+
             mob.swingHand(Hand.MAIN_HAND);
+        }
         mob.tryAttack(livingEntity);
         mob.getBrain().remember(MemoryModuleType.ATTACK_COOLING_DOWN, true, (long)this.cooldownBetweenAttacks);
     }

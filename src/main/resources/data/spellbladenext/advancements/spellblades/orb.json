@@ -1,0 +1,43 @@
+{
+  "display": {
+    "icon": {
+      "item": "spellbladenext:arcane_orb"
+    },
+    "title": "Orbiting My Pond",
+    "description": "Obtain all three orbs",
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "parent": "spellbladenext:spellblades/root",
+  "criteria": {
+    "arcane": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "spellbladenext:arcane_orb"
+            ]
+          },
+          {
+            "items": [
+              "spellbladenext:fire_orb"
+            ]
+          },
+          {
+            "items": [
+              "spellbladenext:frost_orb"
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "arcane"
+      ]
+  ]
+}

@@ -1,11 +1,14 @@
 package com.spellbladenext.block;
 
+import com.spellbladenext.Spellblades;
+import com.spellbladenext.entity.HexbladePortal;
 import net.fabricmc.fabric.api.dimension.v1.FabricDimensions;
 import net.minecraft.block.Block;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemStack;
+import net.minecraft.registry.RegistryKey;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundEvents;
@@ -22,20 +25,20 @@ public class HexbladeBlockItem extends BlockItem {
 
     @Override
     public ActionResult useOnEntity(ItemStack itemStack, PlayerEntity player, LivingEntity livingEntity, Hand hand) {
-        /*if(livingEntity instanceof HexbladePortal){
+        if(livingEntity instanceof HexbladePortal){
             livingEntity.playSound(SoundEvents.ENTITY_ENDERMAN_TELEPORT,1,1);
             if(player.getWorld().isClient()) {
                 return ActionResult.success(player.getWorld().isClient());
             }
             else{
                 livingEntity.discard();
-                RegistryKey<World> resourceKey = player.world.getRegistryKey().equals(SpellbladeNext.DIMENSIONKEY) ? World.OVERWORLD : SpellbladeNext.DIMENSIONKEY;
+                RegistryKey<World> resourceKey = player.getWorld().getRegistryKey().equals(Spellblades.DIMENSIONKEY) ? World.OVERWORLD : Spellblades.DIMENSIONKEY;
 
                 ServerWorld serverWorld = player.getEntityWorld().getServer().getWorld(resourceKey);
                 if (serverWorld == null) {
                     return super.useOnEntity(itemStack, player, livingEntity, hand);
                 }
-                if (resourceKey == SpellbladeNext.DIMENSIONKEY) {
+                if (resourceKey == Spellblades.DIMENSIONKEY) {
                     TeleportTarget target = new TeleportTarget(
                             new net.minecraft.util.math.Vec3d(0, 150, 0),
                             net.minecraft.util.math.Vec3d.ZERO,
@@ -66,13 +69,13 @@ public class HexbladeBlockItem extends BlockItem {
                 }
             }
 
-        }*/
+        }
         return super.useOnEntity(itemStack, player, livingEntity, hand);
     }
 
     @Override
     public TypedActionResult<ItemStack> use(World world, PlayerEntity playerEntity, Hand hand) {
-    /*    HexbladePortal portal = new HexbladePortal(SpellbladesFabric.HEXBLADEPORTAL,world);
+        HexbladePortal portal = new HexbladePortal(Spellblades.HEXBLADEPORTAL,world);
         portal.prevYaw = playerEntity.getYaw();
         portal.setYaw(playerEntity.getYaw());
         portal.headYaw = playerEntity.getYaw();
@@ -90,8 +93,7 @@ public class HexbladeBlockItem extends BlockItem {
         }
         ItemStack itemStack = playerEntity.getStackInHand(hand);
         playerEntity.getItemCooldownManager().set(this,160);
-*/
-        ItemStack itemStack = playerEntity.getStackInHand(hand);
+
         return TypedActionResult.success(itemStack,playerEntity.getWorld().isClient());
 
     }

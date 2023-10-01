@@ -58,7 +58,12 @@ public class Items {
         var settings = new Item.Settings();
         var item = new Spellblade(material, settings, 1, -2.4F, school);
         return entry(requiredMod, name, material, item, new ItemConfig.Weapon(damage, -2.4F));
-    }
+    }    public static final Weapon.Entry STARFORGE = blade("starforge",
+            Weapon.CustomMaterial.matching(ToolMaterials.NETHERITE, () -> Ingredient.ofItems(net.minecraft.item.Items.NETHER_STAR)), 5F,MagicSchool.ARCANE)
+            .attribute(ItemConfig.SpellAttribute.bonus(SpellAttributes.POWER.get(MagicSchool.FROST), 6))
+            .attribute(ItemConfig.SpellAttribute.bonus(SpellAttributes.POWER.get(MagicSchool.FIRE), 6))
+            .attribute(ItemConfig.SpellAttribute.bonus(SpellAttributes.POWER.get(MagicSchool.ARCANE), 6));
+
     public static final Weapon.Entry frost_blade = blade("frost_blade",
             Weapon.CustomMaterial.matching(ToolMaterials.DIAMOND, () -> Ingredient.ofItems(net.minecraft.item.Items.PRISMARINE_SHARD)), 4F,MagicSchool.FROST)
             .attribute(ItemConfig.SpellAttribute.bonus(SpellAttributes.POWER.get(MagicSchool.FROST), bladeValue));

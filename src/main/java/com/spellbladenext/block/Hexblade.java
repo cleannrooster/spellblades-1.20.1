@@ -95,7 +95,7 @@ public class Hexblade extends HorizontalFacingBlock {
     public void appendTooltip(ItemStack itemStack, @Nullable BlockView blockGetter, List<Text> list, TooltipContext tooltipFlag) {
         list.add(Text.translatable("Place to ward off Hexblade invasions in a 64 block radius, "));
         list.add(Text.translatable("or carry to prevent yourself from being Hexed."));
-        //list.add(Text.translatable("Right Click on air to create a Hexblade Portal you can right click with this sword to enter the Glass Ocean"));
+        list.add(Text.translatable("Right Click on air to create a Hexblade Portal you can right click on with this sword to enter the Glass Ocean"));
 
         super.appendTooltip(itemStack, blockGetter, list, tooltipFlag);
     }

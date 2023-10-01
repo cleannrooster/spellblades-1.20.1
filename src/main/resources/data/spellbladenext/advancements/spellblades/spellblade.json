@@ -1,0 +1,43 @@
+{
+  "display": {
+    "icon": {
+      "item": "spellbladenext:arcane_blade"
+    },
+    "title": "Fine. B-L-A-D-E.",
+    "description": "Obtain all three basic Spellblades",
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "parent": "spellbladenext:spellblades/root",
+  "criteria": {
+    "arcane": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "spellbladenext:arcane_blade"
+            ]
+          },
+          {
+            "items": [
+              "spellbladenext:fire_blade"
+            ]
+          },
+          {
+            "items": [
+              "spellbladenext:frost_blade"
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "arcane"
+      ]
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "display": {
+    "icon": {
+      "item": "spellbladenext:arcane_blade"
+    },
+    "title": "Spellblades and Such",
+    "description": "Is it a sword or just a sharp wand?",
+    "background": "minecraft:textures/block/chiseled_quartz_block.png",
+    "frame": "task",
+    "show_toast": false,
+    "announce_to_chat": false,
+    "hidden": false
+  },
+  "criteria": {
+    "always": {
+      "trigger": "minecraft:tick"
+    }
+  }
+}

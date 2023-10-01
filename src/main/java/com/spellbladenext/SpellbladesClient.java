@@ -1,5 +1,6 @@
 package com.spellbladenext;
 
+import com.spellbladenext.client.entity.ArchmagusRenderer;
 import com.spellbladenext.client.entity.HexbladePortalRenderer;
 import com.spellbladenext.client.entity.MagisterRenderer;
 import net.fabricmc.api.ClientModInitializer;
@@ -27,6 +28,7 @@ public class SpellbladesClient implements ClientModInitializer {
     public void onInitializeClient() {
         EntityRendererRegistry.register(Spellblades.REAVER, MagisterRenderer::new);
         EntityRendererRegistry.register(HEXBLADEPORTAL, HexbladePortalRenderer::new);
+        EntityRendererRegistry.register(Spellblades.ARCHMAGUS, ArchmagusRenderer::new);
 
         ClientTickEvents.START_CLIENT_TICK.register(server -> {
                     PlayerEntity player = server.player;

@@ -214,7 +214,10 @@ public class Magister extends PathAwareEntity implements InventoryOwner, GeoEnti
     @Override
     public void tick() {
         super.tick();
-
+        if(this.getWorld() instanceof ServerWorld serverWorld && serverWorld.getEntitiesByType(Spellblades.REAVER,LivingEntity::isAlive).size()>32){
+            this.playSoundIfNotSilent(SoundEvents.ITEM_CHORUS_FRUIT_TELEPORT);
+            this.discard();
+        }
 
 
         if (this.getBrain().getOptionalMemory(MemoryModuleType.ATTACK_TARGET).isPresent()) {
@@ -281,10 +284,9 @@ public class Magister extends PathAwareEntity implements InventoryOwner, GeoEnti
 
     @Override
     protected boolean shouldDropLoot() {
-        return true;
-/*
+
         return !( this.getRandom().nextFloat() > 0.25 && this.getWorld().getRegistryKey() == Spellblades.DIMENSIONKEY);
-*/
+
     }
 
     @Override

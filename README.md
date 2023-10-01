@@ -1,8 +1,8 @@
-# Fabric Example Mod
+# Spellblades and Such
 
-## Setup
+## Intro
 
-For setup instructions please see the [fabric wiki page](https://fabricmc.net/wiki/tutorial:setup) that relates to the IDE that you are using.
+This is a mod based off of Daedelus' Spell Engine, and incorporates many new features relating to magic and swordfighting.
 
 ## License
 

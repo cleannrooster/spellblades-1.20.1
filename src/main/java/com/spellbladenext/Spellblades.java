@@ -6,10 +6,12 @@ import com.spellbladenext.block.HexbladeBlockItem;
 import com.spellbladenext.effect.CustomEffect;
 import com.spellbladenext.effect.Hex;
 import com.spellbladenext.effect.RunicAbsorption;
+import com.spellbladenext.entity.Archmagus;
 import com.spellbladenext.entity.HexbladePortal;
 import com.spellbladenext.entity.Magister;
 import com.spellbladenext.invasions.attackevent;
 import com.spellbladenext.items.*;
+import com.spellbladenext.items.Items;
 import com.spellbladenext.items.armor.Armors;
 import com.spellbladenext.items.attacks.AttackAll;
 import com.spellbladenext.items.interfaces.PlayerDamageInterface;
@@ -41,14 +43,13 @@ import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.entity.effect.StatusEffectCategory;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemGroup;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.TridentItem;
+import net.minecraft.item.*;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.registry.RegistryKey;
+import net.minecraft.registry.RegistryKeys;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.BlockSoundGroup;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvent;
@@ -62,6 +63,8 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.GameRules;
 import net.minecraft.world.RaycastContext;
+import net.minecraft.world.World;
+import net.minecraft.world.dimension.DimensionType;
 import net.spell_engine.api.item.ItemConfig;
 import net.spell_engine.api.item.trinket.SpellBooks;
 import net.spell_engine.api.item.weapon.Weapon;
@@ -115,13 +118,20 @@ public class Spellblades implements ModInitializer {
 	public static Item RUNEFROST = new Item(new FabricItemSettings().maxCount(64));
 	public static Item RUNEGLEAM = new Item(new FabricItemSettings().maxCount(64));
 	public static Item MONKEYSTAFF = new MonkeyStaff(0,0,new FabricItemSettings());
+	public static Item PRISMATIC = new PrismaticEffigy(new FabricItemSettings());
 	public static final GameRules.Key<GameRules.BooleanRule> SHOULD_INVADE = GameRuleRegistry.register("hexbladeInvade", GameRules.Category.MOBS, GameRuleFactory.createBooleanRule(true));
+	public static EntityType<Archmagus> ARCHMAGUS;
 
 	public static StatusEffect RunicAbsorption = new RunicAbsorption(StatusEffectCategory.BENEFICIAL, 0xff4bdd);
+	public static StatusEffect PORTALSICKNESS = new CustomEffect(StatusEffectCategory.HARMFUL, 0xff4bdd);
+
 	public static final Item NETHERDEBUG = new DebugNetherPortal(new FabricItemSettings().maxCount(1));
 
 	public static StatusEffect HEXED = new Hex(StatusEffectCategory.HARMFUL, 0xff4bdd);
 	public static StatusEffect MAGISTERFRIEND = new CustomEffect(StatusEffectCategory.BENEFICIAL, 0xff4bdd);
+	public static final RegistryKey<World> DIMENSIONKEY = RegistryKey.of(RegistryKeys.WORLD,new Identifier(Spellblades.MOD_ID,"glassocean"));
+
+	public static final RegistryKey<DimensionType> DIMENSION_TYPE_RESOURCE_KEY = RegistryKey.of(RegistryKeys.DIMENSION_TYPE,new Identifier(Spellblades.MOD_ID,"glassocean"));
 
 	public static ConfigManager<ItemConfig> itemConfig = new ConfigManager<ItemConfig>
 			("items_v4", Default.itemConfig)
@@ -154,9 +164,11 @@ public class Spellblades implements ModInitializer {
 		Registry.register(Registries.ITEM, new Identifier(MOD_ID,"hexbladeitem"), HEXBLADEITEM);
 		Registry.register(Registries.ITEM, new Identifier(MOD_ID,"offering"), OFFERING);
 		Registry.register(Registries.ITEM, new Identifier(MOD_ID, "debug"), NETHERDEBUG);
+		Registry.register(Registries.ITEM, new Identifier(MOD_ID, "prismatic"), PRISMATIC);
 
 		Registry.register(Registries.STATUS_EFFECT,new Identifier(MOD_ID,"hexed"),HEXED);
 		Registry.register(Registries.STATUS_EFFECT,new Identifier(MOD_ID,"magisterfriend"),MAGISTERFRIEND);
+		Registry.register(Registries.STATUS_EFFECT,new Identifier(MOD_ID,"portalsickness"),PORTALSICKNESS);
 
 		Registry.register(Registries.STATUS_EFFECT,new Identifier(MOD_ID,"runicabsorption"),RunicAbsorption);
 		Registry.register(Registries.CUSTOM_STAT, "threat", SINCELASTHEX);
@@ -186,7 +198,7 @@ public class Spellblades implements ModInitializer {
 			content.add(HEXBLADEITEM);
 			content.add(OFFERING);
 			content.add(NETHERDEBUG);
-
+			content.add(PRISMATIC);
 
 		});
 		REAVER = Registry.register(
@@ -198,6 +210,17 @@ public class Spellblades implements ModInitializer {
 						.trackedUpdateRate(1)
 						.build()
 		);
+		ARCHMAGUS = Registry.register(
+				ENTITY_TYPE,
+				new Identifier(MOD_ID, "magus"),
+				FabricEntityTypeBuilder.<Archmagus>create(SpawnGroup.MISC, Archmagus::new)
+						.dimensions(EntityDimensions.fixed(0.6F, 1.8F)) // dimensions in Minecraft units of the render
+						.trackRangeBlocks(128)
+						.trackedUpdateRate(1)
+						.build()
+		);
+		FabricDefaultAttributeRegistry.register(ARCHMAGUS,Archmagus.createAttributes());
+
 		FabricDefaultAttributeRegistry.register(REAVER,Magister.createAttributes());
 
 		SpellBooks.createAndRegister(new Identifier(MOD_ID,"frost_battlemage"),KEY);
@@ -667,15 +690,18 @@ public class Spellblades implements ModInitializer {
 		ServerTickEvents.START_SERVER_TICK.register(server -> {
 			for (ServerPlayerEntity player : server.getPlayerManager().getPlayerList()) {
 
-
+				if (player.getWorld().getRegistryKey().equals(DIMENSIONKEY) && player.getY() < -32) {
+					player.requestTeleport(player.getX(), 150, player.getZ());
+				}
 				if (((int) (player.getWorld().getTimeOfDay() % 24000L)) % 1200 == 0 && server.getGameRules().getBoolean(SHOULD_INVADE)) {
-/*
-					if (player.getWorld().getRegistryKey().equals(DIMENSIONKEY) && !player.hasStatusEffect(PORTALSICKNESS.get())) {
+
+					if (player.getWorld().getRegistryKey().equals(DIMENSIONKEY) && !player.hasStatusEffect(PORTALSICKNESS) && player.getWorld().isSkyVisible(player.getBlockPos().up())) {
 
 						attackeventArrayList.add(new attackevent(player.getWorld(), player));
+					}
 
- */
-					if (player.getStatHandler().getStat(Stats.CUSTOM.getOrCreateStat(HEXRAID)) > 0 /*&& !player.hasStatusEffect(PORTALSICKNESS.get()*/) {
+
+					if (player.getStatHandler().getStat(Stats.CUSTOM.getOrCreateStat(HEXRAID)) > 0 && !player.hasStatusEffect(PORTALSICKNESS)) {
 
 						player.increaseStat(SINCELASTHEX, 1);
 						if (!player.hasStatusEffect(HEXED) && player.getStatHandler().getStat(Stats.CUSTOM.getOrCreateStat(SINCELASTHEX)) > 10 && player.getRandom().nextFloat() < 0.01 * (player.getStatHandler().getStat(Stats.CUSTOM.getOrCreateStat(HEXRAID)) / 100F) * Math.pow((1.02930223664), player.getStatHandler().getStat(Stats.CUSTOM.getOrCreateStat(SINCELASTHEX)))) {

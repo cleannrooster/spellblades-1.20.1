@@ -22,6 +22,7 @@
   "entity.spellbladenext.amethyst": "Amethyst",
   "entity.spellbladenext.gladius": "Frost Blade",
   "entity.spellbladenext.magister": "Hexblade Magister",
+  "entity.spellbladenext.magus": "Magus",
 
   "item.spellbladenext.monkeystaff": "Pillar of the Monkey King",
   "spell.spellbladenext.monkeyreflect.name": "Rending Winds",
@@ -36,6 +37,12 @@
   "spell.spellbladenext.frostslash.description": "{damage} Frost DPS. Swing your weapon wildly, shooting bouncing, ricocheting blade projectiles.",
   "spell.spellbladenext.amethystslash.name": "Amethyst Splash",
   "spell.spellbladenext.amethystslash.description": "{damage} Arcane DPS. Swing your weapon wildly, shooting piercing amethyst projectiles.",
+  "spell.spellbladenext.arcaneoverdrive.name": "Arcane Overdrive",
+  "spell.spellbladenext.arcaneoverdrive.description": "{damage} Arcane damage in an area around you. Activates normally and on hit.",
+  "spell.spellbladenext.frostoverdrive.name": "Frost Overdrive",
+  "spell.spellbladenext.frostoverdrive.description": "{damage} Frost damage in an area around you. Activates normally and on hit.",
+  "spell.spellbladenext.fireoverdrive.name": "Flame Overdrive",
+  "spell.spellbladenext.fireoverdrive.description": "{damage} Fire damage in an area around you. Activates normally and on hit.",
 
   "spell.spellbladenext.finalstrike.name": "Sonic Strike",
   "spell.spellbladenext.finalstrike.description": "Charge up a deadly attack against all enemies in a line, teleporting behind the last one and dealing 3x melee damage plus an additional {damage} arcane spell damage.",
@@ -84,6 +91,7 @@
   "effect.spellbladenext.runicabsorption": "Runic Absorption",
   "effect.spellbladenext.magisterfriend": "Magisters' Approval",
   "effect.spellbladenext.hexed": "Hexed",
+  "effect.spellbladenext.portalsickness": "Portal Sickness",
 
   "stat.spellbladenext.hex": "Hex",
   "stat.spellbladenext.threat": "Threat",
@@ -114,8 +122,12 @@
   "item.spellbladenext.debug": "Debug Item",
   "item.spellbladenext.offering": "Hexblade Offering",
   "item.spellbladenext.hexbladeitem": "The Hexblade",
-  "block.spellbladenext.hexblade": "The Hexblade"
+  "block.spellbladenext.hexblade": "The Hexblade",
+  "item.spellbladenext.starforge": "Starforge",
 
-
-
+  "item.spellbladenext.prismatic": "Prismatic Effigy",
+  "item.spellbladenext.magus_head": "Primordial Hood",
+  "item.spellbladenext.magus_chest": "Primordial Robe",
+  "item.spellbladenext.magus_legs": "Primordial Leggings",
+  "item.spellbladenext.magus_feet": "Primordial Boots"
 }

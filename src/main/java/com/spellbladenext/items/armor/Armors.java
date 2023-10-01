@@ -291,6 +291,59 @@ public class Armors {
                     ))
                     .put(entries)
                     .armorSet();;
+    public static final Armor.Set magus =
+            create(
+                    new Armor.CustomMaterial(
+                            "magus",
+                            20,
+                            10,
+                            SoundEvents.ITEM_ARMOR_EQUIP_LEATHER,
+                            WOOL_INGREDIENTS
+                    ),
+                    ItemConfig.ArmorSet.with(
+                            new ItemConfig.ArmorSet.Piece(2)
+                                    .addAll(List.of(
+                                            ItemConfig.SpellAttribute.bonus(SpellAttributes.POWER.get(MagicSchool.FROST), 2F),
+                                            ItemConfig.SpellAttribute.bonus(SpellAttributes.POWER.get(MagicSchool.FIRE), 2F),
+                                            ItemConfig.SpellAttribute.bonus(SpellAttributes.POWER.get(MagicSchool.ARCANE), 2F)
+
+
+                                    )),
+                            new ItemConfig.ArmorSet.Piece(6)
+                                    .addAll(List.of(
+                                            ItemConfig.SpellAttribute.bonus(SpellAttributes.POWER.get(MagicSchool.FROST), 2F),
+                                            ItemConfig.SpellAttribute.bonus(SpellAttributes.POWER.get(MagicSchool.FIRE), 2F),
+                                            ItemConfig.SpellAttribute.bonus(SpellAttributes.POWER.get(MagicSchool.ARCANE), 2F)
+
+
+
+                                    )),
+                            new ItemConfig.ArmorSet.Piece(4)
+                                    .addAll(List.of(
+                                            ItemConfig.SpellAttribute.bonus(SpellAttributes.POWER.get(MagicSchool.FROST), 2F),
+                                            ItemConfig.SpellAttribute.bonus(SpellAttributes.POWER.get(MagicSchool.FIRE), 2F),
+                                            ItemConfig.SpellAttribute.bonus(SpellAttributes.POWER.get(MagicSchool.ARCANE), 2F)
+
+
+
+                                    )),
+                            new ItemConfig.ArmorSet.Piece(2)
+                                    .addAll(List.of(
+                                            ItemConfig.SpellAttribute.bonus(SpellAttributes.POWER.get(MagicSchool.FROST), 2F),
+                                            ItemConfig.SpellAttribute.bonus(SpellAttributes.POWER.get(MagicSchool.FIRE), 2F),
+                                            ItemConfig.SpellAttribute.bonus(SpellAttributes.POWER.get(MagicSchool.ARCANE), 2F)
+
+
+
+                                    ))
+                    )) .bundle(material -> new Armor.Set(Spellblades.MOD_ID,
+                            new MagusArmor(material, ArmorItem.Type.HELMET, new Item.Settings(),List.of(MagicSchool.FROST,MagicSchool.ARCANE,MagicSchool.FIRE)),
+                            new MagusArmor(material, ArmorItem.Type.CHESTPLATE,new Item.Settings(), List.of(MagicSchool.FROST,MagicSchool.ARCANE,MagicSchool.FIRE)),
+                            new MagusArmor(material, ArmorItem.Type.LEGGINGS, new Item.Settings(),List.of(MagicSchool.FROST,MagicSchool.ARCANE,MagicSchool.FIRE)),
+                            new MagusArmor(material, ArmorItem.Type.BOOTS,new Item.Settings(), List.of(MagicSchool.FROST,MagicSchool.ARCANE,MagicSchool.FIRE))
+                    ))
+                    .put(entries)
+                    .armorSet();;
 
 
     public static void register(Map<String, ItemConfig.ArmorSet> configs) {

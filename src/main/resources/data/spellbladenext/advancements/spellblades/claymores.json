@@ -1,0 +1,43 @@
+{
+  "display": {
+    "icon": {
+      "item": "spellbladenext:arcane_claymore"
+    },
+    "title": "Clay... more? Yes please.",
+    "description": "Obtain all three basic elemental Claymores",
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "parent": "spellbladenext:spellblades/spellblade",
+  "criteria": {
+    "arcane": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "spellbladenext:arcane_claymore"
+            ]
+          },
+          {
+            "items": [
+              "spellbladenext:fire_claymore"
+            ]
+          },
+          {
+            "items": [
+              "spellbladenext:frost_claymore"
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "arcane"
+      ]
+  ]
+}
