@@ -5,8 +5,9 @@
     "tier": 1
   },
   "cast": {
-    "duration": 0,
-    "animation": "spellbladenext:two_handed_slam_spellblade"
+
+    "duration": 0.5,
+    "animation": "spell_engine:one_handed_projectile_charge"
   },
   "release": {
     "custom_impact": true,

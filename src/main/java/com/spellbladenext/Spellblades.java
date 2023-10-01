@@ -75,9 +75,9 @@ import net.spell_engine.api.spell.CustomSpellHandler;
 import net.spell_engine.api.spell.Spell;
 import net.spell_engine.client.render.SpellProjectileRenderer;
 import net.spell_engine.entity.SpellProjectile;
-import net.spell_engine.internals.SpellCasterEntity;
 import net.spell_engine.internals.SpellHelper;
 import net.spell_engine.internals.SpellRegistry;
+import net.spell_engine.internals.casting.SpellCasterEntity;
 import net.spell_engine.particle.ParticleHelper;
 import net.spell_engine.utils.TargetHelper;
 import net.spell_power.api.MagicSchool;
@@ -440,7 +440,7 @@ public class Spellblades implements ModInitializer {
 			data1.targets().remove(data1.caster());
 			if(data1.targets().isEmpty()){
 				if(data1.caster() instanceof SpellCasterEntity entity){
-					entity.clearCasting();
+					entity.setSpellCastProcess(null);
 				}
 				return true;
 			}
@@ -453,7 +453,7 @@ public class Spellblades implements ModInitializer {
 				playerDamageInterface.setLastAttacked(null);
 
 				if(data1.caster() instanceof SpellCasterEntity entity){
-					entity.clearCasting();
+					entity.setSpellCastProcess(null);
 				}
 				return true;
 			}
@@ -500,7 +500,7 @@ public class Spellblades implements ModInitializer {
 					playerDamageInterface.setLastAttacked(null);
 					playerDamageInterface.resetRepeats();
 					if(data1.caster() instanceof SpellCasterEntity antity){
-						antity.clearCasting();
+						antity.setSpellCastProcess(null);
 					}
 					return true;
 				}
