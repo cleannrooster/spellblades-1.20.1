@@ -5,7 +5,9 @@
     "tier": 2
   },
   "cast": {
-    "duration": 0,
+    "animation": "spell_engine:one_handed_projectile_charge",
+    "duration": 0.5,
+
     "sound": {
       "id": "minecraft:entity.player.attack.sweep"
     },

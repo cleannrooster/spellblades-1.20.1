@@ -348,7 +348,7 @@ public class Spellblades implements ModInitializer {
 			data1.targets().remove(data1.caster());
 			if(data1.targets().isEmpty()){
 				if(data1.caster() instanceof SpellCasterEntity entity){
-					entity.clearCasting();
+					entity.setSpellCastProcess(null);
 				}
 				return true;
 			}
@@ -361,7 +361,7 @@ public class Spellblades implements ModInitializer {
 				playerDamageInterface.setLastAttacked(null);
 
 				if(data1.caster() instanceof SpellCasterEntity entity){
-					entity.clearCasting();
+					entity.setSpellCastProcess(null);
 				}
 				return true;
 			}
@@ -408,7 +408,7 @@ public class Spellblades implements ModInitializer {
 					playerDamageInterface.setLastAttacked(null);
 					playerDamageInterface.resetRepeats();
 					if(data1.caster() instanceof SpellCasterEntity antity){
-						antity.clearCasting();
+						antity.setSpellCastProcess(null);
 					}
 					return true;
 				}

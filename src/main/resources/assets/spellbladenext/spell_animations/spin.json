@@ -10,7 +10,14 @@
         "stopTick":170,
         "degrees":false,
         "moves":[
-            
+            {
+                "tick":0,
+                "easing": "EASEINOUTQUAD",
+                "turn": 0,
+                "torso":{
+                    "yaw":-100.53096771240234
+                }
+            },
             {
                 "tick":10,
                 "easing": "EASEINOUTQUAD",
@@ -32,7 +39,7 @@
                 "easing": "EASEINOUTQUAD",
                 "turn": 0,
                 "torso":{
-                    "yaw":100.53096771240234
+                    "yaw":0
                 }
             },
             {

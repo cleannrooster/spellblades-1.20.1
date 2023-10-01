@@ -6,7 +6,10 @@ import net.minecraft.client.render.entity.LivingEntityRenderer;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.util.Identifier;
+import net.spell_engine.internals.casting.SpellCasterClient;
 import net.spell_engine.internals.casting.SpellCasterEntity;
+import net.spell_engine.mixin.PlayerEntityMixin;
+import net.spell_engine.mixin.client.ClientPlayerEntityMixin;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -18,8 +21,9 @@ import static com.spellbladenext.Spellblades.MOD_ID;
 public class LivingEntityRendererMixin<T extends LivingEntity> {
     @Inject(at = @At("HEAD"), method = "render", cancellable = true)
     public void render(T entity, float f, float tickDelta, MatrixStack matrices, VertexConsumerProvider vertexConsumerProvider, int i, CallbackInfo info) {
-        if(entity instanceof SpellCasterEntity caster){
-            if(caster.getCurrentSpellId() != null && (caster.getCurrentSpellId().equals(new Identifier(Spellblades.MOD_ID,"eviscerate")) || (caster.getCurrentSpellId().equals(new Identifier(MOD_ID, "monkeyslam")) && caster.getCurrentCastProgress() > 17F / 160F))){
+        if(entity instanceof SpellCasterClient caster){
+
+            if(caster.getCurrentSpellId() != null && (caster.getCurrentSpellId().equals(new Identifier(Spellblades.MOD_ID,"eviscerate")) || (caster.getCurrentSpellId().equals(new Identifier(MOD_ID, "monkeyslam"))&& caster.getSpellCastProgress() != null && caster.getSpellCastProgress().ratio() > 17/160F))){
                 /*Spell spell = SpellRegistry.getSpell(new Identifier(InvokeMod.MODID,"greaterfireball"));
                 SpellProjectile spell_projectile = new SpellProjectile(entity.getWorld(),entity,entity.getX(),entity.getY(),entity.getZ(), SpellProjectile.Behaviour.FLY,
                         spell,null,new SpellHelper.ImpactContext(), new Spell.ProjectileData().perks);

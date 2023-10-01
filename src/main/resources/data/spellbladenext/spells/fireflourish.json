@@ -5,7 +5,8 @@
     "tier": 1
   },
   "cast": {
-    "duration": 0
+    "animation": "spell_engine:one_handed_projectile_charge",
+    "duration": 0.5
   },
   "release": {
     "custom_impact": true,
