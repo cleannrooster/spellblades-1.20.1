@@ -6,8 +6,16 @@
   },
   "cast": {
     "animation": "spell_engine:one_handed_projectile_charge",
-    "duration": 0.5,
+    "duration": 0.5
 
+
+  },
+  "release": {
+    "custom_impact": true,
+    "target": {
+      "type": "PROJECTILE"
+    },
+    "animation": "spellbladenext:dashslash",
     "sound": {
       "id": "minecraft:entity.player.attack.sweep"
     },
@@ -29,16 +37,6 @@
         "max_speed": 0.9
       }
     ]
-  },
-  "release": {
-    "custom_impact": true,
-    "target": {
-      "type": "PROJECTILE"
-    },
-    "animation": "spellbladenext:dashslash",
-    "sound": {
-      "id": "minecraft:entity.player.attack.sweep"
-    }
   },
   "impact": [
     {

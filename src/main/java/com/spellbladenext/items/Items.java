@@ -53,12 +53,20 @@ public class Items {
     private static Weapon.Entry blade(String name, Weapon.CustomMaterial material, float damage, MagicSchool school) {
         return blade(null, name, material, damage, school );
     }
-
+    private static Weapon.Entry starforge(String name, Weapon.CustomMaterial material, float damage, MagicSchool school) {
+        return starforge(null, name, material, damage, school );
+    }
+    private static Weapon.Entry starforge(String requiredMod, String name, Weapon.CustomMaterial material, float damage,MagicSchool school) {
+        var settings = new Item.Settings();
+        var item = new Starforge(material, settings, 1, -2.4F, school);
+        return entry(requiredMod, name, material, item, new ItemConfig.Weapon(damage, -2.4F));
+    }
     private static Weapon.Entry blade(String requiredMod, String name, Weapon.CustomMaterial material, float damage,MagicSchool school) {
         var settings = new Item.Settings();
         var item = new Spellblade(material, settings, 1, -2.4F, school);
         return entry(requiredMod, name, material, item, new ItemConfig.Weapon(damage, -2.4F));
-    }    public static final Weapon.Entry STARFORGE = blade("starforge",
+    }
+    public static final Weapon.Entry STARFORGE = starforge("starforge",
             Weapon.CustomMaterial.matching(ToolMaterials.NETHERITE, () -> Ingredient.ofItems(net.minecraft.item.Items.NETHER_STAR)), 5F,MagicSchool.ARCANE)
             .attribute(ItemConfig.SpellAttribute.bonus(SpellAttributes.POWER.get(MagicSchool.FROST), 6))
             .attribute(ItemConfig.SpellAttribute.bonus(SpellAttributes.POWER.get(MagicSchool.FIRE), 6))

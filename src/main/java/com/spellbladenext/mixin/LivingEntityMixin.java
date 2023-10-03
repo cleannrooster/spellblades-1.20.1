@@ -2,6 +2,7 @@ package com.spellbladenext.mixin;
 
 import com.spellbladenext.Spellblades;
 import com.spellbladenext.items.Orb;
+import com.spellbladenext.items.Starforge;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
@@ -54,7 +55,7 @@ public class LivingEntityMixin {
     public Vec3d applyInputMIX(Vec3d vec3d) {
         LivingEntity living = ((LivingEntity) (Object) this);
 
-        if(living instanceof PlayerEntity player && player instanceof SpellCasterEntity entity && entity.getCurrentSpellId() != null && player.getActiveItem().getItem() instanceof Orb) {
+        if(living instanceof PlayerEntity player && player instanceof SpellCasterEntity entity && entity.getCurrentSpell() != null && player.getMainHandStack().getItem() instanceof Orb) {
             return vec3d.multiply(6);
         }
         else{
@@ -68,7 +69,7 @@ public class LivingEntityMixin {
         if (player.getAttacker() instanceof PlayerEntity player1  && !player1.getWorld().isClient()) {
             ItemStack stack = player1.getMainHandStack();
 
-            if (SpellContainerHelper.containerWithProxy(stack, player1) != null && SpellContainerHelper.containerWithProxy(stack, player1).spell_ids.contains("spellbladenext:arcaneoverdrive")) {
+            if (player1.getMainHandStack().getItem() instanceof Starforge) {
                 Predicate<Entity> selectionPredicate = (target2) -> {
                     return (TargetHelper.actionAllowed(TargetHelper.TargetingMode.AREA, TargetHelper.Intent.HARMFUL, player1, target2)
                     );
@@ -81,10 +82,7 @@ public class LivingEntityMixin {
                     int i = 0;
                     List<Entity> targets = player1.getWorld().getOtherEntities(player1, player1.getBoundingBox().expand(spell.range), selectionPredicate);
 
-                    if (entity.getCurrentSpellId() != null) {
-                        LivingEntity living = (LivingEntity) entity;
-                        i = (int) (entity.getCurrentCastProgress() * SpellHelper.getCastDuration(living, SpellRegistry.getSpell(entity.getCurrentSpellId())));
-                    }
+
                     SpellHelper.ImpactContext context = new SpellHelper.ImpactContext(1.0F, 1.0F, (Vec3d) null, SpellPower.getSpellPower(spell.school, player1), impactTargetingMode(spell));
 
                     for (Entity target1 : targets) {
@@ -107,7 +105,7 @@ public class LivingEntityMixin {
 
                 }
             }
-            if (SpellContainerHelper.containerWithProxy(stack, player1) != null && SpellContainerHelper.containerWithProxy(stack, player1).spell_ids.contains("spellbladenext:fireoverdrive")) {
+            if (player1.getMainHandStack().getItem() instanceof Starforge) {
                 Predicate<Entity> selectionPredicate = (target2) -> {
                     return (TargetHelper.actionAllowed(TargetHelper.TargetingMode.AREA, TargetHelper.Intent.HARMFUL, player1, target2)
                     );
@@ -120,10 +118,6 @@ public class LivingEntityMixin {
                     int i = 0;
                     List<Entity> targets = player1.getWorld().getOtherEntities(player1, player1.getBoundingBox().expand(spell.range), selectionPredicate);
 
-                    if (entity.getCurrentSpellId() != null) {
-                        LivingEntity living = (LivingEntity) entity;
-                        i = (int) (entity.getCurrentCastProgress() * SpellHelper.getCastDuration(living, SpellRegistry.getSpell(entity.getCurrentSpellId())));
-                    }
                     SpellHelper.ImpactContext context = new SpellHelper.ImpactContext(1.0F, 1.0F, (Vec3d) null, SpellPower.getSpellPower(spell.school, player1), impactTargetingMode(spell));
 
                     for (Entity target1 : targets) {
@@ -146,7 +140,7 @@ public class LivingEntityMixin {
 
                 }
             }
-            if (SpellContainerHelper.containerWithProxy(stack, player1) != null && SpellContainerHelper.containerWithProxy(stack, player1).spell_ids.contains("spellbladenext:frostoverdrive")) {
+            if (player1.getMainHandStack().getItem() instanceof Starforge) {
                 Predicate<Entity> selectionPredicate = (target2) -> {
                     return (TargetHelper.actionAllowed(TargetHelper.TargetingMode.AREA, TargetHelper.Intent.HARMFUL, player1, target2)
                     );
@@ -159,10 +153,6 @@ public class LivingEntityMixin {
                     int i = 0;
                     List<Entity> targets = player1.getWorld().getOtherEntities(player1, player1.getBoundingBox().expand(spell.range), selectionPredicate);
 
-                    if (entity.getCurrentSpellId() != null) {
-                        LivingEntity living = (LivingEntity) entity;
-                        i = (int) (entity.getCurrentCastProgress() * SpellHelper.getCastDuration(living, SpellRegistry.getSpell(entity.getCurrentSpellId())));
-                    }
                     SpellHelper.ImpactContext context = new SpellHelper.ImpactContext(1.0F, 1.0F, (Vec3d) null, SpellPower.getSpellPower(spell.school, player1), impactTargetingMode(spell));
 
                     for (Entity target1 : targets) {
@@ -190,7 +180,7 @@ public class LivingEntityMixin {
             player3.increaseStat(HEXRAID, (int) Math.ceil(f));
         }
 
-        if (player2 instanceof SpellCasterEntity entity && (entity.getCurrentSpellId() != null && (entity.getCurrentSpellId().equals(new Identifier(MOD_ID, "eviscerate")) || entity.getCurrentSpellId().equals(new Identifier(MOD_ID, "monkeyslam"))))) {
+        if (player2 instanceof SpellCasterEntity entity && (entity.getCurrentSpell() != null && (entity.getCurrentSpell().equals(SpellRegistry.getSpell(new Identifier(MOD_ID, "eviscerate"))) || entity.getCurrentSpell().equals(SpellRegistry.getSpell(new Identifier(MOD_ID, "monkeyslam")))))) {
             info.setReturnValue(false);
         }
     }

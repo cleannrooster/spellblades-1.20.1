@@ -79,7 +79,7 @@ public class SpellAttack<E extends MobEntity, T extends LivingEntity> extends Mu
                 Spell spell = SpellRegistry.getSpell(new Identifier(Spellblades.MOD_ID, "arcane_missile"));
                 SpellHelper.ImpactContext context = new SpellHelper.ImpactContext(1, 1.0F, (Vec3d) null, new SpellPower.Result(MagicSchool.ARCANE, mob.getAttributeValue(EntityAttributes.GENERIC_ATTACK_DAMAGE)*0.8, 0, 1), impactTargetingMode(spell));
                 Vec3d launchPoint = launchPoint(mob);
-                SpellProjectile projectile = new SpellProjectile(mob.getWorld(), mob, launchPoint.getX(), launchPoint.getY(), launchPoint.getZ(), SpellProjectile.Behaviour.FLY, spell, target, context,   new Spell.ProjectileData().perks);
+                SpellProjectile projectile = new SpellProjectile(mob.getWorld(), mob, launchPoint.getX(), launchPoint.getY(), launchPoint.getZ(), SpellProjectile.Behaviour.FLY, new Identifier(Spellblades.MOD_ID, "arcane_missile"), target, context,   new Spell.ProjectileData().perks);
                 Spell.ProjectileData projectileData = spell.release.target.projectile;
                 projectileData.homing_angle = 15;
                 float velocity = projectileData.velocity;
@@ -98,7 +98,7 @@ public class SpellAttack<E extends MobEntity, T extends LivingEntity> extends Mu
                 Spell spell = SpellRegistry.getSpell(new Identifier(Spellblades.MOD_ID, "frostbolt"));
                 SpellHelper.ImpactContext context = new SpellHelper.ImpactContext(1, 1.0F, (Vec3d) null, new SpellPower.Result(MagicSchool.FROST, mob.getAttributeValue(EntityAttributes.GENERIC_ATTACK_DAMAGE)*0.6, 0, 1), impactTargetingMode(spell));
                 Vec3d launchPoint = launchPoint(mob);
-                SpellProjectile projectile = new SpellProjectile(mob.getWorld(), mob, launchPoint.getX(), launchPoint.getY(), launchPoint.getZ(), SpellProjectile.Behaviour.FLY, spell, target, context,   new Spell.ProjectileData().perks);
+                SpellProjectile projectile = new SpellProjectile(mob.getWorld(), mob, launchPoint.getX(), launchPoint.getY(), launchPoint.getZ(), SpellProjectile.Behaviour.FLY, new Identifier(Spellblades.MOD_ID, "frostbolt"), target, context,   new Spell.ProjectileData().perks);
                 Spell.ProjectileData projectileData = spell.release.target.projectile;
                 float additional = 7.5F*reaver.getRandom().nextFloat();
                 projectileData.homing_angle = 7.5F+additional;
@@ -118,7 +118,7 @@ public class SpellAttack<E extends MobEntity, T extends LivingEntity> extends Mu
                 Spell spell = SpellRegistry.getSpell(new Identifier(Spellblades.MOD_ID, "fireball"));
                 SpellHelper.ImpactContext context = new SpellHelper.ImpactContext(1, 1.0F, (Vec3d) null, new SpellPower.Result(MagicSchool.FIRE, mob.getAttributeValue(EntityAttributes.GENERIC_ATTACK_DAMAGE)*1, 0, 1), impactTargetingMode(spell));
                 Vec3d launchPoint = launchPoint(mob);
-                SpellProjectile projectile = new SpellProjectile(mob.getWorld(), mob, launchPoint.getX(), launchPoint.getY(), launchPoint.getZ(), SpellProjectile.Behaviour.FLY, spell, target, context,   new Spell.ProjectileData().perks);
+                SpellProjectile projectile = new SpellProjectile(mob.getWorld(), mob, launchPoint.getX(), launchPoint.getY(), launchPoint.getZ(), SpellProjectile.Behaviour.FLY, new Identifier(Spellblades.MOD_ID, "fireball"), target, context,   new Spell.ProjectileData().perks);
                 Spell.ProjectileData projectileData = spell.release.target.projectile;
                 projectileData.homing_angle = 15;
                 float velocity = projectileData.velocity;

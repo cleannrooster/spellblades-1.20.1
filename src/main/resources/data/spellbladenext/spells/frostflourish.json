@@ -6,7 +6,7 @@
   },
   "cast": {
     "animation": "spell_engine:one_handed_projectile_charge",
-    "duration": 0
+    "duration": 0.5
   },
   "release": {
     "custom_impact": true,

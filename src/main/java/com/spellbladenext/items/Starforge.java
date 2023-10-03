@@ -24,7 +24,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.spell_engine.api.item.ConfigurableAttributes;
 import net.spell_engine.api.item.ItemConfig;
-import net.spell_engine.internals.SpellCasterEntity;
 import net.spell_power.api.MagicSchool;
 import net.spell_power.api.SpellDamageSource;
 import net.spell_power.api.SpellPower;
@@ -36,11 +35,11 @@ import java.util.List;
 public class Starforge extends SwordItem implements ConfigurableAttributes {
     private Multimap<EntityAttribute, EntityAttributeModifier> attributes;
 
-    public Starforge(ToolMaterial material, Multimap<EntityAttribute, EntityAttributeModifier> attributes, Settings settings, ArrayList<ItemConfig.SpellAttribute> school) {
-        super(material, 1, material.getAttackDamage(), settings);
-
-        this.setAttributes(attributes);
+    public Starforge(ToolMaterial material, Settings settings, int damage, float speed, MagicSchool school) {
+        super(material, damage,speed, settings);
+        this.school = school;
     }
+
     @Override
     public void inventoryTick(ItemStack itemStack, World level, Entity entity, int i, boolean bl) {
 
@@ -56,6 +55,7 @@ public class Starforge extends SwordItem implements ConfigurableAttributes {
     public void setAttributes(Multimap<EntityAttribute, EntityAttributeModifier> attributes) {
         this.attributes = attributes;
     }
+    MagicSchool school = MagicSchool.PHYSICAL_MELEE;
 
     public boolean canMine(BlockState state, World world, BlockPos pos, PlayerEntity miner) {
         return !miner.isCreative();
@@ -82,6 +82,9 @@ public class Starforge extends SwordItem implements ConfigurableAttributes {
     @Environment(EnvType.CLIENT)
     @Override
     public void appendTooltip(ItemStack itemStack, @Nullable World level, List<Text> list, TooltipContext tooltipFlag) {
-       super.appendTooltip(itemStack,level,list,tooltipFlag);
+       list.add(Text.translatable("Triggers Elemental Novas on hit, with a 1 second base cooldown and a 0.8 coefficient."));
+        list.add(Text.translatable("Requires runes of the right type, or Spell Infinity."));
+
+        super.appendTooltip(itemStack,level,list,tooltipFlag);
     }
 }

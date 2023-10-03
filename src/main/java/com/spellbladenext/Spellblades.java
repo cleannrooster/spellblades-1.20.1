@@ -9,6 +9,7 @@ import com.spellbladenext.effect.RunicAbsorption;
 import com.spellbladenext.entity.Archmagus;
 import com.spellbladenext.entity.HexbladePortal;
 import com.spellbladenext.entity.Magister;
+import com.spellbladenext.entity.RifleProjectile;
 import com.spellbladenext.invasions.attackevent;
 import com.spellbladenext.items.*;
 import com.spellbladenext.items.Items;
@@ -43,6 +44,8 @@ import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.entity.effect.StatusEffectCategory;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.projectile.PersistentProjectileEntity;
+import net.minecraft.entity.projectile.ProjectileUtil;
 import net.minecraft.item.*;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
@@ -58,6 +61,7 @@ import net.minecraft.stat.Stats;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.hit.BlockHitResult;
+import net.minecraft.util.hit.EntityHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
@@ -83,6 +87,7 @@ import net.spell_engine.utils.TargetHelper;
 import net.spell_power.api.MagicSchool;
 import net.spell_power.api.SpellDamageSource;
 import net.spell_power.api.SpellPower;
+import net.spell_power.api.attributes.SpellAttributes;
 import net.tinyconfig.ConfigManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -91,6 +96,7 @@ import java.util.*;
 
 import static net.minecraft.registry.Registries.ENTITY_TYPE;
 import static net.spell_engine.internals.SpellHelper.launchPoint;
+import static net.spell_engine.internals.SpellHelper.projectileImpact;
 import static net.spell_power.api.SpellPower.getCriticalChance;
 
 public class Spellblades implements ModInitializer {
@@ -102,6 +108,7 @@ public class Spellblades implements ModInitializer {
 	public static String MOD_ID = "spellbladenext";
 	public static EntityType<Magister> REAVER;
 	public static EntityType<HexbladePortal> HEXBLADEPORTAL;
+	public static EntityType<RifleProjectile> RIFLEPROJECTILE;
 
 	public static final Identifier SINCELASTHEX = new Identifier(MOD_ID, "threat");
 	public static final Identifier HEXRAID = new Identifier(MOD_ID, "hex");
@@ -119,6 +126,8 @@ public class Spellblades implements ModInitializer {
 	public static Item RUNEGLEAM = new Item(new FabricItemSettings().maxCount(64));
 	public static Item MONKEYSTAFF = new MonkeyStaff(0,0,new FabricItemSettings());
 	public static Item PRISMATIC = new PrismaticEffigy(new FabricItemSettings());
+	public static Item RIFLE = new Rifle(new FabricItemSettings().maxDamage(2000));
+
 	public static final GameRules.Key<GameRules.BooleanRule> SHOULD_INVADE = GameRuleRegistry.register("hexbladeInvade", GameRules.Category.MOBS, GameRuleFactory.createBooleanRule(true));
 	public static EntityType<Archmagus> ARCHMAGUS;
 
@@ -165,6 +174,7 @@ public class Spellblades implements ModInitializer {
 		Registry.register(Registries.ITEM, new Identifier(MOD_ID,"offering"), OFFERING);
 		Registry.register(Registries.ITEM, new Identifier(MOD_ID, "debug"), NETHERDEBUG);
 		Registry.register(Registries.ITEM, new Identifier(MOD_ID, "prismatic"), PRISMATIC);
+		Registry.register(Registries.ITEM, new Identifier(MOD_ID, "rifle"), RIFLE);
 
 		Registry.register(Registries.STATUS_EFFECT,new Identifier(MOD_ID,"hexed"),HEXED);
 		Registry.register(Registries.STATUS_EFFECT,new Identifier(MOD_ID,"magisterfriend"),MAGISTERFRIEND);
@@ -173,6 +183,7 @@ public class Spellblades implements ModInitializer {
 		Registry.register(Registries.STATUS_EFFECT,new Identifier(MOD_ID,"runicabsorption"),RunicAbsorption);
 		Registry.register(Registries.CUSTOM_STAT, "threat", SINCELASTHEX);
 		Registry.register(Registries.CUSTOM_STAT, "hex", HEXRAID);
+
 		Items.register(itemConfig.value.weapons);
 		Armors.register(itemConfig.value.armor_sets);
 		lootConfig.refresh();
@@ -199,7 +210,7 @@ public class Spellblades implements ModInitializer {
 			content.add(OFFERING);
 			content.add(NETHERDEBUG);
 			content.add(PRISMATIC);
-
+			content.add(RIFLE);
 		});
 		REAVER = Registry.register(
 				ENTITY_TYPE,
@@ -226,7 +237,27 @@ public class Spellblades implements ModInitializer {
 		SpellBooks.createAndRegister(new Identifier(MOD_ID,"frost_battlemage"),KEY);
 		SpellBooks.createAndRegister(new Identifier(MOD_ID,"fire_battlemage"),KEY);
 		SpellBooks.createAndRegister(new Identifier(MOD_ID,"arcane_battlemage"),KEY);
+		CustomSpellHandler.register(new Identifier(MOD_ID,"sniper"),(data) -> {
+			CustomSpellHandler.Data data1 = (CustomSpellHandler.Data) data;
+			RifleProjectile projectile = new RifleProjectile(RIFLEPROJECTILE,data1.caster().getWorld());
+			projectile.setPos(data1.caster().getX(),data1.caster().getY(),data1.caster().getZ());
+			SpellPower.Result power = SpellPower.getSpellPower(MagicSchool.FIRE, (LivingEntity) data1.caster());
 
+			for(Entity target : data1.targets()) {
+				if(target instanceof LivingEntity living) {
+					SpellPower.Vulnerability vulnerability = SpellPower.Vulnerability.none;
+					vulnerability = SpellPower.getVulnerability(living, MagicSchool.FIRE);
+					double amount = power.randomValue(vulnerability);
+					amount *= SpellRegistry.getSpell(new Identifier(MOD_ID,"sniper")).impact[0].action.damage.spell_power_coefficient/3;
+					target.timeUntilRegen = 0;
+					amount += EnchantmentHelper.getEquipmentLevel(Enchantments.POWER,data1.caster());
+					projectile.setDamage(projectile.getDamage()*2+amount);
+					projectile.setOwner(data1.caster());
+					projectile.onEntityHit(new EntityHitResult(living,living.getPos()));
+				}
+			}
+			return true;
+		});
 		CustomSpellHandler.register(new Identifier(MOD_ID,"whirlingblades"),(data) -> {
 			MagicSchool actualSchool = MagicSchool.FIRE;
 			CustomSpellHandler.Data data1 = (CustomSpellHandler.Data) data;
@@ -258,6 +289,33 @@ public class Spellblades implements ModInitializer {
 
 			return true;
 	});
+		CustomSpellHandler.register(new Identifier(MOD_ID,"riflebarrage"),(data) -> {
+
+			CustomSpellHandler.Data data1 = (CustomSpellHandler.Data) data;
+			data1.caster().getWorld().playSoundFromEntity((PlayerEntity)null, data1.caster(), SoundEvents.ENTITY_GENERIC_EXPLODE, SoundCategory.PLAYERS, 1.0F, 1.0F);
+
+			for(Entity target : data1.targets()) {
+				if(target instanceof LivingEntity living) {
+
+					RifleProjectile projectile = new RifleProjectile(RIFLEPROJECTILE,data1.caster().getWorld());
+					projectile.setPos(data1.caster().getX(),data1.caster().getY(),data1.caster().getZ());
+					SpellPower.Result power = SpellPower.getSpellPower(MagicSchool.FIRE, (LivingEntity) data1.caster());
+
+					SpellPower.Vulnerability vulnerability = SpellPower.Vulnerability.none;
+					vulnerability = SpellPower.getVulnerability(living, MagicSchool.FIRE);
+					double amount = power.randomValue(vulnerability);
+					amount *= SpellRegistry.getSpell(new Identifier(MOD_ID,"riflebarrage")).impact[0].action.damage.spell_power_coefficient/3;
+					projectile.setOwner(data1.caster());
+					target.timeUntilRegen = 0;
+					amount += EnchantmentHelper.getEquipmentLevel(Enchantments.POWER,data1.caster());
+					projectile.setDamage(projectile.getDamage()+amount);
+					projectile.setDamage(projectile.getDamage()*(0.5+0.5*(1-data1.caster().distanceTo(target)
+							/SpellRegistry.getSpell(new Identifier(MOD_ID,"riflebarrage")).range)));
+					projectile.onEntityHit(new EntityHitResult(living,living.getPos()));
+				}
+			}
+			return false;
+		});
 		CustomSpellHandler.register(new Identifier(MOD_ID,"frostvert"),(data) -> {
 			MagicSchool actualSchool = MagicSchool.FIRE;
 			CustomSpellHandler.Data data1 = (CustomSpellHandler.Data) data;
@@ -287,9 +345,16 @@ public class Spellblades implements ModInitializer {
 			CustomSpellHandler.Data data1 = (CustomSpellHandler.Data) data;
 			float modifier = SpellRegistry.getSpell(new Identifier(MOD_ID,"finalstrike")).impact[0].action.damage.spell_power_coefficient;
 			List<Entity> list = TargetHelper.targetsFromRaycast(data1.caster(),SpellRegistry.getSpell(new Identifier(MOD_ID,"finalstrike")).range, Objects::nonNull);
+
 			if(!data1.targets().isEmpty()) {
-				AttackAll.attackAll(data1.caster(), data1.targets(), (float) modifier);
+				if(data1.targets().get(data1.targets().size()-1) instanceof LivingEntity living){
+					Vec3d vec3 = data1.targets().get(data1.targets().size()-1).getPos().add(data1.caster().getRotationVec(1F).subtract(0,data1.caster().getRotationVec(1F).getY(),0).normalize().multiply(1+0.5+(data1.targets().get(data1.targets().size()-1).getBoundingBox().getXLength() / 2)));
+					data1.caster().requestTeleport(vec3.getX(),vec3.getY(),vec3.getZ());
+				}
 				for (Entity entity : data1.targets()) {
+
+					AttackAll.attackAll(data1.caster(), List.of(entity), (float) modifier);
+
 					SpellPower.Result power = SpellPower.getSpellPower(actualSchool, (LivingEntity) data1.caster());
 					SpellPower.Vulnerability vulnerability = SpellPower.Vulnerability.none;
 					if (entity instanceof LivingEntity living) {
@@ -301,10 +366,7 @@ public class Spellblades implements ModInitializer {
 					entity.damage(SpellDamageSource.player(actualSchool, data1.caster()), (float) amount);
 					ParticleHelper.sendBatches(entity,SpellRegistry.getSpell(new Identifier(MOD_ID,"finalstrike")).impact[0].particles);
 
-					if(entity instanceof LivingEntity living){
-						Vec3d vec3 = entity.getPos().add(data1.caster().getRotationVec(1F).subtract(0,data1.caster().getRotationVec(1F).getY(),0).normalize().multiply(1+0.5+(entity.getBoundingBox().getXLength() / 2)));
-						data1.caster().requestTeleport(vec3.getX(),vec3.getY(),vec3.getZ());
-					}
+
 				}
 			}
 			else {
@@ -384,6 +446,15 @@ public class Spellblades implements ModInitializer {
 				new Identifier(MOD_ID, "hexbladeportal"),
 				FabricEntityTypeBuilder.<HexbladePortal>create(SpawnGroup.MISC, HexbladePortal::new)
 						.dimensions(EntityDimensions.fixed(2F, 3F)) // dimensions in Minecraft units of the render
+						.trackRangeBlocks(128)
+						.trackedUpdateRate(1)
+						.build()
+		);
+		RIFLEPROJECTILE = Registry.register(
+				ENTITY_TYPE,
+				new Identifier(MOD_ID, "rifleprojectile"),
+				FabricEntityTypeBuilder.<RifleProjectile>create(SpawnGroup.MISC, RifleProjectile::new)
+						.dimensions(EntityDimensions.fixed(0.5F, 0.5F)) // dimensions in Minecraft units of the render
 						.trackRangeBlocks(128)
 						.trackedUpdateRate(1)
 						.build()

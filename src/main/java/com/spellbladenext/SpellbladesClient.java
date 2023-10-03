@@ -6,6 +6,8 @@ import com.spellbladenext.client.entity.MagisterRenderer;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
+import net.minecraft.client.render.entity.ArrowEntityRenderer;
+import net.minecraft.client.render.entity.ProjectileEntityRenderer;
 import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.Identifier;
@@ -29,6 +31,7 @@ public class SpellbladesClient implements ClientModInitializer {
         EntityRendererRegistry.register(Spellblades.REAVER, MagisterRenderer::new);
         EntityRendererRegistry.register(HEXBLADEPORTAL, HexbladePortalRenderer::new);
         EntityRendererRegistry.register(Spellblades.ARCHMAGUS, ArchmagusRenderer::new);
+        EntityRendererRegistry.register(Spellblades.RIFLEPROJECTILE, ArrowEntityRenderer::new);
 
         ClientTickEvents.START_CLIENT_TICK.register(server -> {
                     PlayerEntity player = server.player;
@@ -51,7 +54,7 @@ public class SpellbladesClient implements ClientModInitializer {
 
                             if (player instanceof SpellCasterEntity caster) {
 
-                                if (Objects.equals(caster.getCurrentSpellId(), new Identifier(MOD_ID, "maelstrom"))) {
+                                if (Objects.equals(caster.getCurrentSpell(), SpellRegistry.getSpell(new Identifier(MOD_ID, "maelstrom")))) {
 
 
                                     player.setVelocity(player.getRotationVec(1).subtract(0, player.getRotationVec(1).y, 0).normalize().multiply(speed, speed * modifier, speed).add(0, player.getVelocity().y, 0));
@@ -73,7 +76,7 @@ public class SpellbladesClient implements ClientModInitializer {
 
                             if (player instanceof SpellCasterEntity caster) {
 
-                                if (Objects.equals(caster.getCurrentSpellId(), new Identifier(MOD_ID, "inferno"))) {
+                                if (Objects.equals(caster.getCurrentSpell(), SpellRegistry.getSpell(new Identifier(MOD_ID, "inferno")))) {
 
 
                                     player.setVelocity(player.getRotationVec(1).subtract(0, player.getRotationVec(1).y, 0).normalize().multiply(speed, speed * modifier, speed).add(0, player.getVelocity().y, 0));
@@ -95,7 +98,7 @@ public class SpellbladesClient implements ClientModInitializer {
 
                             if (player instanceof SpellCasterEntity caster) {
 
-                                if (Objects.equals(caster.getCurrentSpellId(), new Identifier(MOD_ID, "whirlwind"))) {
+                                if (Objects.equals(caster.getCurrentSpell(), SpellRegistry.getSpell(new Identifier(MOD_ID, "whirlwind")))) {
 
 
                                     player.setVelocity(player.getRotationVec(1).subtract(0, player.getRotationVec(1).y, 0).normalize().multiply(speed, speed * modifier, speed).add(0, player.getVelocity().y, 0));
@@ -117,7 +120,7 @@ public class SpellbladesClient implements ClientModInitializer {
 
                             if (player instanceof SpellCasterEntity caster) {
 
-                                if (Objects.equals(caster.getCurrentSpellId(), new Identifier(MOD_ID, "tempest"))) {
+                                if (Objects.equals(caster.getCurrentSpell(), SpellRegistry.getSpell(new Identifier(MOD_ID, "tempest")))) {
 
 
                                     player.setVelocity(player.getRotationVec(1).subtract(0, player.getRotationVec(1).y, 0).normalize().multiply(speed, speed * modifier, speed).add(0, player.getVelocity().y, 0));

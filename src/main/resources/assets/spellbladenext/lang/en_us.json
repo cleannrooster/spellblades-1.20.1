@@ -12,6 +12,8 @@
   "item.spellbladenext.arcane_orb": "Arcane Orb",
     "item.spellbladenext.frost_orb": "Frost Orb",
       "item.spellbladenext.fire_orb": "Fire Orb",
+  "item.spellbladenext.rifle": "Runeblaze Rifle",
+
   "item.spellbladenext.spelloil": "Spell Oil",
   "item.spellbladenext.whirlwindoil": "Whirlwind Oil",
   "item.spellbladenext.smiteoil": "Smite Oil",
@@ -30,6 +32,12 @@
   "spell.spellbladenext.monkeyslam.name": "Head in the Clouds",
   "spell.spellbladenext.monkeyslam.description": "Leap into the clouds, becoming invulnerable while channeling.",
 
+  "spell.spellbladenext.sniper.name": "Runeblaze Round",
+  "spell.spellbladenext.sniper.description": "Charge and shoot your rifle, dealing 2x ranged damage and an additional {damage} ranged physical damage.",
+  "spell.spellbladenext.overblaze.name": "Incinerating Round",
+  "spell.spellbladenext.overblaze.description": "Incinerate enemies in a line, dealing {damage} spell damage.",
+  "spell.spellbladenext.riflebarrage.name": "Scrap Barrage",
+  "spell.spellbladenext.riflebarrage.description": "Shoot repeatedly while channeling, dealing up to 1x ranged damage plus an additional {damage} spell damage per shot to enemies in a cone, based on proximity.",
 
   "spell.spellbladenext.flameslash.name": "Flaming Laceration",
   "spell.spellbladenext.flameslash.description": "{damage} Fire DPS. Swing your weapon wildly, shooting flaming, exploding projectiles.",

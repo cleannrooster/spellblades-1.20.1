@@ -1,9 +1,9 @@
 {
   "is_proxy": false,
   "spell_ids": [
-    "spellbladenext:maelstrom",
-    "spellbladenext:arcaneoverdrive",
-    "spellbladenext:frostoverdrive",
-    "spellbladenext:fireoverdrive"
+    "spellbladenext:whirlwind",
+    "spellbladenext:finalstrike",
+    "spellbladenext:eviscerate",
+    "spellbladenext:flicker_strike"
   ]
 }
