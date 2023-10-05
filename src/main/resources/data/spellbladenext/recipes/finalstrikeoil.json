@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:smithing_transform",
+  "addition": {
+    "item": "runes:arcane_stone"
+  },
+  "base": {
+    "item": "minecraft:potion",
+    "tag": "potion:water"
+  },
+  "result": {
+    "item": "spellbladenext:finalstrikeoil"
+  },
+  "template": {
+    "item": "spellbladenext:runegleam_ingot"
+  }
+}

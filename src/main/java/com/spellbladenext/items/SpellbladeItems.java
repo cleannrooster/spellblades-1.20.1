@@ -16,6 +16,9 @@ public class SpellbladeItems {
         entries.put("spellblades:whirlwindoil", Spellblades.whirlwindOil);
         entries.put("spellblades:spelloil", Spellblades.spellOil);
         entries.put("spellblades:smiteoil", Spellblades.smiteOil);
+        entries.put("spellblades:eviscerateoil", Spellblades.eviscerateoil);
+        entries.put("spellblades:finalstrikeoil", Spellblades.finalstrikeoil);
+        entries.put("spellblades:flickerstrikeoil", Spellblades.flickerstrikeoil);
         entries.put("spellblades:monkeystaff", Spellblades.MONKEYSTAFF);
 
 
