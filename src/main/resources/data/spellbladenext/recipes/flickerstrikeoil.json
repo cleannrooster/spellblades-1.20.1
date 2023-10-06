@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:smithing_transform",
+  "addition": {
+    "item": "runes:fire_stone"
+  },
+  "base": {
+    "item": "minecraft:potion",
+    "tag": "potion:water"
+  },
+  "result": {
+    "item": "spellbladenext:flickerstrikeoil"
+  },
+  "template": {
+    "item": "spellbladenext:runeblaze_ingot"
+  }
+}

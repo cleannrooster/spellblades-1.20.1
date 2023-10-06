@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:smithing_transform",
+  "addition": {
+    "item": "runes:frost_stone"
+  },
+  "base": {
+    "item": "minecraft:potion",
+    "tag": "potion:water"
+  },
+  "result": {
+    "item": "spellbladenext:eviscerateoil"
+  },
+  "template": {
+    "item": "spellbladenext:runefrost_ingot"
+  }
+}
