@@ -84,9 +84,12 @@ import net.spell_engine.internals.SpellRegistry;
 import net.spell_engine.internals.casting.SpellCasterEntity;
 import net.spell_engine.particle.ParticleHelper;
 import net.spell_engine.utils.TargetHelper;
+import net.spell_power.SpellPowerMod;
 import net.spell_power.api.MagicSchool;
 import net.spell_power.api.SpellDamageSource;
 import net.spell_power.api.SpellPower;
+import net.spell_power.api.attributes.CustomEntityAttribute;
+import net.spell_power.api.attributes.SpellAttributeEntry;
 import net.spell_power.api.attributes.SpellAttributes;
 import net.tinyconfig.ConfigManager;
 import org.slf4j.Logger;
@@ -109,6 +112,7 @@ public class Spellblades implements ModInitializer {
 	public static EntityType<Magister> REAVER;
 	public static EntityType<HexbladePortal> HEXBLADEPORTAL;
 	public static EntityType<RifleProjectile> RIFLEPROJECTILE;
+	public static final CustomEntityAttribute WARDING = new CustomEntityAttribute("attribute.name.spellbladenext.warding", 0,0,9999,new Identifier(MOD_ID,"warding"));
 
 	public static final Identifier SINCELASTHEX = new Identifier(MOD_ID, "threat");
 	public static final Identifier HEXRAID = new Identifier(MOD_ID, "hex");
@@ -143,7 +147,7 @@ public class Spellblades implements ModInitializer {
 	public static final RegistryKey<DimensionType> DIMENSION_TYPE_RESOURCE_KEY = RegistryKey.of(RegistryKeys.DIMENSION_TYPE,new Identifier(Spellblades.MOD_ID,"glassocean"));
 
 	public static ConfigManager<ItemConfig> itemConfig = new ConfigManager<ItemConfig>
-			("items_v4", Default.itemConfig)
+			("items_v5", Default.itemConfig)
 			.builder()
 			.setDirectory(MOD_ID)
 			.sanitize(true)
@@ -183,7 +187,7 @@ public class Spellblades implements ModInitializer {
 		Registry.register(Registries.STATUS_EFFECT,new Identifier(MOD_ID,"runicabsorption"),RunicAbsorption);
 		Registry.register(Registries.CUSTOM_STAT, "threat", SINCELASTHEX);
 		Registry.register(Registries.CUSTOM_STAT, "hex", HEXRAID);
-
+		Registry.register(Registries.ATTRIBUTE,new Identifier(MOD_ID,"warding"),WARDING);
 		Items.register(itemConfig.value.weapons);
 		Armors.register(itemConfig.value.armor_sets);
 		lootConfig.refresh();

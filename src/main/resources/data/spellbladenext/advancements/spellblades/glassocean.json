@@ -1,0 +1,27 @@
+{
+  "display": {
+    "icon": {
+      "item": "minecraft:glass"
+    },
+    "title": "Oshiete, Oshiete Yo",
+    "description": "Enter the Glass Ocean",
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "parent": "spellbladenext:spellblades/hexblade",
+  "criteria": {
+    "arcane": {
+      "trigger": "minecraft:changed_dimension",
+      "conditions": {
+        "to": "spellbladenext:glassocean"
+      }
+    }
+  },
+  "requirements": [
+    [
+      "arcane"
+      ]
+  ]
+}

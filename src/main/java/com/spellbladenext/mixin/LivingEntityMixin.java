@@ -3,11 +3,15 @@ package com.spellbladenext.mixin;
 import com.spellbladenext.Spellblades;
 import com.spellbladenext.items.Orb;
 import com.spellbladenext.items.Starforge;
+import com.spellbladenext.items.interfaces.PlayerDamageInterface;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.attribute.DefaultAttributeContainer;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.damage.DamageType;
 import net.minecraft.entity.damage.DamageTypes;
+import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.fluid.FluidState;
 import net.minecraft.fluid.Fluids;
@@ -30,13 +34,13 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.List;
 import java.util.function.Predicate;
 
-import static com.spellbladenext.Spellblades.HEXRAID;
-import static com.spellbladenext.Spellblades.MOD_ID;
+import static com.spellbladenext.Spellblades.*;
 import static net.spell_engine.internals.SpellHelper.ammoForSpell;
 import static net.spell_engine.internals.SpellHelper.impactTargetingMode;
 
@@ -51,7 +55,28 @@ public class LivingEntityMixin {
             }
         }
     }
-    @ModifyVariable(at = @At("HEAD"), method = "applyMovementInput", index = 1)
+    @Inject(at = @At("HEAD"), method = "tick", cancellable = true)
+    public void tick_SB_HEAD(CallbackInfo info) {
+        LivingEntity living = (LivingEntity) (Object) this;
+        if (living instanceof PlayerDamageInterface damageInterface && living.getAttributeInstance(WARDING) != null && living.getAttributeValue(WARDING) >= 1) {
+            float additional = (float) (0.05 * living.getAttributeValue(WARDING) * (0.173287 * Math.pow(Math.E, -0.173287 * 0.05 * (living.age - damageInterface.getLasthurt()))));
+
+            if (damageInterface.getLasthurt() != 0 && living.age - damageInterface.getLasthurt() < 100 * 20 && damageInterface.getDamageAbsorbed() + additional <= living.getAttributeValue(WARDING)) {
+                damageInterface.absorbDamage(additional);
+            }
+            if(living.age < 16*20 && damageInterface.getLasthurt() == 0 && damageInterface.getDamageAbsorbed() + additional <= living.getAttributeValue(WARDING)) {
+                damageInterface.absorbDamage(additional);
+            }
+            if(damageInterface.getDamageAbsorbed() > living.getAbsorptionAmount()){
+                living.setAbsorptionAmount(damageInterface.getDamageAbsorbed());
+            }
+        }
+    }
+    @Inject(method = "createLivingAttributes", at = @At("RETURN"))
+    private static void addAttributesSpellblade_RETURN(final CallbackInfoReturnable<DefaultAttributeContainer.Builder> info) {
+            info.getReturnValue().add(WARDING);
+    }
+        @ModifyVariable(at = @At("HEAD"), method = "applyMovementInput", index = 1)
     public Vec3d applyInputMIX(Vec3d vec3d) {
         LivingEntity living = ((LivingEntity) (Object) this);
 
@@ -60,6 +85,15 @@ public class LivingEntityMixin {
         }
         else{
             return vec3d;
+        }
+    }
+    @Inject(at = @At("HEAD"), method = "onEquipStack", cancellable = true)
+    public void onEquipStackSpellblades(EquipmentSlot slot, ItemStack oldStack, ItemStack newStack, CallbackInfo info) {
+        if(newStack.getAttributeModifiers(slot).containsKey(Spellblades.WARDING)){
+            LivingEntity entity = (LivingEntity) (Object) this;
+            if(entity instanceof PlayerDamageInterface playerDamageInterface){
+                playerDamageInterface.resetDamageAbsorbed();
+            }
         }
     }
     @Inject(at = @At("HEAD"), method = "damage", cancellable = true)

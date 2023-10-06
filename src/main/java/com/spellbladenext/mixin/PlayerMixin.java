@@ -1,13 +1,18 @@
 package com.spellbladenext.mixin;
 
+import com.spellbladenext.Spellblades;
 import com.spellbladenext.items.interfaces.PlayerDamageInterface;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.ItemStack;
 import net.spell_engine.entity.SpellProjectile;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.ArrayList;
@@ -21,6 +26,9 @@ import static net.minecraft.util.math.MathHelper.sqrt;
 public class PlayerMixin implements PlayerDamageInterface {
     public float damageMultipler = 1F;
     public Entity lastAttacked;
+    public int lasthurt;
+    public float damageAbsorbed;
+
     public int repeats = 0;
     public boolean overrideDamageMultiplier = false;
     public boolean shouldUnFortify = false;
@@ -32,6 +40,30 @@ public class PlayerMixin implements PlayerDamageInterface {
     }
     public int getRepeats(){
         return repeats;
+    }
+
+    public int getLasthurt() {
+        return lasthurt;
+    }
+
+    @Override
+    public float getDamageAbsorbed() {
+        return damageAbsorbed;
+    }
+
+    @Override
+    public void resetDamageAbsorbed() {
+        damageAbsorbed = 0;
+        this.lasthurt = ((PlayerEntity) (Object) this).age;
+    }
+
+    @Override
+    public void absorbDamage(float i) {
+        damageAbsorbed = damageAbsorbed + i;
+    }
+
+    public void setLasthurt(int lasthurt) {
+        this.lasthurt = lasthurt;
     }
 
     @Override
@@ -64,8 +96,17 @@ public class PlayerMixin implements PlayerDamageInterface {
         return list;
     }
 
+    @Inject(at = @At("HEAD"), method = "applyDamage", cancellable = true)
+    protected void applyDamageMixinSpellblade(DamageSource source, float amount, CallbackInfo info) {
+        PlayerEntity player = (PlayerEntity) (Object) this;
+        if (!player.isInvulnerableTo(source)) {
+            this.setLasthurt(player.age);
+            this.resetDamageAbsorbed();
+        }
+    }
 
-    @Override
+
+        @Override
     public void override(boolean bool) {
         overrideDamageMultiplier = bool;
     }

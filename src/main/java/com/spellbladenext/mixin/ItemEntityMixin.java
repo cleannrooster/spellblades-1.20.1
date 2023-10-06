@@ -2,6 +2,7 @@ package com.spellbladenext.mixin;
 
 import net.minecraft.entity.ItemEntity;
 import net.minecraft.util.math.Vec3d;
+import net.spell_power.api.attributes.SpellAttributes;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;

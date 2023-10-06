@@ -11,7 +11,12 @@ public interface PlayerDamageInterface {
     void repeat();
     int getRepeats();
     void resetRepeats();
+    int getLasthurt();
+    float getDamageAbsorbed();
+    void resetDamageAbsorbed();
+    void absorbDamage(float i);
 
+    void setLasthurt(int lasthurt);
     void override(boolean bool);
     void setLastAttacked(Entity entity);
     Entity getLastAttacked();

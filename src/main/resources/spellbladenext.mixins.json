@@ -6,7 +6,8 @@
 		"PlayerMixin",
 		"LivingEntityMixin",
 		"ItemEntityMixin",
-		"NaturalSpawnerMixin"
+		"NaturalSpawnerMixin",
+		"ItemStackMixin"
 	],
 	"client": [
 		"EntityRenderDispatcherMixin",

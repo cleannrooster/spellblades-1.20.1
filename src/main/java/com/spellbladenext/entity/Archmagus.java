@@ -60,6 +60,7 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraft.world.explosion.Explosion;
@@ -638,7 +639,9 @@ public class Archmagus extends HostileEntity implements InventoryOwner, GeoEntit
             int posX = this.getBlockX()  + a*this.getRandom().nextInt(8 ) + a*4;
             int posY = this.getBlockY();
             int posZ = this.getBlockZ()  + c* this.getRandom().nextInt(8) +  c * 4;
-            this.teleport(posX,posY + 1,posZ);
+            if(this.getWorld().isSkyVisible(new BlockPos(posX,posY,posZ).up())) {
+                this.teleport(posX, posY + 1, posZ);
+            }
         }
 
     }

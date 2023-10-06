@@ -6,6 +6,7 @@ import dev.kosmx.playerAnim.core.util.Vec3f;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.ingame.CreativeInventoryScreen;
 import net.minecraft.client.gui.screen.ingame.InventoryScreen;
+import net.minecraft.client.option.Perspective;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.entity.EntityRenderDispatcher;
 import net.minecraft.client.render.entity.EntityRenderer;
@@ -32,7 +33,9 @@ public class EntityRenderDispatcherMixin<E extends Entity>{
     public void renderMix(E entity, double d, double e, double f, float g, float h, MatrixStack poseStack, VertexConsumerProvider multiBufferSource, int i, CallbackInfo info) {
         EntityRenderDispatcher renderer = (EntityRenderDispatcher) (Object) this;
         EntityRenderer entityRenderer = renderer.getRenderer(entity);
-
+        if (MinecraftClient.getInstance() != null && MinecraftClient.getInstance().player != null && MinecraftClient.getInstance().options.getPerspective().equals(Perspective.FIRST_PERSON) && MinecraftClient.getInstance().player.equals(entity)) {
+            return;
+        }
         if(MinecraftClient.getInstance() != null && !(MinecraftClient.getInstance().player != null && (MinecraftClient.getInstance().currentScreen instanceof CreativeInventoryScreen || MinecraftClient.getInstance().currentScreen instanceof InventoryScreen) && entity == MinecraftClient.getInstance().player) && entity.getWorld().getRegistryKey().equals(Spellblades.DIMENSIONKEY) && entity.getY() >= 62) {
             try {
                 double d1 = MathHelper.lerp((double)h, entity.lastRenderY, entity.getY());

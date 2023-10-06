@@ -85,7 +85,7 @@ public class Armors {
                             new RunicArmor(material, ArmorItem.Type.LEGGINGS, new Item.Settings()),
                             new RunicArmor(material, ArmorItem.Type.BOOTS, new Item.Settings())
                     ))
-                    .put(entries).armorSet();;
+                    .put(runeentries).armorSet();;
 
     public static final Armor.Set runeblazing =
             create(
@@ -122,7 +122,7 @@ public class Armors {
                             new RunicArmor(material, ArmorItem.Type.LEGGINGS, new Item.Settings()),
                             new RunicArmor(material, ArmorItem.Type.BOOTS, new Item.Settings())
                     ))
-                    .put(entries)
+                    .put(runeentries)
                     .armorSet();;
 
     public static final Armor.Set runefrosted =
@@ -154,6 +154,7 @@ public class Armors {
                                     .addAll(List.of(
                                             ItemConfig.SpellAttribute.bonus(SpellAttributes.POWER.get(MagicSchool.FROST), 1F)
 
+
                                     ))
                     ))
                     .bundle(material -> new Armor.Set(Spellblades.MOD_ID,
@@ -162,7 +163,7 @@ public class Armors {
                             new RunicArmor(material, ArmorItem.Type.LEGGINGS, new Item.Settings()),
                             new RunicArmor(material, ArmorItem.Type.BOOTS, new Item.Settings())
                     ))
-                    .put(entries)
+                    .put(runeentries)
                     .armorSet();;
     public static final Armor.Set aetherfire =
             create(
@@ -347,6 +348,8 @@ public class Armors {
 
 
     public static void register(Map<String, ItemConfig.ArmorSet> configs) {
+        Armor.register(configs, runeentries,Spellblades.KEY);
+
         Armor.register(configs, entries,Spellblades.KEY);
     }
 }

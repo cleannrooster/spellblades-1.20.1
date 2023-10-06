@@ -1,0 +1,29 @@
+{
+  "display": {
+    "icon": {
+      "item": "spellbladenext:prismatic"
+    },
+    "title": "The Black Wind Howls...",
+    "description": "Face Magus",
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "parent": "spellbladenext:spellblades/glassocean",
+  "criteria": {
+    "arcane": {
+      "trigger": "minecraft:effects_changed",
+      "conditions": {
+        "effects": {
+          "spellbladenext:portalsickness": {}
+        }
+      }
+    }
+  },
+  "requirements": [
+    [
+      "arcane"
+      ]
+  ]
+}

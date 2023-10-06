@@ -23,7 +23,7 @@ public class CustomArmor extends ArmorItem implements ConfigurableAttributes {
         this.customMaterial = material;
     }
 
-    private Multimap<EntityAttribute, EntityAttributeModifier> attributes;
+    public Multimap<EntityAttribute, EntityAttributeModifier> attributes;
 
     public void setAttributes(Multimap<EntityAttribute, EntityAttributeModifier> attributes) {
         ImmutableMultimap.Builder<EntityAttribute, EntityAttributeModifier> builder = ImmutableMultimap.builder();
