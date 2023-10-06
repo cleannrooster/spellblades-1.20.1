@@ -58,6 +58,7 @@ public class SpellOil extends Item {
     @Override
     public void appendTooltip(ItemStack stack, @Nullable World world, List<Text> tooltip, TooltipContext context) {
         tooltip.add(Text.translatable("Allows a tool to cast spells from a spell book. "));
+        tooltip.add(Text.translatable("Can only be used on a weapon not already containing a spell."));
         tooltip.add(Text.translatable("Drag over an item and right click to use. IRREVERSIBLE. USE CAREFULLY."));
 
         super.appendTooltip(stack, world, tooltip, context);

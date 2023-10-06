@@ -4,8 +4,8 @@
     "item": "runes:frost_stone"
   },
   "base": {
-    "item": "minecraft:potion",
-    "tag": "potion:water"
+    "item": "spellbladenext:spelloil"
+
   },
   "result": {
     "item": "spellbladenext:eviscerateoil"

@@ -4,8 +4,7 @@
     "item": "runes:fire_stone"
   },
   "base": {
-    "item": "minecraft:potion",
-    "tag": "potion:water"
+    "item": "spellbladenext:spelloil"
   },
   "result": {
     "item": "spellbladenext:flickerstrikeoil"
