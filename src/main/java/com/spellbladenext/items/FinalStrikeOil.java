@@ -33,6 +33,8 @@ public class FinalStrikeOil extends Item {
             List<String> stringlist = List.of();
             if(containerFromItemStack(stack1) != null) {
                 SpellContainer container = containerFromItemStack(stack1);
+                stringlist = containerFromItemStack(stack1).spell_ids;
+
                 if (container.spell_ids.size() > 0) return false;
             }
             NbtList list = new NbtList();

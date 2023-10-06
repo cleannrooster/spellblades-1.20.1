@@ -15,6 +15,7 @@ import net.minecraft.util.ClickType;
 import net.minecraft.util.Identifier;
 import net.minecraft.world.World;
 import net.spell_engine.api.item.weapon.SpellWeaponItem;
+import net.spell_engine.api.spell.SpellContainer;
 import net.spell_engine.internals.SpellContainerHelper;
 import org.jetbrains.annotations.Nullable;
 
@@ -34,7 +35,10 @@ public class WhirlwindOil extends Item {
             NbtCompound compound = stack1.getOrCreateNbt();
             List<String> stringlist = List.of();
             if(containerFromItemStack(stack1) != null) {
+                SpellContainer container = containerFromItemStack(stack1);
                 stringlist = containerFromItemStack(stack1).spell_ids;
+
+                if (container.spell_ids.size() > 0) return false;
             }
             NbtList list = new NbtList();
 
