@@ -26,6 +26,7 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.TypedActionResult;
 import net.minecraft.util.Util;
 import net.minecraft.world.World;
+import net.spell_engine.api.item.ConfigurableAttributes;
 import net.spell_engine.api.item.armor.Armor;
 import net.spell_power.api.MagicSchool;
 
@@ -42,6 +43,17 @@ public class MagisterArmor extends CustomArmor implements GeoItem {
         super(material, type, settings);
         this.magicschool.addAll(magicSchool);
 
+    }
+    private Multimap<EntityAttribute, EntityAttributeModifier> attributes;
+
+
+
+    @Override
+    public Multimap<EntityAttribute, EntityAttributeModifier> getAttributeModifiers(EquipmentSlot slot) {
+        if (attributes == null) {
+            return super.getAttributeModifiers(slot);
+        }
+        return slot == this.type.getEquipmentSlot() ? this.attributes : super.getAttributeModifiers(slot);
     }
     private static final EnumMap<Type, UUID> MODIFIERS = (EnumMap) Util.make(new EnumMap(ArmorItem.Type.class), (uuidMap) -> {
         uuidMap.put(ArmorItem.Type.BOOTS, UUID.fromString("845DB27C-C624-495F-8C9F-6020A9A58B6B"));

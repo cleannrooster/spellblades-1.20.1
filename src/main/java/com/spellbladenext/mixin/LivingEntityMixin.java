@@ -4,6 +4,7 @@ import com.spellbladenext.Spellblades;
 import com.spellbladenext.items.Orb;
 import com.spellbladenext.items.Starforge;
 import com.spellbladenext.items.interfaces.PlayerDamageInterface;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.LivingEntity;
@@ -58,17 +59,22 @@ public class LivingEntityMixin {
     @Inject(at = @At("HEAD"), method = "tick", cancellable = true)
     public void tick_SB_HEAD(CallbackInfo info) {
         LivingEntity living = (LivingEntity) (Object) this;
-        if (living instanceof PlayerDamageInterface damageInterface && living.getAttributeInstance(WARDING) != null && living.getAttributeValue(WARDING) >= 1) {
-            float additional = (float) (0.05 * living.getAttributeValue(WARDING) * (0.173287 * Math.pow(Math.E, -0.173287 * 0.05 * (living.age - damageInterface.getLasthurt()))));
+        if(!FabricLoader.getInstance().isModLoaded("reabsorption")) {
 
-            if (damageInterface.getLasthurt() != 0 && living.age - damageInterface.getLasthurt() < 100 * 20 && damageInterface.getDamageAbsorbed() + additional <= living.getAttributeValue(WARDING)) {
-                damageInterface.absorbDamage(additional);
-            }
-            if(living.age < 16*20 && damageInterface.getLasthurt() == 0 && damageInterface.getDamageAbsorbed() + additional <= living.getAttributeValue(WARDING)) {
-                damageInterface.absorbDamage(additional);
-            }
-            if(damageInterface.getDamageAbsorbed() > living.getAbsorptionAmount()){
-                living.setAbsorptionAmount(damageInterface.getDamageAbsorbed());
+            if (living instanceof PlayerDamageInterface damageInterface && living.getAttributeInstance(WARDING) != null && living.getAttributeValue(WARDING) >= 1) {
+                float additional = (float) (0.05 * living.getAttributeValue(WARDING) * (0.173287 * Math.pow(Math.E, -0.173287 * 0.05 * (living.age - damageInterface.getLasthurt()))));
+
+                if (damageInterface.getLasthurt() != 0 && living.age - damageInterface.getLasthurt() < 100 * 20 && damageInterface.getDamageAbsorbed() + additional <= living.getAttributeValue(WARDING)) {
+                    damageInterface.absorbDamage(additional);
+                }
+                if (living.age < 16 * 20 && damageInterface.getLasthurt() == 0 && damageInterface.getDamageAbsorbed() + additional <= living.getAttributeValue(WARDING)) {
+                    damageInterface.absorbDamage(additional);
+                }
+                if (damageInterface.getDamageAbsorbed() > living.getAbsorptionAmount()) {
+                    if (!living.getWorld().isClient()) {
+                        living.setAbsorptionAmount(damageInterface.getDamageAbsorbed());
+                    }
+                }
             }
         }
     }
@@ -120,7 +126,7 @@ public class LivingEntityMixin {
                     SpellHelper.ImpactContext context = new SpellHelper.ImpactContext(1.0F, 1.0F, (Vec3d) null, SpellPower.getSpellPower(spell.school, player1), impactTargetingMode(spell));
 
                     for (Entity target1 : targets) {
-                        SpellHelper.performImpacts(player1.getWorld(), player1, target1, SpellRegistry.getSpell(new Identifier(MOD_ID, "arcaneoverdrive")), new SpellHelper.ImpactContext());
+                        SpellHelper.performImpacts(player1.getWorld(), player1, target1,player1, SpellRegistry.getSpell(new Identifier(MOD_ID, "arcaneoverdrive")), new SpellHelper.ImpactContext());
                     }
                     ParticleHelper.sendBatches(player1, spell.release.particles);
                     SpellHelper.AmmoResult ammoResult = ammoForSpell(player1, spell, stack);
@@ -155,7 +161,7 @@ public class LivingEntityMixin {
                     SpellHelper.ImpactContext context = new SpellHelper.ImpactContext(1.0F, 1.0F, (Vec3d) null, SpellPower.getSpellPower(spell.school, player1), impactTargetingMode(spell));
 
                     for (Entity target1 : targets) {
-                        SpellHelper.performImpacts(player1.getWorld(), player1, target1, SpellRegistry.getSpell(new Identifier(MOD_ID, "fireoverdrive")), new SpellHelper.ImpactContext());
+                        SpellHelper.performImpacts(player1.getWorld(), player1, target1, player1, SpellRegistry.getSpell(new Identifier(MOD_ID, "fireoverdrive")), new SpellHelper.ImpactContext());
                     }
                     ParticleHelper.sendBatches(player1, spell.release.particles);
                     SpellHelper.AmmoResult ammoResult = ammoForSpell(player1, spell, stack);
@@ -190,7 +196,7 @@ public class LivingEntityMixin {
                     SpellHelper.ImpactContext context = new SpellHelper.ImpactContext(1.0F, 1.0F, (Vec3d) null, SpellPower.getSpellPower(spell.school, player1), impactTargetingMode(spell));
 
                     for (Entity target1 : targets) {
-                        SpellHelper.performImpacts(player1.getWorld(), player1, target1, SpellRegistry.getSpell(new Identifier(MOD_ID, "frostoverdrive")), new SpellHelper.ImpactContext());
+                        SpellHelper.performImpacts(player1.getWorld(), player1, target1, player1, SpellRegistry.getSpell(new Identifier(MOD_ID, "frostoverdrive")), new SpellHelper.ImpactContext());
                     }
                     ParticleHelper.sendBatches(player1, spell.release.particles);
                     SpellHelper.AmmoResult ammoResult = ammoForSpell(player1, spell, stack);

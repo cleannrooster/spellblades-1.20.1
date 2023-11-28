@@ -1,6 +1,7 @@
 package com.spellbladenext;
 
 import com.spellbladenext.client.entity.ArchmagusRenderer;
+import com.spellbladenext.client.entity.CycloneRenderer;
 import com.spellbladenext.client.entity.HexbladePortalRenderer;
 import com.spellbladenext.client.entity.MagisterRenderer;
 import net.fabricmc.api.ClientModInitializer;
@@ -32,6 +33,7 @@ public class SpellbladesClient implements ClientModInitializer {
         EntityRendererRegistry.register(HEXBLADEPORTAL, HexbladePortalRenderer::new);
         EntityRendererRegistry.register(Spellblades.ARCHMAGUS, ArchmagusRenderer::new);
         EntityRendererRegistry.register(Spellblades.RIFLEPROJECTILE, ArrowEntityRenderer::new);
+        EntityRendererRegistry.register(Spellblades.CYCLONEENTITY, CycloneRenderer::new);
 
         ClientTickEvents.START_CLIENT_TICK.register(server -> {
                     PlayerEntity player = server.player;
@@ -99,6 +101,28 @@ public class SpellbladesClient implements ClientModInitializer {
                             if (player instanceof SpellCasterEntity caster) {
 
                                 if (Objects.equals(caster.getCurrentSpell(), SpellRegistry.getSpell(new Identifier(MOD_ID, "whirlwind")))) {
+
+
+                                    player.setVelocity(player.getRotationVec(1).subtract(0, player.getRotationVec(1).y, 0).normalize().multiply(speed, speed * modifier, speed).add(0, player.getVelocity().y, 0));
+                                }
+                            }
+                        }
+                        if (SpellRegistry.getSpell(new Identifier(MOD_ID, "reckoning")) != null) {
+                            double speed = player.getAttributeValue(EntityAttributes.GENERIC_MOVEMENT_SPEED) * player.getAttributeValue(SpellAttributes.HASTE.attribute) * 0.01 * 4;
+                            BlockHitResult result = level.raycast(new RaycastContext(player.getPos(), player.getPos().add(0, -2, 0), RaycastContext.ShapeType.COLLIDER, RaycastContext.FluidHandling.ANY, player));
+                            if (player.isSneaking()) {
+                                speed *= 0;
+                            }
+                            double modifier = 0;
+                            if (result.getType() == HitResult.Type.BLOCK) {
+                                modifier = 1;
+                            }
+
+                            Spell spell = SpellRegistry.getSpell(new Identifier(MOD_ID, "reckoning"));
+
+                            if (player instanceof SpellCasterEntity caster) {
+
+                                if (Objects.equals(caster.getCurrentSpell(), SpellRegistry.getSpell(new Identifier(MOD_ID, "reckoning")))) {
 
 
                                     player.setVelocity(player.getRotationVec(1).subtract(0, player.getRotationVec(1).y, 0).normalize().multiply(speed, speed * modifier, speed).add(0, player.getVelocity().y, 0));

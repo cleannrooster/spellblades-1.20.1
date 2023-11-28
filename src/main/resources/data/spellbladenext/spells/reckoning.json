@@ -1,15 +1,15 @@
 {
-  "school": "ARCANE",
+  "school": "PHYSICAL_MELEE",
   "range": 3.5,
   "learn": {
     "tier": 1
   },
   "cast": {
     "duration": 8,
-    "animation": "spellbladenext:spin",
+    "animation": "spellbladenext:spinstaff",
     "channel_ticks": 4,
     "sound": {
-      "id": "spell_engine:generic_arcane_casting",
+      "id": "spell_engine:generic_frost_casting",
       "randomness": 0
     }
   },
@@ -24,32 +24,11 @@
   },
   "impact": [
     {
-      "school": "PHYSICAL_MELEE",
       "action": {
         "type": "DAMAGE",
         "damage": {
           "knockback": 0.5,
           "spell_power_coefficient": 1.5
-        }
-      },
-      "particles": [
-        {
-          "particle_id": "sweep_attack",
-          "shape": "SPHERE",
-          "origin": "CENTER",
-          "count": 1
-        }
-      ],
-      "sound": {
-        "id": "minecraft:entity.player.attack.sweep"
-      }
-    },
-    {
-      "action": {
-        "type": "DAMAGE",
-        "damage": {
-          "knockback": 0.5,
-          "spell_power_coefficient": 1.0
         }
       },
       "particles": [

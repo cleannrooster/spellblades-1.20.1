@@ -1,5 +1,5 @@
 {
   "is_proxy": true,
   "max_spell_count": 4,
-  "spell_ids": [ "spellbladenext:whirlwind","spellbladenext:monkeyslam", "spellbladenext:monkeyreflect"]
+  "spell_ids": [ "spellbladenext:reckoning","spellbladenext:monkeyslam", "spellbladenext:monkeyreflect"]
 }

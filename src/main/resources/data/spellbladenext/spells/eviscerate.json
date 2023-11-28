@@ -20,14 +20,6 @@
         "count": 5.0,
         "min_speed": 0.2,
         "max_speed": 0.6
-      },
-      {
-        "particle_id": "spell_engine:snowflake",
-        "shape": "SPHERE",
-        "origin": "CENTER",
-        "count": 6.0,
-        "min_speed": 0.2,
-        "max_speed": 0.4
       }
     ]
   },
@@ -42,6 +34,20 @@
   },
   "impact": [
     {
+      "school": "PHYSICAL_MELEE",
+      "action": {
+        "type": "DAMAGE",
+        "damage": {
+          "knockback": 0.5,
+          "spell_power_coefficient": 2.5
+        }
+      },
+      "sound": {
+        "id": "minecraft:entity.player.attack.sweep"
+      }
+    },
+    {
+      "school": "FROST",
       "action": {
         "type": "DAMAGE",
         "damage": {
@@ -57,14 +63,6 @@
           "count": 20.0,
           "min_speed": 0.2,
           "max_speed": 0.6
-        },
-        {
-          "particle_id": "spell_engine:snowflake",
-          "shape": "SPHERE",
-          "origin": "CENTER",
-          "count": 30.0,
-          "min_speed": 0.2,
-          "max_speed": 0.4
         }
       ],
       "sound": {

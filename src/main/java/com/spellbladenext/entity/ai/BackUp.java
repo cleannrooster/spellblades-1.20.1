@@ -11,6 +11,7 @@ import net.minecraft.entity.ai.brain.task.MultiTickTask;
 import net.minecraft.entity.ai.brain.task.Task;
 import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.mob.MobEntity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.MathHelper;
 import net.spell_power.api.MagicSchool;
@@ -26,11 +27,11 @@ public class BackUp<E extends MobEntity> extends MultiTickTask<E> {
         this.strafeSpeed = f;
     }
     protected boolean shouldRun(ServerWorld serverLevel, E mob) {
-        if(this.getTarget(mob).getAttributeValue(EntityAttributes.GENERIC_ATTACK_DAMAGE) > 40 ||
-                this.getTarget(mob).getAttributeValue(SpellAttributes.POWER.get(MagicSchool.ARCANE).attribute) > mob.getMaxHealth()/2 ||
-                this.getTarget(mob).getAttributeValue(SpellAttributes.POWER.get(MagicSchool.FROST).attribute) > mob.getMaxHealth()/2 ||
-                this.getTarget(mob).getAttributeValue(SpellAttributes.POWER.get(MagicSchool.FIRE).attribute) > mob.getMaxHealth()/2 ||
-                this.getTarget(mob).getAttributeValue(SpellAttributes.POWER.get(MagicSchool.HEALING).attribute) > mob.getMaxHealth()/2){
+        if(this.getTarget(mob) instanceof PlayerEntity player &&( player.getAttributeValue(EntityAttributes.GENERIC_ATTACK_DAMAGE) > 40 ||
+                player.getAttributeValue(SpellAttributes.POWER.get(MagicSchool.ARCANE).attribute) > mob.getMaxHealth()/2 ||
+                player.getAttributeValue(SpellAttributes.POWER.get(MagicSchool.FROST).attribute) > mob.getMaxHealth()/2 ||
+                player.getAttributeValue(SpellAttributes.POWER.get(MagicSchool.FIRE).attribute) > mob.getMaxHealth()/2 ||
+                player.getAttributeValue(SpellAttributes.POWER.get(MagicSchool.HEALING).attribute) > mob.getMaxHealth()/2)){
             return true;
         }
         return (/*mob instanceof Magus ||*/ (mob instanceof Magister reaver && reaver.isCaster())) && this.isTargetVisible(mob) && this.isTargetTooClose(mob);

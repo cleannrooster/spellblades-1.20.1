@@ -44,7 +44,7 @@ public class Items {
         };
     }
 
-    private static final float bladeValue = 3F;
+    private static final float bladeValue = 2F;
     private static final float bladeDamage = 2;
     private static final float claymoreDamage = 4F;
     private static final float bladeSpeed = -3;
@@ -58,7 +58,7 @@ public class Items {
     }
     private static Weapon.Entry starforge(String requiredMod, String name, Weapon.CustomMaterial material, float damage,MagicSchool school) {
         var settings = new Item.Settings();
-        var item = new Starforge(material, settings, 1, -2.4F, school);
+        var item = new Starforge(material, settings, 5, -2.4F, school);
         return entry(requiredMod, name, material, item, new ItemConfig.Weapon(damage, -2.4F));
     }
     private static Weapon.Entry blade(String requiredMod, String name, Weapon.CustomMaterial material, float damage,MagicSchool school) {
@@ -67,29 +67,29 @@ public class Items {
         return entry(requiredMod, name, material, item, new ItemConfig.Weapon(damage, -2.4F));
     }
     public static final Weapon.Entry STARFORGE = starforge("starforge",
-            Weapon.CustomMaterial.matching(ToolMaterials.NETHERITE, () -> Ingredient.ofItems(net.minecraft.item.Items.NETHER_STAR)), 5F,MagicSchool.ARCANE)
-            .attribute(ItemConfig.SpellAttribute.bonus(SpellAttributes.POWER.get(MagicSchool.FROST), 6))
-            .attribute(ItemConfig.SpellAttribute.bonus(SpellAttributes.POWER.get(MagicSchool.FIRE), 6))
-            .attribute(ItemConfig.SpellAttribute.bonus(SpellAttributes.POWER.get(MagicSchool.ARCANE), 6));
+            Weapon.CustomMaterial.matching(ToolMaterials.NETHERITE, () -> Ingredient.ofItems(net.minecraft.item.Items.NETHER_STAR)), 9F,MagicSchool.ARCANE)
+            .attribute(ItemConfig.Attribute.bonus(SpellAttributes.POWER.get(MagicSchool.FROST), 4))
+            .attribute(ItemConfig.Attribute.bonus(SpellAttributes.POWER.get(MagicSchool.FIRE), 4))
+            .attribute(ItemConfig.Attribute.bonus(SpellAttributes.POWER.get(MagicSchool.ARCANE), 4));
 
     public static final Weapon.Entry frost_blade = blade("frost_blade",
-            Weapon.CustomMaterial.matching(ToolMaterials.DIAMOND, () -> Ingredient.ofItems(net.minecraft.item.Items.PRISMARINE_SHARD)), 4F,MagicSchool.FROST)
-            .attribute(ItemConfig.SpellAttribute.bonus(SpellAttributes.POWER.get(MagicSchool.FROST), bladeValue));
+            Weapon.CustomMaterial.matching(ToolMaterials.DIAMOND, () -> Ingredient.ofItems(net.minecraft.item.Items.PRISMARINE_SHARD)), 3F,MagicSchool.FROST)
+            .attribute(ItemConfig.Attribute.bonus(SpellAttributes.POWER.get(MagicSchool.FROST), bladeValue));
     public static final Weapon.Entry fire_blade = blade("fire_blade",
-            Weapon.CustomMaterial.matching(ToolMaterials.DIAMOND, () -> Ingredient.ofItems(net.minecraft.item.Items.BLAZE_ROD)), 4F,MagicSchool.FIRE)
-            .attribute(ItemConfig.SpellAttribute.bonus(SpellAttributes.POWER.get(MagicSchool.FIRE), bladeValue));
+            Weapon.CustomMaterial.matching(ToolMaterials.DIAMOND, () -> Ingredient.ofItems(net.minecraft.item.Items.BLAZE_ROD)), 3F,MagicSchool.FIRE)
+            .attribute(ItemConfig.Attribute.bonus(SpellAttributes.POWER.get(MagicSchool.FIRE), bladeValue));
     public static final Weapon.Entry arcane_blade = blade("arcane_blade",
-            Weapon.CustomMaterial.matching(ToolMaterials.DIAMOND, () -> Ingredient.ofItems(net.minecraft.item.Items.AMETHYST_SHARD)), 4F,MagicSchool.ARCANE)
-            .attribute(ItemConfig.SpellAttribute.bonus(SpellAttributes.POWER.get(MagicSchool.ARCANE), bladeValue));
+            Weapon.CustomMaterial.matching(ToolMaterials.DIAMOND, () -> Ingredient.ofItems(net.minecraft.item.Items.AMETHYST_SHARD)), 3F,MagicSchool.ARCANE)
+            .attribute(ItemConfig.Attribute.bonus(SpellAttributes.POWER.get(MagicSchool.ARCANE), bladeValue));
     public static final Weapon.Entry glacial_gladius = blade("glacial_gladius",
-            Weapon.CustomMaterial.matching(ToolMaterials.DIAMOND, () -> Ingredient.ofItems(net.minecraft.item.Items.PRISMARINE_SHARD)), 2F,MagicSchool.FROST)
-            .attribute(ItemConfig.SpellAttribute.bonus(SpellAttributes.POWER.get(MagicSchool.FROST), 5));
+            Weapon.CustomMaterial.matching(ToolMaterials.DIAMOND, () -> Ingredient.ofItems(Spellblades.RUNEFROST)), 5F,MagicSchool.FROST)
+            .attribute(ItemConfig.Attribute.bonus(SpellAttributes.POWER.get(MagicSchool.FROST), 3));
     public static final Weapon.Entry flaming_falchion = blade("flaming_falchion",
-            Weapon.CustomMaterial.matching(ToolMaterials.DIAMOND, () -> Ingredient.ofItems(net.minecraft.item.Items.BLAZE_ROD)), 2F,MagicSchool.FIRE)
-            .attribute(ItemConfig.SpellAttribute.bonus(SpellAttributes.POWER.get(MagicSchool.FIRE), 5));
+            Weapon.CustomMaterial.matching(ToolMaterials.DIAMOND, () -> Ingredient.ofItems(Spellblades.RUNEBLAZE)), 5F,MagicSchool.FIRE)
+            .attribute(ItemConfig.Attribute.bonus(SpellAttributes.POWER.get(MagicSchool.FIRE), 3));
     public static final Weapon.Entry crystal_cutlass = blade("crystal_cutlass",
-            Weapon.CustomMaterial.matching(ToolMaterials.DIAMOND, () -> Ingredient.ofItems(net.minecraft.item.Items.AMETHYST_SHARD)), 2F,MagicSchool.ARCANE)
-            .attribute(ItemConfig.SpellAttribute.bonus(SpellAttributes.POWER.get(MagicSchool.ARCANE), 5));
+            Weapon.CustomMaterial.matching(ToolMaterials.DIAMOND, () -> Ingredient.ofItems(Spellblades.RUNEGLEAM)), 5F,MagicSchool.ARCANE)
+            .attribute(ItemConfig.Attribute.bonus(SpellAttributes.POWER.get(MagicSchool.ARCANE), 3));
 
     private static Weapon.Entry claymore(String name, Weapon.CustomMaterial material, float damage, MagicSchool school) {
         return claymore(null, name, material, damage, school );
@@ -101,13 +101,13 @@ public class Items {
     }
     public static final Weapon.Entry frost_claymore = claymore("frost_claymore",
             Weapon.CustomMaterial.matching(ToolMaterials.DIAMOND, () -> Ingredient.ofItems(net.minecraft.item.Items.PRISMARINE_SHARD)), 6F,MagicSchool.FROST)
-            .attribute(ItemConfig.SpellAttribute.bonus(SpellAttributes.POWER.get(MagicSchool.FROST), claymoreDamage));
+            .attribute(ItemConfig.Attribute.bonus(SpellAttributes.POWER.get(MagicSchool.FROST), claymoreDamage));
     public static final Weapon.Entry fire_claymore = claymore("fire_claymore",
             Weapon.CustomMaterial.matching(ToolMaterials.DIAMOND, () -> Ingredient.ofItems(net.minecraft.item.Items.BLAZE_ROD)), 6F,MagicSchool.FIRE)
-            .attribute(ItemConfig.SpellAttribute.bonus(SpellAttributes.POWER.get(MagicSchool.FIRE), claymoreDamage));
+            .attribute(ItemConfig.Attribute.bonus(SpellAttributes.POWER.get(MagicSchool.FIRE), claymoreDamage));
     public static final Weapon.Entry arcane_claymore = claymore("arcane_claymore",
             Weapon.CustomMaterial.matching(ToolMaterials.DIAMOND, () -> Ingredient.ofItems(net.minecraft.item.Items.AMETHYST_SHARD)), 6F,MagicSchool.ARCANE)
-            .attribute(ItemConfig.SpellAttribute.bonus(SpellAttributes.POWER.get(MagicSchool.ARCANE), claymoreDamage));
+            .attribute(ItemConfig.Attribute.bonus(SpellAttributes.POWER.get(MagicSchool.ARCANE), claymoreDamage));
     private static Weapon.Entry orb(String name, Weapon.CustomMaterial material, float damage, MagicSchool school) {
         return orb(null, name, material, damage, school );
     }
@@ -118,17 +118,17 @@ public class Items {
     }
     public static final Weapon.Entry frost_orb = orb("frost_orb",
             Weapon.CustomMaterial.matching(ToolMaterials.DIAMOND, () -> Ingredient.ofItems(net.minecraft.item.Items.PRISMARINE_CRYSTALS)), 1F,MagicSchool.FROST)
-            .attribute(ItemConfig.SpellAttribute.bonus(SpellAttributes.POWER.get(MagicSchool.FROST), bladeValue))
-            .attribute(ItemConfig.SpellAttribute.multiply(SpellAttributes.HASTE,0.25F));
+            .attribute(ItemConfig.Attribute.bonus(SpellAttributes.POWER.get(MagicSchool.FROST), bladeValue))
+            .attribute(ItemConfig.Attribute.multiply(SpellAttributes.HASTE,0.25F));
     public static final Weapon.Entry fire_orb = orb("fire_orb",
             Weapon.CustomMaterial.matching(ToolMaterials.DIAMOND, () -> Ingredient.ofItems(net.minecraft.item.Items.BLAZE_ROD)), 1F,MagicSchool.FIRE)
-            .attribute(ItemConfig.SpellAttribute.bonus(SpellAttributes.POWER.get(MagicSchool.FIRE), bladeValue))
-            .attribute(ItemConfig.SpellAttribute.multiply(SpellAttributes.HASTE,0.25F));
+            .attribute(ItemConfig.Attribute.bonus(SpellAttributes.POWER.get(MagicSchool.FIRE), bladeValue))
+            .attribute(ItemConfig.Attribute.multiply(SpellAttributes.HASTE,0.25F));
 
     public static final Weapon.Entry arcane_orb = orb("arcane_orb",
             Weapon.CustomMaterial.matching(ToolMaterials.DIAMOND, () -> Ingredient.ofItems(net.minecraft.item.Items.AMETHYST_SHARD)), 1F,MagicSchool.ARCANE)
-            .attribute(ItemConfig.SpellAttribute.bonus(SpellAttributes.POWER.get(MagicSchool.ARCANE), bladeValue))
-            .attribute(ItemConfig.SpellAttribute.multiply(SpellAttributes.HASTE,0.25F));
+            .attribute(ItemConfig.Attribute.bonus(SpellAttributes.POWER.get(MagicSchool.ARCANE), bladeValue))
+            .attribute(ItemConfig.Attribute.multiply(SpellAttributes.HASTE,0.25F));
 
     public static void register(Map<String, ItemConfig.Weapon> configs) {
         Weapon.register(configs, entries, RegistryKey.of(Registries.ITEM_GROUP.getKey(),new Identifier(Spellblades.MOD_ID,"generic")));

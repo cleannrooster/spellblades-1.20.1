@@ -2,6 +2,7 @@ package com.spellbladenext.items.armor;
 
 import com.spellbladenext.Spellblades;
 import net.minecraft.entity.EquipmentSlot;
+import net.minecraft.entity.attribute.EntityAttributeModifier;
 import net.minecraft.item.ArmorItem;
 import net.minecraft.item.ArmorMaterials;
 import net.minecraft.item.Item;
@@ -11,11 +12,13 @@ import net.minecraft.sound.SoundEvents;
 import net.spell_engine.api.item.ItemConfig;
 import net.spell_engine.api.item.armor.Armor;
 import net.spell_power.api.MagicSchool;
+import net.spell_power.api.attributes.SpellAttributeEntry;
 import net.spell_power.api.attributes.SpellAttributes;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.function.Supplier;
 
 public class Armors {
@@ -65,19 +68,19 @@ public class Armors {
                     ItemConfig.ArmorSet.with(
                             new ItemConfig.ArmorSet.Piece(1)
                                     .addAll(List.of(
-                                            ItemConfig.SpellAttribute.bonus(SpellAttributes.POWER.get(MagicSchool.ARCANE), 1F)
+                                            ItemConfig.Attribute.bonus(SpellAttributes.POWER.get(MagicSchool.ARCANE), 1F)
                                     )),
                             new ItemConfig.ArmorSet.Piece(3)
                                     .addAll(List.of(
-                                            ItemConfig.SpellAttribute.bonus(SpellAttributes.POWER.get(MagicSchool.ARCANE), 1F)
+                                            ItemConfig.Attribute.bonus(SpellAttributes.POWER.get(MagicSchool.ARCANE), 1F)
                                     )),
                             new ItemConfig.ArmorSet.Piece(2)
                                     .addAll(List.of(
-                                            ItemConfig.SpellAttribute.bonus(SpellAttributes.POWER.get(MagicSchool.ARCANE), 1F)
+                                            ItemConfig.Attribute.bonus(SpellAttributes.POWER.get(MagicSchool.ARCANE), 1F)
                                     )),
                             new ItemConfig.ArmorSet.Piece(1)
                                     .addAll(List.of(
-                                            ItemConfig.SpellAttribute.bonus(SpellAttributes.POWER.get(MagicSchool.ARCANE), 1F)
+                                            ItemConfig.Attribute.bonus(SpellAttributes.POWER.get(MagicSchool.ARCANE), 1F)
                                     ))
                     ))   .bundle(material -> new Armor.Set(Spellblades.MOD_ID,
                             new RunicArmor(material, ArmorItem.Type.HELMET, new Item.Settings()),
@@ -85,7 +88,7 @@ public class Armors {
                             new RunicArmor(material, ArmorItem.Type.LEGGINGS, new Item.Settings()),
                             new RunicArmor(material, ArmorItem.Type.BOOTS, new Item.Settings())
                     ))
-                    .put(runeentries).armorSet();;
+                    .put(entries).armorSet();;
 
     public static final Armor.Set runeblazing =
             create(
@@ -99,21 +102,21 @@ public class Armors {
                     ItemConfig.ArmorSet.with(
                             new ItemConfig.ArmorSet.Piece(1)
                                     .addAll(List.of(
-                                            ItemConfig.SpellAttribute.bonus(SpellAttributes.POWER.get(MagicSchool.FIRE), 1F)
+                                            ItemConfig.Attribute.bonus(SpellAttributes.POWER.get(MagicSchool.FIRE), 1F)
                                     )),
                             new ItemConfig.ArmorSet.Piece(3)
                                     .addAll(List.of(
-                                            ItemConfig.SpellAttribute.bonus(SpellAttributes.POWER.get(MagicSchool.FIRE), 1F)
+                                            ItemConfig.Attribute.bonus(SpellAttributes.POWER.get(MagicSchool.FIRE), 1F)
 
                                     )),
                             new ItemConfig.ArmorSet.Piece(2)
                                     .addAll(List.of(
-                                            ItemConfig.SpellAttribute.bonus(SpellAttributes.POWER.get(MagicSchool.FIRE), 1F)
+                                            ItemConfig.Attribute.bonus(SpellAttributes.POWER.get(MagicSchool.FIRE), 1F)
 
                                     )),
                             new ItemConfig.ArmorSet.Piece(1)
                                     .addAll(List.of(
-                                            ItemConfig.SpellAttribute.bonus(SpellAttributes.POWER.get(MagicSchool.FIRE), 1F)
+                                            ItemConfig.Attribute.bonus(SpellAttributes.POWER.get(MagicSchool.FIRE), 1F)
 
                                     ))
                     ))   .bundle(material -> new Armor.Set(Spellblades.MOD_ID,
@@ -122,7 +125,7 @@ public class Armors {
                             new RunicArmor(material, ArmorItem.Type.LEGGINGS, new Item.Settings()),
                             new RunicArmor(material, ArmorItem.Type.BOOTS, new Item.Settings())
                     ))
-                    .put(runeentries)
+                    .put(entries)
                     .armorSet();;
 
     public static final Armor.Set runefrosted =
@@ -137,22 +140,22 @@ public class Armors {
                     ItemConfig.ArmorSet.with(
                             new ItemConfig.ArmorSet.Piece(1)
                                     .addAll(List.of(
-                                            ItemConfig.SpellAttribute.bonus(SpellAttributes.POWER.get(MagicSchool.FROST), 1F)
+                                            ItemConfig.Attribute.bonus(SpellAttributes.POWER.get(MagicSchool.FROST), 1F)
 
                                     )),
                             new ItemConfig.ArmorSet.Piece(3)
                                     .addAll(List.of(
-                                            ItemConfig.SpellAttribute.bonus(SpellAttributes.POWER.get(MagicSchool.FROST), 1F)
+                                            ItemConfig.Attribute.bonus(SpellAttributes.POWER.get(MagicSchool.FROST), 1F)
 
                                     )),
                             new ItemConfig.ArmorSet.Piece(2)
                                     .addAll(List.of(
-                                            ItemConfig.SpellAttribute.bonus(SpellAttributes.POWER.get(MagicSchool.FROST), 1F)
+                                            ItemConfig.Attribute.bonus(SpellAttributes.POWER.get(MagicSchool.FROST), 1F)
 
                                     )),
                             new ItemConfig.ArmorSet.Piece(1)
                                     .addAll(List.of(
-                                            ItemConfig.SpellAttribute.bonus(SpellAttributes.POWER.get(MagicSchool.FROST), 1F)
+                                            ItemConfig.Attribute.bonus(SpellAttributes.POWER.get(MagicSchool.FROST), 1F)
 
 
                                     ))
@@ -163,7 +166,7 @@ public class Armors {
                             new RunicArmor(material, ArmorItem.Type.LEGGINGS, new Item.Settings()),
                             new RunicArmor(material, ArmorItem.Type.BOOTS, new Item.Settings())
                     ))
-                    .put(runeentries)
+                    .put(entries)
                     .armorSet();;
     public static final Armor.Set aetherfire =
             create(
@@ -177,26 +180,26 @@ public class Armors {
                     ItemConfig.ArmorSet.with(
                             new ItemConfig.ArmorSet.Piece(2)
                                     .addAll(List.of(
-                                            ItemConfig.SpellAttribute.multiply(SpellAttributes.CRITICAL_DAMAGE, 0.4F),
-                                            ItemConfig.SpellAttribute.multiply(SpellAttributes.HASTE, 0.12F)
+                                            ItemConfig.Attribute.multiply(SpellAttributes.CRITICAL_DAMAGE, 0.4F),
+                                            ItemConfig.Attribute.multiply(SpellAttributes.HASTE, 0.12F)
 
 
                                     )),
                             new ItemConfig.ArmorSet.Piece(6)
                                     .addAll(List.of(
-                                            ItemConfig.SpellAttribute.bonus(SpellAttributes.POWER.get(MagicSchool.ARCANE), 2F)
+                                            ItemConfig.Attribute.bonus(SpellAttributes.POWER.get(MagicSchool.ARCANE), 2F)
 
 
                                     )),
                             new ItemConfig.ArmorSet.Piece(4)
                                     .addAll(List.of(
-                                            ItemConfig.SpellAttribute.bonus(SpellAttributes.POWER.get(MagicSchool.ARCANE), 2F)
+                                            ItemConfig.Attribute.bonus(SpellAttributes.POWER.get(MagicSchool.ARCANE), 2F)
 
 
                                     )),
                             new ItemConfig.ArmorSet.Piece(2)
                                     .addAll(List.of(
-                                            ItemConfig.SpellAttribute.bonus(SpellAttributes.POWER.get(MagicSchool.ARCANE), 2F)
+                                            ItemConfig.Attribute.bonus(SpellAttributes.POWER.get(MagicSchool.ARCANE), 2F)
 
 
                                     ))
@@ -220,25 +223,25 @@ public class Armors {
                     ItemConfig.ArmorSet.with(
                             new ItemConfig.ArmorSet.Piece(2)
                                     .addAll(List.of(
-                                            ItemConfig.SpellAttribute.multiply(SpellAttributes.CRITICAL_CHANCE, 0.08F),
-                                            ItemConfig.SpellAttribute.multiply(SpellAttributes.HASTE, 0.12F)
+                                            ItemConfig.Attribute.multiply(SpellAttributes.CRITICAL_CHANCE, 0.08F),
+                                            ItemConfig.Attribute.multiply(SpellAttributes.HASTE, 0.12F)
 
 
                                     )),                            new ItemConfig.ArmorSet.Piece(6)
                                     .addAll(List.of(
-                                            ItemConfig.SpellAttribute.bonus(SpellAttributes.POWER.get(MagicSchool.FIRE), 2F)
+                                            ItemConfig.Attribute.bonus(SpellAttributes.POWER.get(MagicSchool.FIRE), 2F)
 
 
                                     )),
                             new ItemConfig.ArmorSet.Piece(4)
                                     .addAll(List.of(
-                                            ItemConfig.SpellAttribute.bonus(SpellAttributes.POWER.get(MagicSchool.FIRE), 2F)
+                                            ItemConfig.Attribute.bonus(SpellAttributes.POWER.get(MagicSchool.FIRE), 2F)
 
 
                                     )),
                             new ItemConfig.ArmorSet.Piece(2)
                                     .addAll(List.of(
-                                            ItemConfig.SpellAttribute.bonus(SpellAttributes.POWER.get(MagicSchool.FIRE), 2F)
+                                            ItemConfig.Attribute.bonus(SpellAttributes.POWER.get(MagicSchool.FIRE), 2F)
 
 
                                     ))
@@ -262,25 +265,25 @@ public class Armors {
                     ItemConfig.ArmorSet.with(
                             new ItemConfig.ArmorSet.Piece(2)
                                     .addAll(List.of(
-                                            ItemConfig.SpellAttribute.multiply(SpellAttributes.CRITICAL_CHANCE, 0.08F),
-                                            ItemConfig.SpellAttribute.multiply(SpellAttributes.CRITICAL_DAMAGE, 0.4F)
+                                            ItemConfig.Attribute.multiply(SpellAttributes.CRITICAL_CHANCE, 0.08F),
+                                            ItemConfig.Attribute.multiply(SpellAttributes.CRITICAL_DAMAGE, 0.4F)
 
                                     )),
                             new ItemConfig.ArmorSet.Piece(6)
                                     .addAll(List.of(
-                                            ItemConfig.SpellAttribute.bonus(SpellAttributes.POWER.get(MagicSchool.FROST), 2F)
+                                            ItemConfig.Attribute.bonus(SpellAttributes.POWER.get(MagicSchool.FROST), 2F)
 
 
                                     )),
                             new ItemConfig.ArmorSet.Piece(4)
                                     .addAll(List.of(
-                                            ItemConfig.SpellAttribute.bonus(SpellAttributes.POWER.get(MagicSchool.FROST), 2F)
+                                            ItemConfig.Attribute.bonus(SpellAttributes.POWER.get(MagicSchool.FROST), 2F)
 
 
                                     )),
                             new ItemConfig.ArmorSet.Piece(2)
                                     .addAll(List.of(
-                                            ItemConfig.SpellAttribute.bonus(SpellAttributes.POWER.get(MagicSchool.FROST), 2F)
+                                            ItemConfig.Attribute.bonus(SpellAttributes.POWER.get(MagicSchool.FROST), 2F)
 
 
                                     ))
@@ -304,35 +307,35 @@ public class Armors {
                     ItemConfig.ArmorSet.with(
                             new ItemConfig.ArmorSet.Piece(2)
                                     .addAll(List.of(
-                                            ItemConfig.SpellAttribute.bonus(SpellAttributes.POWER.get(MagicSchool.FROST), 2F),
-                                            ItemConfig.SpellAttribute.bonus(SpellAttributes.POWER.get(MagicSchool.FIRE), 2F),
-                                            ItemConfig.SpellAttribute.bonus(SpellAttributes.POWER.get(MagicSchool.ARCANE), 2F)
+                                            ItemConfig.Attribute.bonus(SpellAttributes.POWER.get(MagicSchool.FROST), 2F),
+                                            ItemConfig.Attribute.bonus(SpellAttributes.POWER.get(MagicSchool.FIRE), 2F),
+                                            ItemConfig.Attribute.bonus(SpellAttributes.POWER.get(MagicSchool.ARCANE), 2F)
 
 
                                     )),
                             new ItemConfig.ArmorSet.Piece(6)
                                     .addAll(List.of(
-                                            ItemConfig.SpellAttribute.bonus(SpellAttributes.POWER.get(MagicSchool.FROST), 2F),
-                                            ItemConfig.SpellAttribute.bonus(SpellAttributes.POWER.get(MagicSchool.FIRE), 2F),
-                                            ItemConfig.SpellAttribute.bonus(SpellAttributes.POWER.get(MagicSchool.ARCANE), 2F)
+                                            ItemConfig.Attribute.bonus(SpellAttributes.POWER.get(MagicSchool.FROST), 2F),
+                                            ItemConfig.Attribute.bonus(SpellAttributes.POWER.get(MagicSchool.FIRE), 2F),
+                                            ItemConfig.Attribute.bonus(SpellAttributes.POWER.get(MagicSchool.ARCANE), 2F)
 
 
 
                                     )),
                             new ItemConfig.ArmorSet.Piece(4)
                                     .addAll(List.of(
-                                            ItemConfig.SpellAttribute.bonus(SpellAttributes.POWER.get(MagicSchool.FROST), 2F),
-                                            ItemConfig.SpellAttribute.bonus(SpellAttributes.POWER.get(MagicSchool.FIRE), 2F),
-                                            ItemConfig.SpellAttribute.bonus(SpellAttributes.POWER.get(MagicSchool.ARCANE), 2F)
+                                            ItemConfig.Attribute.bonus(SpellAttributes.POWER.get(MagicSchool.FROST), 2F),
+                                            ItemConfig.Attribute.bonus(SpellAttributes.POWER.get(MagicSchool.FIRE), 2F),
+                                            ItemConfig.Attribute.bonus(SpellAttributes.POWER.get(MagicSchool.ARCANE), 2F)
 
 
 
                                     )),
                             new ItemConfig.ArmorSet.Piece(2)
                                     .addAll(List.of(
-                                            ItemConfig.SpellAttribute.bonus(SpellAttributes.POWER.get(MagicSchool.FROST), 2F),
-                                            ItemConfig.SpellAttribute.bonus(SpellAttributes.POWER.get(MagicSchool.FIRE), 2F),
-                                            ItemConfig.SpellAttribute.bonus(SpellAttributes.POWER.get(MagicSchool.ARCANE), 2F)
+                                            ItemConfig.Attribute.bonus(SpellAttributes.POWER.get(MagicSchool.FROST), 2F),
+                                            ItemConfig.Attribute.bonus(SpellAttributes.POWER.get(MagicSchool.FIRE), 2F),
+                                            ItemConfig.Attribute.bonus(SpellAttributes.POWER.get(MagicSchool.ARCANE), 2F)
 
 
 
@@ -348,8 +351,37 @@ public class Armors {
 
 
     public static void register(Map<String, ItemConfig.ArmorSet> configs) {
-        Armor.register(configs, runeentries,Spellblades.KEY);
-
         Armor.register(configs, entries,Spellblades.KEY);
+       /* for (Armor.Entry entry : entries){
+            for(Object pieces : entry.armorSet().pieces()) {
+                if(pieces instanceof List list){
+                    for(Object item : list){
+                        if(item instanceof ArmorItem item1){
+                            if(item1 instanceof MagisterArmor armor){
+                                UUID uuid = (UUID) MagisterArmor.MODIFIERS.get(armor.getType());
+                                System.out.println("Registering magister");
+                                armor.getAttributeModifiers(armor.getSlotType())
+                                        .put(Spellblades.WARDING,new EntityAttributeModifier(uuid,"warding",3, EntityAttributeModifier.Operation.ADDITION));
+                            }
+                            if(item1 instanceof RunicArmor armor){
+                                UUID uuid = (UUID) MagisterArmor.MODIFIERS.get(armor.getType());
+                                System.out.println("Registering runic");
+
+                                armor.getAttributeModifiers(armor.getSlotType())
+                                        .put(Spellblades.WARDING,new EntityAttributeModifier(uuid,"warding",3, EntityAttributeModifier.Operation.ADDITION));
+                            }
+                            if(item1 instanceof MagusArmor armor){
+                                UUID uuid = (UUID) MagisterArmor.MODIFIERS.get(armor.getType());
+                                System.out.println("Registering Magus");
+
+                                armor.getAttributeModifiers(armor.getSlotType())
+                                        .put(Spellblades.WARDING,new EntityAttributeModifier(uuid,"warding",3, EntityAttributeModifier.Operation.ADDITION));
+                            }
+                        }
+                    }
+                }
+            }
+        }*/
+
     }
 }

@@ -29,12 +29,15 @@
   "entity.spellbladenext.gladius": "Frost Blade",
   "entity.spellbladenext.magister": "Hexblade Magister",
   "entity.spellbladenext.magus": "Magus",
+  "entity.spellbladenext.hexbladeportal": "Hexblade Portal",
 
   "item.spellbladenext.monkeystaff": "Pillar of the Monkey King",
   "spell.spellbladenext.monkeyreflect.name": "Rending Winds",
-  "spell.spellbladenext.monkeyreflect.description": "Spin up a gust of wind, dealing heavy knockback and {damage} physical damage per second to the target enemy.",
+  "spell.spellbladenext.monkeyreflect.description": "Spin up a gust of wind, dealing heavy knockback and {damage} physical damage (can crit) per second to the target enemy.",
   "spell.spellbladenext.monkeyslam.name": "Head in the Clouds",
   "spell.spellbladenext.monkeyslam.description": "Leap into the clouds, becoming invulnerable while channeling.",
+  "spell.spellbladenext.reckoning.name": "Monkey King's Reckoning",
+  "spell.spellbladenext.reckoning.description": "Spin, dealing {damage} non-crit physical damage per second, multiplied by your attack speed. No penalty for hitting multiple enemies.",
 
   "spell.spellbladenext.sniper.name": "Runeblaze Round",
   "spell.spellbladenext.sniper.description": "Charge and shoot your rifle, dealing 2x ranged damage and an additional {damage} ranged physical damage.",
@@ -57,46 +60,46 @@
   "spell.spellbladenext.fireoverdrive.description": "{damage} Fire damage in an area around you. Activates normally and on hit.",
 
   "spell.spellbladenext.finalstrike.name": "Sonic Strike",
-  "spell.spellbladenext.finalstrike.description": "Charge up a deadly attack against all enemies in a line, teleporting behind the last one and dealing 3x melee damage plus an additional {damage} arcane spell damage.",
+  "spell.spellbladenext.finalstrike.description": "Charge up a deadly attack against all enemies in a line, teleporting behind the last one and dealing {damage}_0 physical damage plus an additional {damage}_1 arcane spell damage.",
 
   "spell.spellbladenext.eviscerate.name": "Massacre",
-  "spell.spellbladenext.eviscerate.description": "Become intangible, attacking the nearest multiple times over a second, dealing 2.5x melee dps plus an additional {damage} frost dps, scaling with attack speed. Refreshes on kill, jumping onto the nearest enemy.",
+  "spell.spellbladenext.eviscerate.description": "Become intangible, attacking the nearest enemy five times over a second, dealing {damage}_0 physical damage and {damage}_1 frost damage. If this kills the enemy before the last hit, you can continue channeling to target the closest enemy with an additional second of strikes.",
 
   "spell.spellbladenext.whirlingblades.name": "Riptide",
   "spell.spellbladenext.whirlingblades.description": "Aim and launch yourself as if with a riptide-enchanted trident",
 
   "spell.spellbladenext.flicker_strike.name": "Flickering Flame",
-  "spell.spellbladenext.flicker_strike.description": "Jump onto nearby enemies equally, dealing 1x melee dps plus an additional {damage} fire dps, scaled by attack speed. Focuses on one target if there is only one target.",
+  "spell.spellbladenext.flicker_strike.description": "Jump onto nearby enemies equally, dealing {damage}_0 non-crit physical damage plus an additional {damage}_1 fire damage, scaled by attack speed. Focuses on one target if there is only one target.",
 
   "spell.spellbladenext.frostblink.name": "Arcane Flicker",
-  "spell.spellbladenext.frostblink.description": "Teleport behind an enemy, dealing 1.5x melee damage plus an additional {damage} arcane damage.",
+  "spell.spellbladenext.frostblink.description": "Teleport behind an enemy, dealing {damage}_0 non-crit physical damage plus an additional {damage}_1 arcane damage.",
 
   "spell.spellbladenext.frostvert.name": "Rising Dragon Strike",
-  "spell.spellbladenext.frostvert.description": "Attack enemies in front of you, dealing 1.5x melee damage plus an additional {damage} fire damage, gaining upwards momentum.",
+  "spell.spellbladenext.frostvert.description": "Attack enemies in front of you, dealing {damage}_0 non-crit physical damage plus an additional {damage}_1 fire damage, gaining upwards momentum.",
 
   "spell.spellbladenext.smite.name": "Divine Smite",
-  "spell.spellbladenext.smite.description": "Smite enemies in front of you in an area, dealing 1.5x attack damage and {damage} extra healing damage to each enemy hit, twice as much against undead.",
+  "spell.spellbladenext.smite.description": "Smite enemies in front of you in an area, dealing {damage}_0 non-crit physical and {damage}_1 extra healing damage to each enemy hit, 50% more healing damage against undead.",
 
   "spell.spellbladenext.maelstrom.name": "Maelstrom",
-  "spell.spellbladenext.maelstrom.description": "Spin continuously, dealing 1.5x your attack DPS, plus {damage} arcane DPS, multiplied by attack speed",
+  "spell.spellbladenext.maelstrom.description": "Spin continuously, dealing {damage}_0 non-crit physical damage and {damage}_1 arcane damage per second, multiplied by attack speed. Penalty for hitting multiple mobs, mitigated by Sweeping Edge. Shift to stop moving.",
 
   "spell.spellbladenext.inferno.name": "Inferno",
-  "spell.spellbladenext.inferno.description": "Spin continuously, dealing 1.5x your attack DPS, plus {damage} fire DPS, multiplied by attack speed",
+  "spell.spellbladenext.inferno.description": "Spin continuously, dealing {damage}_0 non-crit physical damage and {damage}_1 fire damage per second multiplied by attack speed. Penalty for hitting multiple mobs, mitigated by Sweeping Edge. Shift to stop moving.",
 
   "spell.spellbladenext.tempest.name": "Tempest",
-  "spell.spellbladenext.tempest.description": "Spin continuously, dealing 1.5x your attack DPS, plus {damage} frost DPS, multiplied by attack speed",
+  "spell.spellbladenext.tempest.description": "Spin continuously, dealing {damage}_0 non-crit physical damage and {damage}_1 frost damage per second, multiplied by attack speed. Penalty for hitting multiple mobs, mitigated by Sweeping Edge. Shift to stop moving.",
 
   "spell.spellbladenext.whirlwind.name": "Whirlwind",
-  "spell.spellbladenext.whirlwind.description": "Spin continuously, dealing 1.5x your attack DPS.",
+  "spell.spellbladenext.whirlwind.description": "Spin continuously, {damage} non-crit physical damage per second, multiplied by your attack speed. Penalty for hitting multiple mobs, mitigated by Sweeping Edge. Shift to stop moving.",
 
   "spell.spellbladenext.arcaneflourish.name": "Arcane Flourish",
-  "spell.spellbladenext.arcaneflourish.description": "Spin rapidly, dealing 1.5x your attack damage, plus {damage} arcane damage.",
+  "spell.spellbladenext.arcaneflourish.description": "Spin rapidly, dealing {damage}_0 non-crit physical damage, plus {damage}_1 arcane damage.",
 
   "spell.spellbladenext.fireflourish.name": "Fire Flourish",
-  "spell.spellbladenext.fireflourish.description": "Spin rapidly, dealing 1.5x your attack damage, plus {damage} fire damage.",
+  "spell.spellbladenext.fireflourish.description": "Spin rapidly, dealing {damage}_0 non-crit physical damage, plus {damage}_1} fire damage.",
 
   "spell.spellbladenext.frostflourish.name": "Frost Flourish",
-  "spell.spellbladenext.frostflourish.description": "Spin rapidly, dealing 1.5x your attack damage, plus {damage} frost damage.",
+  "spell.spellbladenext.frostflourish.description": "Spin rapidly, dealing {damage}_0 non-crit physical damage, plus {damage}_1 frost damage.",
   "item.spellbladenext.runegleam_ingot": "Runegleam Ingot",
   "item.spellbladenext.runeblaze_ingot": "Runeblaze Ingot",
   "item.spellbladenext.runefrost_ingot": "Runefrost Ingot",

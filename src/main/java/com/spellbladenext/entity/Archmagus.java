@@ -32,6 +32,7 @@ import net.minecraft.entity.boss.ServerBossBar;
 import net.minecraft.entity.boss.WitherEntity;
 import net.minecraft.entity.boss.dragon.EnderDragonEntity;
 import net.minecraft.entity.damage.DamageSource;
+import net.minecraft.entity.damage.DamageSources;
 import net.minecraft.entity.damage.DamageType;
 import net.minecraft.entity.data.DataTracker;
 import net.minecraft.entity.data.TrackedData;
@@ -82,8 +83,7 @@ import java.util.function.Predicate;
 import java.util.stream.StreamSupport;
 
 import static com.spellbladenext.Spellblades.DIMENSIONKEY;
-import static java.lang.Math.max;
-import static java.lang.Math.min;
+import static java.lang.Math.*;
 
 public class Archmagus extends HostileEntity implements InventoryOwner, GeoEntity {
     public PlayerEntity nemesis;
@@ -298,51 +298,46 @@ public class Archmagus extends HostileEntity implements InventoryOwner, GeoEntit
     }
 
     @Override
-    public boolean damage(DamageSource damageSource, float f) {
+    public void applyDamage(DamageSource damageSource, float f) {
         if(damageSource.getAttacker() instanceof PlayerEntity player && player.getMainHandStack().getItem() instanceof DebugNetherPortal){
-            return super.damage(damageSource,this.getMaxHealth()*0.55F);
+            return;
         }
+
         if(this.age <= 10 && f < 999999){
-            return false;
+            return;
         }
         if(f > 999999){
 
-            return super.damage(damageSource,f);
+            return;
         }
         if((!this.isAttacking() && (damageSource.getAttacker() instanceof PlayerEntity player && !player.isCreative())) || this.isInvisible() || (this.getStatusEffect(StatusEffects.RESISTANCE) != null && this.getStatusEffect(StatusEffects.RESISTANCE).getAmplifier() >= 4)){
             this.playSoundIfNotSilent(SoundEvents.ENTITY_ILLUSIONER_MIRROR_MOVE);
 
-            return false;
+            return;
         }
         if(this.biding){
             this.playSoundIfNotSilent(SoundEvents.ENTITY_ILLUSIONER_MIRROR_MOVE);
-            return false;
+            return;
         }
-        if(damageSource.getAttacker() instanceof PlayerEntity player && player.getMainHandStack().getAttributeModifiers(EquipmentSlot.MAINHAND).keys().stream().anyMatch( attribute -> attribute.equals(SpellAttributes.POWER.get(MagicSchool.HEALING).attribute))) {
-            this.dataTracker.set(modifier, this.dataTracker.get(modifier)+ max((int)(100*f/this.getMaxHealth()),1));
-            return false;
 
-        }
-        else if(damageSource.getAttacker() instanceof PlayerEntity player && EnchantmentHelper.getEquipmentLevel(Enchantments.SMITE,player) > 0) {
-            this.dataTracker.set(modifier, this.dataTracker.get(modifier)+ max((int)(100*f/this.getMaxHealth()),EnchantmentHelper.getEquipmentLevel(Enchantments.SMITE,player)));
-
-        }
         if(damageSource.getAttacker() instanceof PlayerEntity player) {
             switch (this.getMagicSchool()) {
-                case FROST -> this.dataTracker.set(modifier, this.dataTracker.get(modifier) + min((int) (100 *  ((int) player.getAttributeValue(SpellAttributes.POWER.get(MagicSchool.FROST).attribute)) / this.getMaxHealth()),(int)f));
-                case FIRE -> this.dataTracker.set(modifier, this.dataTracker.get(modifier) + min((int) (100 *  ((int) player.getAttributeValue(SpellAttributes.POWER.get(MagicSchool.FIRE).attribute)) / this.getMaxHealth()),(int)f));
-                case ARCANE -> this.dataTracker.set(modifier, this.dataTracker.get(modifier) + min((int) (100 *  ((int) player.getAttributeValue(SpellAttributes.POWER.get(MagicSchool.ARCANE).attribute)) / this.getMaxHealth()),(int)f));
+                case FROST -> this.dataTracker.set(modifier, this.dataTracker.get(modifier) + min((int) ceil(100 *  ( player.getAttributeValue(SpellAttributes.POWER.get(MagicSchool.FROST).attribute)) / this.getMaxHealth()),(int)f));
+                case FIRE -> this.dataTracker.set(modifier, this.dataTracker.get(modifier) + min((int) ceil(100 *  ( player.getAttributeValue(SpellAttributes.POWER.get(MagicSchool.FIRE).attribute)) / this.getMaxHealth()),(int)f));
+                case ARCANE -> this.dataTracker.set(modifier, this.dataTracker.get(modifier) + min((int) ceil(100 *  ( player.getAttributeValue(SpellAttributes.POWER.get(MagicSchool.ARCANE).attribute)) / this.getMaxHealth()),(int)f));
 
             }
+            this.dataTracker.set(modifier, this.dataTracker.get(modifier) + min((int) ceil(100 *  ( player.getAttributeValue(SpellAttributes.POWER.get(MagicSchool.HEALING).attribute)) / this.getMaxHealth()),(int)f));
+
         }
         if(damageSource.getAttacker() instanceof LivingEntity living && EnchantmentHelper.getEquipmentLevel(Enchantments.SMITE, living) > 0) {
-            this.dataTracker.set(modifier, this.dataTracker.get(modifier)+1);
+            this.dataTracker.set(modifier, this.dataTracker.get(modifier)+EnchantmentHelper.getEquipmentLevel(Enchantments.SMITE, living));
         }
 
         double damagemodifier = min(1,0.05+(double)this.dataTracker.get(modifier)/100);
 
         damagetakensincelastthink += f * (damagemodifier);
-        return super.damage(damageSource, (float) min(max(this.getMaxHealth()*0.005*damagemodifier,this.getMaxHealth()*0.1-damagetakensincelastthink),(float) (f * damagemodifier)));
+        super.applyDamage(damageSource, (float) (f*damagemodifier));
     }
 
 

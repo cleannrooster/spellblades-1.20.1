@@ -19,12 +19,13 @@ import net.minecraft.util.Util;
 import net.minecraft.world.World;
 import net.spell_engine.api.item.ConfigurableAttributes;
 import net.spell_engine.api.item.armor.Armor;
+import net.spell_engine.api.item.weapon.StaffItem;
 import net.spell_engine.mixin.ItemStackMixin;
 
 import java.util.EnumMap;
 import java.util.UUID;
 
-public class RunicArmor extends CustomArmor implements ConfigurableAttributes {
+public class RunicArmor extends CustomArmor {
     public RunicArmor(Armor.CustomMaterial material, Type type, Settings settings) {
         super(material, type, settings);
     }
@@ -35,6 +36,15 @@ public class RunicArmor extends CustomArmor implements ConfigurableAttributes {
         uuidMap.put(ArmorItem.Type.HELMET, UUID.fromString("2AD3F246-FEE1-4E67-B886-69FD380BB150"));
     });
     private Multimap<EntityAttribute, EntityAttributeModifier> attributes;
+
+
+    @Override
+    public Multimap<EntityAttribute, EntityAttributeModifier> getAttributeModifiers(EquipmentSlot slot) {
+        if (attributes == null) {
+            return super.getAttributeModifiers(slot);
+        }
+        return slot == this.type.getEquipmentSlot() ? this.attributes : super.getAttributeModifiers(slot);
+    }
 
     public void setAttributes(Multimap<EntityAttribute, EntityAttributeModifier> attributes) {
         ImmutableMultimap.Builder<EntityAttribute, EntityAttributeModifier> builder = ImmutableMultimap.builder();
@@ -54,13 +64,7 @@ public class RunicArmor extends CustomArmor implements ConfigurableAttributes {
         }
         return super.equipAndSwap(item, world, user, hand);
     }
-    @Override
-    public Multimap<EntityAttribute, EntityAttributeModifier> getAttributeModifiers(EquipmentSlot slot) {
-        if (attributes == null) {
-            return super.getAttributeModifiers(slot);
-        }
-        return slot == this.type.getEquipmentSlot() ? this.attributes : super.getAttributeModifiers(slot);
-    }
+
 
     @Override
     public void inventoryTick(ItemStack itemStack, World level, Entity entity, int i, boolean bl) {

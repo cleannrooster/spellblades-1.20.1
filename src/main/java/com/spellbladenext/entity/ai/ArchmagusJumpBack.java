@@ -44,10 +44,7 @@ public class ArchmagusJumpBack<E extends Archmagus> extends MultiTickTask<E> {
 
     protected boolean checkExtraStartConditions(ServerWorld serverLevel, E mob) {
         float health = mob.getMaxHealth()/10;
-        if(mob.getDataTracker().get(BIDED)){
-            health *= 0.5;
-        }
-        return this.isTargetVisible(mob) && health < mob.damagetakensincelastthink;
+        return this.isTargetVisible(mob) && mob.getMaxHealth() - health*(mob.getDataTracker().get(TIER)+1) >= mob.getHealth() ;
     }
     @Override
     public boolean shouldRun(ServerWorld serverLevel, E mob) {

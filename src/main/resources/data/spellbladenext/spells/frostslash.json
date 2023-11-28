@@ -17,37 +17,44 @@
     "target": {
       "type": "PROJECTILE",
       "projectile": {
-        "velocity": 3.0,
-        "homing_angle": 0,
-        "divergence": 15,
-        "perks": {
-          "ricochet": 2,
-          "bounce": 2
+        "launch_properties": {
+          "velocity": 3.0
         },
-        "client_data": {
-          "travel_particles": [
-            {
-              "particle_id": "spell_engine:frost_shard",
-              "shape": "CIRCLE",
-              "rotation": "LOOK",
-              "origin": "CENTER",
-              "count": 2.0,
-              "min_speed": 0.05,
-              "max_speed": 0.1
-            },
-            {
-              "particle_id": "spell_engine:snowflake",
-              "shape": "CIRCLE",
-              "rotation": "LOOK",
-              "origin": "CENTER",
-              "count": 2.0,
-              "min_speed": 0.05,
-              "max_speed": 0.1
+        "projectile": {
+          "homing_angle": 0,
+          "divergence": 15,
+          "perks": {
+            "ricochet": 2,
+            "bounce": 2
+          },
+          "client_data": {
+            "travel_particles": [
+              {
+                "particle_id": "spell_engine:frost_shard",
+                "shape": "CIRCLE",
+                "rotation": "LOOK",
+                "origin": "CENTER",
+                "count": 2.0,
+                "min_speed": 0.05,
+                "max_speed": 0.1
+              },
+              {
+                "particle_id": "spell_engine:snowflake",
+                "shape": "CIRCLE",
+                "rotation": "LOOK",
+                "origin": "CENTER",
+                "count": 2.0,
+                "min_speed": 0.05,
+                "max_speed": 0.1
+              }
+            ],
+
+            "model": {
+              "model_id": "spellbladenext:projectile/gladius",
+              "render": "DEEP",
+              "scale": 3
             }
-          ],
-          "model_id": "spellbladenext:projectile/gladius",
-          "render": "DEEP",
-          "scale": 3
+          }
         }
       }
     }

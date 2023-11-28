@@ -25,26 +25,34 @@
   "release": {
     "target": {
       "type": "PROJECTILE",
+
       "projectile": {
-        "velocity": 1.0,
-        "divergence": 0.0,
-        "inherit_shooter_velocity": false,
-        "homing_angle": 2.0,
-        "client_data": {
-          "travel_particles": [
-            {
-              "particle_id": "spell_engine:snowflake",
-              "shape": "CIRCLE",
-              "rotation": "LOOK",
-              "origin": "CENTER",
-              "count": 3.0,
-              "min_speed": 0.0,
-              "max_speed": 0.1
+        "launch_properties": {
+          "velocity": 1.0
+        },
+        "projectile": {
+          "divergence": 0.0,
+          "inherit_shooter_velocity": false,
+          "homing_angle": 2.0,
+          "client_data": {
+            "travel_particles": [
+              {
+                "particle_id": "spell_engine:snowflake",
+                "shape": "CIRCLE",
+                "rotation": "LOOK",
+                "origin": "CENTER",
+                "count": 3.0,
+                "min_speed": 0.0,
+                "max_speed": 0.1
+              }
+            ],
+
+            "model": {
+              "model_id": "spellbladenext:projectile/gladius",
+              "render": "DEEP",
+              "scale": 1
             }
-          ],
-          "model_id": "spellbladenext:projectile/gladius",
-          "render": "DEEP",
-          "scale": 1
+          }
         }
       }
     },

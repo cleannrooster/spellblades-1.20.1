@@ -2,6 +2,7 @@ package com.spellbladenext.items.loot;
 
 import com.spellbladenext.Spellblades;
 import com.spellbladenext.items.Items;
+import com.spellbladenext.items.armor.Armors;
 import net.minecraft.registry.Registries;
 import net.spell_engine.api.item.ItemConfig;
 import net.spell_engine.api.loot.LootConfig;
@@ -18,6 +19,9 @@ public class Default {
         itemConfig = new ItemConfig();
         for (var weapon : Items.entries) {
             itemConfig.weapons.put(weapon.name(), weapon.defaults());
+        }
+        for (var armor : Armors.entries) {
+            itemConfig.armor_sets.put(armor.name(), armor.defaults());
         }
 
 

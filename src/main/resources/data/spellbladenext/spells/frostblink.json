@@ -40,11 +40,21 @@
   },
   "impact": [
     {
+      "school": "PHYSICAL_MELEE",
       "action": {
         "type": "DAMAGE",
         "damage": {
           "knockback": 0.5,
           "spell_power_coefficient": 1
+        }
+      }
+    },
+    {
+      "action": {
+        "type": "DAMAGE",
+        "damage": {
+          "knockback": 0.5,
+          "spell_power_coefficient": 1.5
         }
       },
       "particles": [

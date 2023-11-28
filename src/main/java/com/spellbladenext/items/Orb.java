@@ -16,15 +16,22 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
+import net.minecraft.client.item.TooltipContext;
 import net.minecraft.client.render.item.BuiltinModelItemRenderer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ToolMaterial;
 import net.minecraft.registry.tag.BlockTags;
+import net.minecraft.text.Style;
+import net.minecraft.text.Text;
+import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
+import net.minecraft.world.World;
 import net.spell_engine.api.item.weapon.SpellWeaponItem;
 import net.spell_power.api.MagicSchool;
+import org.jetbrains.annotations.Nullable;
 
 import java.awt.geom.Arc2D;
+import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
@@ -83,7 +90,12 @@ public class Orb extends SpellWeaponItem implements GeoItem {
         return factory;
     }
 
-
+    @Override
+    public void appendTooltip(ItemStack stack, @Nullable World world, List<Text> tooltip, TooltipContext context) {
+        tooltip.add(Text.translatable("Orbweaver's Grace").formatted(Formatting.LIGHT_PURPLE));
+        tooltip.add(Text.translatable("Move normally while casting").formatted(Formatting.GRAY));
+        super.appendTooltip(stack, world, tooltip, context);
+    }
 
     @Override
     public Supplier<Object> getRenderProvider() {

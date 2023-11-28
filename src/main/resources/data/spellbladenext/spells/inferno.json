@@ -24,11 +24,33 @@
   },
   "impact": [
     {
+      "school": "PHYSICAL_MELEE",
       "action": {
         "type": "DAMAGE",
         "damage": {
           "knockback": 0.5,
           "spell_power_coefficient": 1.5
+        }
+      },
+      "particles": [
+        {
+          "particle_id": "sweep_attack",
+          "shape": "SPHERE",
+          "origin": "CENTER",
+          "count": 1
+        }
+      ],
+      "sound": {
+        "id": "minecraft:entity.player.attack.sweep"
+      }
+    },
+    {
+      "action": {
+        "school": "FIRE",
+        "type": "DAMAGE",
+        "damage": {
+          "knockback": 0.5,
+          "spell_power_coefficient": 1.0
         }
       },
       "particles": [

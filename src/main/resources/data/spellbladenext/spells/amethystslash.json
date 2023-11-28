@@ -16,37 +16,45 @@
   "release": {
     "target": {
       "type": "PROJECTILE",
+
       "projectile": {
-        "velocity": 3.0,
-        "homing_angle": 0,
-        "divergence": 15,
-        "perks": {
-          "pierce": 2
+        "launch_properties": {
+          "velocity": 3.0
         },
-        "client_data": {
-          "travel_particles": [
-            {
-              "particle_id": "spell_engine:arcane_spell",
-              "shape": "CIRCLE",
-              "rotation": "LOOK",
-              "origin": "CENTER",
-              "count": 2.0,
-              "min_speed": 0.05,
-              "max_speed": 0.1
-            },
-            {
-              "particle_id": "firework",
-              "shape": "CIRCLE",
-              "rotation": "LOOK",
-              "origin": "CENTER",
-              "count": 2.0,
-              "min_speed": 0.05,
-              "max_speed": 0.1
+        "projectile": {
+          "homing_angle": 0,
+          "divergence": 15,
+          "perks": {
+            "pierce": 2
+          },
+          "client_data": {
+            "travel_particles": [
+              {
+                "particle_id": "spell_engine:arcane_spell",
+                "shape": "CIRCLE",
+                "rotation": "LOOK",
+                "origin": "CENTER",
+                "count": 2.0,
+                "min_speed": 0.05,
+                "max_speed": 0.1
+              },
+              {
+                "particle_id": "firework",
+                "shape": "CIRCLE",
+                "rotation": "LOOK",
+                "origin": "CENTER",
+                "count": 2.0,
+                "min_speed": 0.05,
+                "max_speed": 0.1
+              }
+            ],
+
+            "model": {
+              "model_id": "spellbladenext:projectile/amethyst",
+              "render": "DEEP",
+              "scale": 3
             }
-          ],
-          "model_id": "spellbladenext:projectile/amethyst",
-          "render": "DEEP",
-          "scale": 3
+          }
         }
       }
     }

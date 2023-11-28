@@ -40,6 +40,17 @@ public class Starforge extends SwordItem implements ConfigurableAttributes {
         this.school = school;
     }
 
+    public void setAttributes(Multimap<EntityAttribute, EntityAttributeModifier> attributes) {
+        this.attributes = attributes;
+    }
+
+    public Multimap<EntityAttribute, EntityAttributeModifier> getAttributeModifiers(EquipmentSlot slot) {
+        if (this.attributes == null) {
+            return super.getAttributeModifiers(slot);
+        } else {
+            return slot == EquipmentSlot.MAINHAND ? this.attributes : super.getAttributeModifiers(slot);
+        }
+    }
     @Override
     public void inventoryTick(ItemStack itemStack, World level, Entity entity, int i, boolean bl) {
 
@@ -52,9 +63,6 @@ public class Starforge extends SwordItem implements ConfigurableAttributes {
             return super.postHit(stack,target,attacker);
     }
 
-    public void setAttributes(Multimap<EntityAttribute, EntityAttributeModifier> attributes) {
-        this.attributes = attributes;
-    }
     MagicSchool school = MagicSchool.PHYSICAL_MELEE;
 
     public boolean canMine(BlockState state, World world, BlockPos pos, PlayerEntity miner) {
@@ -72,13 +80,6 @@ public class Starforge extends SwordItem implements ConfigurableAttributes {
         return true;
     }
 
-    public Multimap<EntityAttribute, EntityAttributeModifier> getAttributeModifiers(EquipmentSlot slot) {
-        if (this.attributes == null) {
-            return super.getAttributeModifiers(slot);
-        } else {
-            return slot == EquipmentSlot.MAINHAND ? this.attributes : super.getAttributeModifiers(slot);
-        }
-    }
     @Environment(EnvType.CLIENT)
     @Override
     public void appendTooltip(ItemStack itemStack, @Nullable World level, List<Text> list, TooltipContext tooltipFlag) {
