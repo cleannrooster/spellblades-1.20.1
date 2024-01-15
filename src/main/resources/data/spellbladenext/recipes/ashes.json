@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "A": {
+      "item": "spellbladenext:thread"
+    },
+    "D": {
+      "item": "minecraft:nether_star"
+    },
+    "C": {
+      "item": "minecraft:glass_bottle"
+    }
+  },
+  "pattern": [
+    " A ",
+    "ADA",
+    " C "
+  ],
+  "result": {
+    "item": "spellbladenext:ashes"
+  }
+}

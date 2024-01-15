@@ -1,6 +1,7 @@
 package com.spellbladenext.mixin;
 
 import com.spellbladenext.Spellblades;
+import com.spellbladenext.config.ServerConfig;
 import com.spellbladenext.items.Orb;
 import com.spellbladenext.items.Starforge;
 import com.spellbladenext.items.interfaces.PlayerDamageInterface;
@@ -8,7 +9,10 @@ import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.attribute.AttributeContainer;
 import net.minecraft.entity.attribute.DefaultAttributeContainer;
+import net.minecraft.entity.attribute.EntityAttribute;
+import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.damage.DamageType;
 import net.minecraft.entity.damage.DamageTypes;
@@ -18,6 +22,7 @@ import net.minecraft.fluid.FluidState;
 import net.minecraft.fluid.Fluids;
 import net.minecraft.item.ItemStack;
 import net.minecraft.registry.Registry;
+import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Vec3d;
@@ -27,8 +32,10 @@ import net.spell_engine.internals.SpellHelper;
 import net.spell_engine.internals.SpellRegistry;
 import net.spell_engine.particle.ParticleHelper;
 import net.spell_engine.utils.TargetHelper;
+import net.spell_power.api.MagicSchool;
 import net.spell_power.api.SpellDamageSource;
 import net.spell_power.api.SpellPower;
+import net.spell_power.api.attributes.SpellAttributes;
 import net.spell_power.mixin.DamageSourcesAccessor;
 import net.spell_engine.internals.casting.SpellCasterEntity;
 import org.spongepowered.asm.mixin.Mixin;
@@ -56,14 +63,54 @@ public class LivingEntityMixin {
             }
         }
     }
+
+
+
+    @Inject(at = @At("HEAD"), method = "onAttacking", cancellable = true)
+    public void onAttackingSpellbladesMixin(Entity target, CallbackInfo info) {
+        LivingEntity living = (LivingEntity) (Object) this;
+
+        if (!living.getWorld().isClient() && living instanceof PlayerEntity player && living instanceof SpellCasterEntity caster && living instanceof PlayerDamageInterface damageInterface &&
+            SpellContainerHelper.containerWithProxy(living.getMainHandStack(), player) != null && SpellContainerHelper.containerWithProxy(player.getMainHandStack(), player).spell_ids != null && SpellContainerHelper.containerWithProxy(player.getMainHandStack(), player).spell_ids.contains("spellbladenext:deathchill")) {
+            if(!FabricLoader.getInstance().isModLoaded("frostiful")) {
+
+                target.setFrozenTicks(target.getFrozenTicks() + 28);
+            }
+            else{
+                target.setFrozenTicks(target.getFrozenTicks() + 28*3*20);
+
+            }
+        }
+    }
     @Inject(at = @At("HEAD"), method = "tick", cancellable = true)
     public void tick_SB_HEAD(CallbackInfo info) {
         LivingEntity living = (LivingEntity) (Object) this;
-        if(!FabricLoader.getInstance().isModLoaded("reabsorption")) {
+        if(!living.getWorld().isClient() && living instanceof PlayerEntity player && living instanceof SpellCasterEntity caster && living instanceof PlayerDamageInterface damageInterface  &&
+                SpellContainerHelper.containerWithProxy(living.getMainHandStack(), player) != null && SpellContainerHelper.containerWithProxy(player.getMainHandStack(), player).spell_ids != null && SpellContainerHelper.containerWithProxy(player.getMainHandStack(), player).spell_ids.contains("spellbladenext:echoes")){
+            if(damageInterface.getDiebeamStacks() < 3 &&  living.age % 80 == 0) {
+                damageInterface.addDiebeamStack(1);
+            }
+            if(damageInterface.getDiebeamStacks() >0) {
+                player.addStatusEffect(new StatusEffectInstance(UNLEASH, 5, damageInterface.getDiebeamStacks() - 1,false,false,true));
+            }
+
+        }
+        if(!living.getWorld().isClient() && living instanceof PlayerEntity player && living instanceof SpellCasterEntity caster && living instanceof PlayerDamageInterface damageInterface  &&
+                SpellContainerHelper.containerWithProxy(living.getMainHandStack(), player) != null && SpellContainerHelper.containerWithProxy(player.getMainHandStack(), player).spell_ids != null && SpellContainerHelper.containerWithProxy(player.getMainHandStack(), player).spell_ids.contains("spellbladenext:deathchill")) {
+            if(!FabricLoader.getInstance().isModLoaded("frostiful")){
+                living.setFrozenTicks(living.getFrozenTicks()+1+living.getMinFreezeDamageTicks()/(20*20));
+            }
+            else{
+                living.setFrozenTicks(living.getFrozenTicks()+2);
+
+            }
+
+        }
+            if(!FabricLoader.getInstance().isModLoaded("reabsorption")) {
 
             if (living instanceof PlayerDamageInterface damageInterface && living.getAttributeInstance(WARDING) != null && living.getAttributeValue(WARDING) >= 1) {
                 float additional = (float) (0.05 * living.getAttributeValue(WARDING) * (0.173287 * Math.pow(Math.E, -0.173287 * 0.05 * (living.age - damageInterface.getLasthurt()))));
-
+                additional *= Spellblades.config.wardrate;
                 if (damageInterface.getLasthurt() != 0 && living.age - damageInterface.getLasthurt() < 100 * 20 && damageInterface.getDamageAbsorbed() + additional <= living.getAttributeValue(WARDING)) {
                     damageInterface.absorbDamage(additional);
                 }
@@ -81,6 +128,10 @@ public class LivingEntityMixin {
     @Inject(method = "createLivingAttributes", at = @At("RETURN"))
     private static void addAttributesSpellblade_RETURN(final CallbackInfoReturnable<DefaultAttributeContainer.Builder> info) {
             info.getReturnValue().add(WARDING);
+        info.getReturnValue().add(CONVERTFROMFIRE);
+        info.getReturnValue().add(CONVERTFROMFROST);
+        info.getReturnValue().add(CONVERTFROMARCANE);
+
     }
         @ModifyVariable(at = @At("HEAD"), method = "applyMovementInput", index = 1)
     public Vec3d applyInputMIX(Vec3d vec3d) {

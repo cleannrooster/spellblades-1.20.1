@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "A": {
+      "item": "spellbladenext:thread"
+    }
+  },
+  "pattern": [
+    "   ",
+    "AAA",
+    "A A"
+  ],
+  "result": {
+    "item": "spellbladenext:magus_head"
+  }
+}

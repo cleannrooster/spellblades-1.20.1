@@ -80,7 +80,6 @@ public class Starforge extends SwordItem implements ConfigurableAttributes {
         return true;
     }
 
-    @Environment(EnvType.CLIENT)
     @Override
     public void appendTooltip(ItemStack itemStack, @Nullable World level, List<Text> list, TooltipContext tooltipFlag) {
        list.add(Text.translatable("Triggers Elemental Novas on hit, with a 1 second base cooldown and a 0.8 coefficient."));

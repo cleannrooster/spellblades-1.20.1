@@ -88,6 +88,11 @@ public class HexbladePortal extends LivingEntity implements GeoEntity {
     }
 
     @Override
+    public boolean shouldDropXp() {
+        return this.spawn;
+    }
+
+    @Override
     public int getXpToDrop() {
         return experiencePoints;
     }

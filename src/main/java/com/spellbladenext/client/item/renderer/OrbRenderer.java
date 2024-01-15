@@ -10,7 +10,6 @@ import net.fabricmc.fabric.api.client.rendering.v1.BuiltinItemRendererRegistry;
 import net.minecraft.util.Identifier;
 import net.spell_power.api.MagicSchool;
 import org.spongepowered.asm.mixin.Dynamic;
-@Environment(EnvType.CLIENT)
 public class OrbRenderer extends GeoItemRenderer<Orb> {
 
 

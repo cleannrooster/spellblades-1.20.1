@@ -22,20 +22,29 @@ public class CycloneRenderer<T extends CycloneEntity> extends GeoEntityRenderer<
 
     @Override
     public void preRender(MatrixStack poseStack, CycloneEntity animatable, BakedGeoModel model, VertexConsumerProvider bufferSource, VertexConsumer buffer, boolean isReRender, float partialTick, int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
-        if(animatable.getOwner() != null){
-            this.scaleWidth = animatable.getOwner().getHeight()*1.75F;
-            this.scaleHeight = animatable.getOwner().getHeight()*1.5F;
-            poseStack.translate(-animatable.lastRenderX,-animatable.lastRenderY,-animatable.lastRenderZ);
-            poseStack.translate(animatable.getOwner().lastRenderX,animatable.getOwner().lastRenderY,animatable.getOwner().lastRenderZ);
+        if(animatable.getOwner() != null ){
+
+            if(animatable.getColor() != 5){
+                this.scaleWidth = animatable.getOwner().getHeight() * 1.75F;
+                this.scaleHeight = animatable.getOwner().getHeight() * 1.5F;
+
+                poseStack.translate(-animatable.lastRenderX,-animatable.lastRenderY,-animatable.lastRenderZ);
+                poseStack.translate(animatable.getOwner().lastRenderX,animatable.getOwner().lastRenderY,animatable.getOwner().lastRenderZ);
+
+            }
+            else{
+                this.scaleWidth = 2 * 1.75F;
+                this.scaleHeight = 2 * 1.5F;
+
+            }
 
         }
 
         super.preRender(poseStack, animatable, model, bufferSource, buffer, isReRender, partialTick, packedLight, packedOverlay, red, green, blue, alpha);
     }
-    @Environment(EnvType.CLIENT)
     @Override
     public boolean shouldRender(CycloneEntity entity, Frustum frustum, double x, double y, double z) {
-        if(MinecraftClient.getInstance().cameraEntity != null &&  entity.getOwner() != null && MinecraftClient.getInstance().cameraEntity.equals(entity.getOwner()) && MinecraftClient.getInstance().options.getPerspective().isFirstPerson()){
+        if(entity.getColor() != 5 && MinecraftClient.getInstance() != null && MinecraftClient.getInstance().cameraEntity != null &&  entity.getOwner() != null && MinecraftClient.getInstance().cameraEntity.equals(entity.getOwner()) && MinecraftClient.getInstance().options.getPerspective().isFirstPerson()){
             return false;
         }
         else{

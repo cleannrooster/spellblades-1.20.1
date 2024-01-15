@@ -14,13 +14,13 @@ public class MagusArmorModel extends GeoModel<MagusArmor> {
 
     @Override
     public Identifier getModelResource(MagusArmor orb) {
+
         return new Identifier(Spellblades.MOD_ID,"geo/robes.geo.json");
 
     }
 
     @Override
     public Identifier getTextureResource(MagusArmor orb) {
-
         return new Identifier(Spellblades.MOD_ID, "textures/armor/robestexture_default.png");
     }
 

@@ -44,14 +44,6 @@ public class SpellAttack<E extends MobEntity, T extends LivingEntity> extends Mu
 
     protected boolean checkExtraStartConditions(ServerWorld serverLevel, E mob) {
 
-        LivingEntity livingEntity = getAttackTarget(mob);
-        if(livingEntity.getAttributeValue(EntityAttributes.GENERIC_ATTACK_DAMAGE) > 40 ||
-                livingEntity.getAttributeValue(SpellAttributes.POWER.get(MagicSchool.ARCANE).attribute) > mob.getMaxHealth()/2 ||
-                livingEntity.getAttributeValue(SpellAttributes.POWER.get(MagicSchool.FROST).attribute) > mob.getMaxHealth()/2 ||
-                livingEntity.getAttributeValue(SpellAttributes.POWER.get(MagicSchool.FIRE).attribute) > mob.getMaxHealth()/2 ||
-                livingEntity.getAttributeValue(SpellAttributes.POWER.get(MagicSchool.HEALING).attribute) > mob.getMaxHealth()/2){
-            return false;
-        }
         return  mob instanceof Magister reaver && reaver.isCaster();
     }
 

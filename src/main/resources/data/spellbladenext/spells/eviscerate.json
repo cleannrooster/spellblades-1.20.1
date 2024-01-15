@@ -39,7 +39,7 @@
         "type": "DAMAGE",
         "damage": {
           "knockback": 0.5,
-          "spell_power_coefficient": 2.5
+          "spell_power_coefficient": 1.6
         }
       },
       "sound": {
@@ -52,7 +52,7 @@
         "type": "DAMAGE",
         "damage": {
           "knockback": 0.5,
-          "spell_power_coefficient": 2.5
+          "spell_power_coefficient": 1.6
         }
       },
       "particles": [

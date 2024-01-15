@@ -65,4 +65,5 @@ public class MagisterRenderer<T extends Magister, M extends BipedEntityModel<T>>
         return DEFAULT_LOCATION;
     }
 
+
 }

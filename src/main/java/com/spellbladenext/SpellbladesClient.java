@@ -1,9 +1,6 @@
 package com.spellbladenext;
 
-import com.spellbladenext.client.entity.ArchmagusRenderer;
-import com.spellbladenext.client.entity.CycloneRenderer;
-import com.spellbladenext.client.entity.HexbladePortalRenderer;
-import com.spellbladenext.client.entity.MagisterRenderer;
+import com.spellbladenext.client.entity.*;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
@@ -14,10 +11,12 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.HitResult;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.RaycastContext;
 import net.minecraft.world.World;
 import net.spell_engine.api.spell.Spell;
 import net.spell_engine.internals.SpellRegistry;
+import net.spell_engine.internals.casting.SpellCasterClient;
 import net.spell_engine.internals.casting.SpellCasterEntity;
 import net.spell_power.api.attributes.SpellAttributes;
 
@@ -34,13 +33,37 @@ public class SpellbladesClient implements ClientModInitializer {
         EntityRendererRegistry.register(Spellblades.ARCHMAGUS, ArchmagusRenderer::new);
         EntityRendererRegistry.register(Spellblades.RIFLEPROJECTILE, ArrowEntityRenderer::new);
         EntityRendererRegistry.register(Spellblades.CYCLONEENTITY, CycloneRenderer::new);
+        EntityRendererRegistry.register(Spellblades.REDLASERENTITY, RedbeamRenderer::new);
 
         ClientTickEvents.START_CLIENT_TICK.register(server -> {
                     PlayerEntity player = server.player;
                     World level = server.world;
 
                     if (player != null && level != null) {
+                        if (SpellRegistry.getSpell(new Identifier(MOD_ID, "frostvert")) != null && player instanceof SpellCasterClient client && client.getSpellCastProgress() != null) {
+                            double speed = player.getAttributeValue(EntityAttributes.GENERIC_MOVEMENT_SPEED) * player.getAttributeValue(SpellAttributes.HASTE.attribute) * 0.01 * 4;
+                            BlockHitResult result = level.raycast(new RaycastContext(player.getPos(), player.getPos().add(0, -2, 0), RaycastContext.ShapeType.COLLIDER, RaycastContext.FluidHandling.ANY, player));
+                            if (player.isSneaking()) {
+                                speed *= 0;
+                            }
+                            double modifier = 0;
+                            if (result.getType() == HitResult.Type.BLOCK) {
+                                modifier = 1;
+                            }
 
+                            Spell spell = SpellRegistry.getSpell(new Identifier(MOD_ID, "frostvert"));
+
+                            if (player instanceof SpellCasterEntity caster) {
+
+                                if (Objects.equals(caster.getCurrentSpell(), SpellRegistry.getSpell(new Identifier(MOD_ID, "frostvert")))) {
+                                    Vec3d vec3d = player.getRotationVec(1).subtract(0, player.getRotationVec(1).y, 0).normalize().multiply(speed, speed * modifier, speed).add(0, player.getVelocity().y, 0);
+                                    player.setVelocity(vec3d);
+
+                                    player.addVelocity(0, Math.max(-2,2 * (1 - (0.2 + client.getSpellCastProgress().ratio()*13) * 2)* player.getAttributeValue(SpellAttributes.HASTE.attribute) * 0.01), 0);
+                                }
+                            }
+
+                        }
                         if (SpellRegistry.getSpell(new Identifier(MOD_ID, "maelstrom")) != null) {
                             double speed = player.getAttributeValue(EntityAttributes.GENERIC_MOVEMENT_SPEED) * player.getAttributeValue(SpellAttributes.HASTE.attribute) * 0.01 * 4;
                             BlockHitResult result = level.raycast(new RaycastContext(player.getPos(), player.getPos().add(0, -2, 0), RaycastContext.ShapeType.COLLIDER, RaycastContext.FluidHandling.ANY, player));

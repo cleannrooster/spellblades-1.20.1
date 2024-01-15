@@ -9,7 +9,6 @@ import net.fabricmc.api.Environment;
 import net.minecraft.util.Identifier;
 import net.spell_power.api.MagicSchool;
 
-@Environment(EnvType.CLIENT)
 public class RifleModel extends GeoModel<Rifle> {
 
 

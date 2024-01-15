@@ -42,7 +42,6 @@ public class Orb extends SpellWeaponItem implements GeoItem {
 
     }
     MagicSchool school = MagicSchool.PHYSICAL_MELEE;
-    @Environment(EnvType.CLIENT)
     @Override
     public void createRenderer(Consumer<Object> consumer) {
         consumer.accept(new RenderProvider() {

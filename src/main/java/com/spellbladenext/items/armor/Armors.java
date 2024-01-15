@@ -302,7 +302,10 @@ public class Armors {
                             20,
                             10,
                             SoundEvents.ITEM_ARMOR_EQUIP_LEATHER,
-                            WOOL_INGREDIENTS
+                            () -> { return Ingredient.ofItems(
+                                    Spellblades.THREAD);
+                            }
+
                     ),
                     ItemConfig.ArmorSet.with(
                             new ItemConfig.ArmorSet.Piece(2)
@@ -341,10 +344,10 @@ public class Armors {
 
                                     ))
                     )) .bundle(material -> new Armor.Set(Spellblades.MOD_ID,
-                            new MagusArmor(material, ArmorItem.Type.HELMET, new Item.Settings(),List.of(MagicSchool.FROST,MagicSchool.ARCANE,MagicSchool.FIRE)),
-                            new MagusArmor(material, ArmorItem.Type.CHESTPLATE,new Item.Settings(), List.of(MagicSchool.FROST,MagicSchool.ARCANE,MagicSchool.FIRE)),
-                            new MagusArmor(material, ArmorItem.Type.LEGGINGS, new Item.Settings(),List.of(MagicSchool.FROST,MagicSchool.ARCANE,MagicSchool.FIRE)),
-                            new MagusArmor(material, ArmorItem.Type.BOOTS,new Item.Settings(), List.of(MagicSchool.FROST,MagicSchool.ARCANE,MagicSchool.FIRE))
+                            new MagusArmor(material, ArmorItem.Type.HELMET, new Item.Settings(),MagicSchool.PHYSICAL_MELEE),
+                            new MagusArmor(material, ArmorItem.Type.CHESTPLATE,new Item.Settings(), MagicSchool.PHYSICAL_MELEE),
+                            new MagusArmor(material, ArmorItem.Type.LEGGINGS, new Item.Settings(),MagicSchool.PHYSICAL_MELEE),
+                            new MagusArmor(material, ArmorItem.Type.BOOTS,new Item.Settings(), MagicSchool.PHYSICAL_MELEE)
                     ))
                     .put(entries)
                     .armorSet();;

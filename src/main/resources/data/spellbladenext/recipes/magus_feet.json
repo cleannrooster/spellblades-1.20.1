@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "A": {
+      "item": "spellbladenext:thread"
+    }
+  },
+  "pattern": [
+    "   ",
+    "A A",
+    "A A"
+  ],
+  "result": {
+    "item": "spellbladenext:magus_feet"
+  }
+}

@@ -48,7 +48,7 @@ public class ArchmagusAI {
         }
 
         private static void initCoreActivity(Archmagus Archmagus, Brain<Archmagus> brain) {
-            brain.setTaskList(Activity.CORE, 0, ImmutableList.of(new LookAroundTask(45, 90), new WanderAroundTask(),   OpenDoorsTask.create(),  ForgetAngryAtTargetTask.create()));
+            brain.setTaskList(Activity.CORE, 0, ImmutableList.of(new LookAroundTask(45, 90),FindWalkTargetTask.create(0.6F), new WanderAroundTask(),   OpenDoorsTask.create(),  ForgetAngryAtTargetTask.create()));
         }
 
         private static void initIdleActivity(Archmagus Archmagus1, Brain<Archmagus> brain) {

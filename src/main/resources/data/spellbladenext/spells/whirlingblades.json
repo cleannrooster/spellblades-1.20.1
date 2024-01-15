@@ -19,8 +19,7 @@
     },
     "sound": {
       "id": "minecraft:entity.player.attack.knockback"
-    },
-    "animation": "spellbladenext:vertspin"
+    }
   },
   "impact": [
     {

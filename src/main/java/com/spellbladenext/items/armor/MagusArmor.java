@@ -28,6 +28,7 @@ import net.minecraft.world.World;
 import net.spell_engine.api.item.ConfigurableAttributes;
 import net.spell_engine.api.item.armor.Armor;
 import net.spell_power.api.MagicSchool;
+import net.spell_power.api.attributes.SpellAttributes;
 
 import java.util.ArrayList;
 import java.util.EnumMap;
@@ -38,9 +39,9 @@ import java.util.function.Supplier;
 
 public class MagusArmor extends CustomArmor implements GeoItem {
 
-    public MagusArmor(Armor.CustomMaterial material, Type type, Settings settings, List<MagicSchool> magicSchool) {
+    public MagusArmor(Armor.CustomMaterial material, Type type, Settings settings, MagicSchool magicSchool) {
         super(material, type, settings);
-        this.magicschool.addAll(magicSchool);
+        this.magicschool = magicSchool;
 
 
     }
@@ -50,7 +51,7 @@ public class MagusArmor extends CustomArmor implements GeoItem {
         uuidMap.put(ArmorItem.Type.CHESTPLATE, UUID.fromString("9F3D476D-C118-4544-8365-64846904B48E"));
         uuidMap.put(ArmorItem.Type.HELMET, UUID.fromString("2AD3F246-FEE1-4E67-B886-69FD380BB150"));
     });
-    private final List<MagicSchool> magicschool = new ArrayList<>();
+    private MagicSchool magicschool = MagicSchool.PHYSICAL_MELEE;
     public void setAttributes(Multimap<EntityAttribute, EntityAttributeModifier> attributes) {
         ImmutableMultimap.Builder<EntityAttribute, EntityAttributeModifier> builder = ImmutableMultimap.builder();
         // builder.putAll(super.getAttributeModifiers(this.slot));
@@ -62,7 +63,7 @@ public class MagusArmor extends CustomArmor implements GeoItem {
 
     }
     // MARK: GeoItem
-    public List<MagicSchool> getMagicschool() {
+    public MagicSchool getMagicschool() {
         return magicschool;
     }
     private final AnimatableInstanceCache cache = AzureLibUtil.createInstanceCache(this);
@@ -99,34 +100,10 @@ public class MagusArmor extends CustomArmor implements GeoItem {
     public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
 
     }
+
     @Override
     public void inventoryTick(ItemStack itemStack, World level, Entity entity, int i, boolean bl) {
-        /*if(!level.isClient()) {
-            if(entity instanceof PlayerEntity) {
-                PlayerEntity player = (PlayerEntity)entity;
 
-                int amount = 0;
-                if(player.getInventory().getArmorStack(0).getItem() instanceof MagusArmor){
-                    amount++;
-                }
-                if(player.getInventory().getArmorStack(1).getItem() instanceof MagusArmor){
-                    amount++;
-                }
-                if(player.getInventory().getArmorStack(2).getItem() instanceof MagusArmor){
-                    amount++;
-                }
-                if(player.getInventory().getArmorStack(3).getItem() instanceof MagusArmor){
-                    amount++;
-                }
-                int ii = 0;
-                if(player.hasStatusEffect(Spellblades.RunicAbsorption)){
-                    ii = player.getStatusEffect(Spellblades.RunicAbsorption).getAmplifier();
-                }
-                if(amount > 0 && !player.hasStatusEffect(Spellblades.RunicAbsorption) && player.getAbsorptionAmount() <= 0)
-                    player.addStatusEffect(new StatusEffectInstance(Spellblades.RunicAbsorption,20*5,amount+1, false, false));
-
-            }
-        }*/
         super.inventoryTick(itemStack, level, entity, i, bl);
     }
 

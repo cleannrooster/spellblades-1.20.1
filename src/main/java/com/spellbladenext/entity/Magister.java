@@ -214,6 +214,7 @@ public class Magister extends PathAwareEntity implements InventoryOwner, GeoEnti
     @Override
     public void tick() {
         super.tick();
+
         if(this.getWorld() instanceof ServerWorld serverWorld && serverWorld.getEntitiesByType(Spellblades.REAVER,LivingEntity::isAlive).size()>32){
             this.playSoundIfNotSilent(SoundEvents.ITEM_CHORUS_FRUIT_TELEPORT);
             this.discard();
@@ -314,6 +315,13 @@ public class Magister extends PathAwareEntity implements InventoryOwner, GeoEnti
     public boolean damage(DamageSource damageSource, float f) {
         if(damageSource.getSource() instanceof PlayerEntity player && this.isScout() && this.getHealth()/this.getMaxHealth() <= 0.5 && this.getMainHandStack().isEmpty()){
             this.tryEquip(new ItemStack(com.spellbladenext.items.Items.arcane_blade.item()));
+
+        }
+        if(damageSource.getSource() instanceof PlayerEntity player && damageSource.getAttacker() instanceof PlayerEntity && player.hasStatusEffect(Spellblades.HEXED) && this.getHealth()/this.getMaxHealth() <= 0.5){
+            player.removeStatusEffect(Spellblades.HEXED);
+        }
+        if(damageSource.getSource() instanceof PlayerEntity player && damageSource.getAttacker() instanceof PlayerEntity && player.hasStatusEffect(Spellblades.MAGISTERFRIEND) && this.getHealth()/this.getMaxHealth() <= 0.5){
+            player.removeStatusEffect(Spellblades.MAGISTERFRIEND);
         }
         return super.damage(damageSource, f);
 
@@ -475,38 +483,39 @@ public class Magister extends PathAwareEntity implements InventoryOwner, GeoEnti
     @Override
     public TradeOfferList getOffers() {
         TradeOfferList offers = new TradeOfferList();
-        ItemStack offering = new ItemStack(Spellblades.OFFERING);
-        offers.add(new TradeOffer(
-                new ItemStack(Spellblades.RUNEBLAZE,2),
-                offering,10,8,1F));
-        offers.add(new TradeOffer(
-                new ItemStack(Spellblades.RUNEGLEAM,2),
-                offering,10,8,1F));
-        offers.add(new TradeOffer(
-                new ItemStack(Spellblades.RUNEFROST,2),
-                offering,10,8,1F));
-        offers.add(new TradeOffer(
-                new ItemStack(com.spellbladenext.items.Items.arcane_blade.item(),1),
-                offering,10,8,1F));
-        offers.add(new TradeOffer(
-                new ItemStack(com.spellbladenext.items.Items.fire_blade.item(),1),
-                offering,10,8,1F));
-        offers.add(new TradeOffer(
-                new ItemStack(com.spellbladenext.items.Items.frost_blade.item(),1),
-                offering,10,8,1F));
-        offers.add(new TradeOffer(
-                new ItemStack(Spellblades.RUNEGLEAM, 2),
-                new ItemStack(Spellblades.finalstrikeoil,1),
-                10,8,1F));
-        offers.add(new TradeOffer(
-                new ItemStack(Spellblades.RUNEBLAZE, 2),
-                new ItemStack(Spellblades.flickerstrikeoil,1),
-                10,8,1F));
-        offers.add(new TradeOffer(
-                new ItemStack(Spellblades.RUNEFROST, 2),
-                new ItemStack(Spellblades.eviscerateoil,1),
-                10,8,1F));
-
+        if(this.getMainHandStack().isEmpty()) {
+            ItemStack offering = new ItemStack(Spellblades.OFFERING);
+            offers.add(new TradeOffer(
+                    new ItemStack(Spellblades.RUNEBLAZE, 2),
+                    offering, 10, 8, 1F));
+            offers.add(new TradeOffer(
+                    new ItemStack(Spellblades.RUNEGLEAM, 2),
+                    offering, 10, 8, 1F));
+            offers.add(new TradeOffer(
+                    new ItemStack(Spellblades.RUNEFROST, 2),
+                    offering, 10, 8, 1F));
+            offers.add(new TradeOffer(
+                    new ItemStack(com.spellbladenext.items.Items.arcane_blade.item(), 1),
+                    offering, 10, 8, 1F));
+            offers.add(new TradeOffer(
+                    new ItemStack(com.spellbladenext.items.Items.fire_blade.item(), 1),
+                    offering, 10, 8, 1F));
+            offers.add(new TradeOffer(
+                    new ItemStack(com.spellbladenext.items.Items.frost_blade.item(), 1),
+                    offering, 10, 8, 1F));
+            offers.add(new TradeOffer(
+                    new ItemStack(Spellblades.RUNEGLEAM, 2),
+                    new ItemStack(Spellblades.finalstrikeoil, 1),
+                    10, 8, 1F));
+            offers.add(new TradeOffer(
+                    new ItemStack(Spellblades.RUNEBLAZE, 2),
+                    new ItemStack(Spellblades.flickerstrikeoil, 1),
+                    10, 8, 1F));
+            offers.add(new TradeOffer(
+                    new ItemStack(Spellblades.RUNEFROST, 2),
+                    new ItemStack(Spellblades.eviscerateoil, 1),
+                    10, 8, 1F));
+        }
         return offers;
     }
 

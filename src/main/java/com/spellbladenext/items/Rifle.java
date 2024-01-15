@@ -39,7 +39,6 @@ public class Rifle extends BowItem implements GeoItem {
     }
     private AnimatableInstanceCache factory = AzureLibUtil.createInstanceCache(this);
     private final Supplier<Object> renderProvider = GeoItem.makeRenderer(this);
-    @Environment(EnvType.CLIENT)
     @Override
     public void createRenderer(Consumer<Object> consumer) {
         consumer.accept(new RenderProvider() {

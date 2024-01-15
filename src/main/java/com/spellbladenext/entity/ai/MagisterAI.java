@@ -61,7 +61,7 @@ public class MagisterAI {
     }
 
     private static void initCoreActivity(Magister reaver, Brain<Magister> brain) {
-        brain.setTaskList(Activity.CORE, 0, ImmutableList.of(new LookAroundTask(45, 90), new WanderAroundTask(),   OpenDoorsTask.create(),  ForgetAngryAtTargetTask.create()));
+        brain.setTaskList(Activity.CORE, 0, ImmutableList.of(new LookAroundTask(45, 90), new WanderAroundTask(), FindWalkTargetTask.create(0.75F),   OpenDoorsTask.create(),  ForgetAngryAtTargetTask.create()));
     }
 
     private static void initIdleActivity(Magister reaver, Brain<Magister> brain) {
@@ -71,7 +71,7 @@ public class MagisterAI {
     private static void initFightActivity(Magister reaver, Brain<Magister> brain) {
         brain.setTaskList(Activity.FIGHT, 10, ImmutableList.of( ForgetAttackTargetTask.create((livingEntity) -> {
             return !isNearestValidAttackTarget(reaver, (LivingEntity) livingEntity);
-        }),new BackUp<Magister>(8, 0.75F),   create(1.25F),new SpellAttack<Magister, LivingEntity>(),  new MeleeAttack(20)), MemoryModuleType.ATTACK_TARGET);
+        }),new BackUp<Magister>(8, 0.75F),   create(1.125F),new SpellAttack<Magister, LivingEntity>(),  new MeleeAttack(20)), MemoryModuleType.ATTACK_TARGET);
     }
     public static Task<MobEntity> create(float speed) {
         return create((entity) -> {

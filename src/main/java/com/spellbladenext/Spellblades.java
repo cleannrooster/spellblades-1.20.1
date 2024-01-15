@@ -3,6 +3,8 @@ package com.spellbladenext;
 import com.google.common.collect.ImmutableMultimap;
 import com.spellbladenext.block.Hexblade;
 import com.spellbladenext.block.HexbladeBlockItem;
+import com.spellbladenext.config.ServerConfig;
+import com.spellbladenext.config.ServerConfigWrapper;
 import com.spellbladenext.effect.CustomEffect;
 import com.spellbladenext.effect.Hex;
 import com.spellbladenext.effect.RunicAbsorption;
@@ -14,6 +16,10 @@ import com.spellbladenext.items.armor.Armors;
 import com.spellbladenext.items.attacks.Attacks;
 import com.spellbladenext.items.interfaces.PlayerDamageInterface;
 import com.spellbladenext.items.loot.Default;
+import me.shedaniel.autoconfig.AutoConfig;
+import me.shedaniel.autoconfig.serializer.JanksonConfigSerializer;
+import me.shedaniel.autoconfig.serializer.PartitioningSerializer;
+import me.shedaniel.clothconfig2.api.ConfigBuilder;
 import net.fabricmc.api.ModInitializer;
 
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
@@ -27,8 +33,10 @@ import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricDefaultAttributeRegistry;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricEntityTypeBuilder;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
+import net.minecraft.client.particle.Particle;
 import net.minecraft.client.util.ParticleUtil;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.enchantment.Enchantments;
@@ -40,6 +48,7 @@ import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.entity.effect.StatusEffectCategory;
 import net.minecraft.entity.effect.StatusEffectInstance;
+import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.*;
 import net.minecraft.particle.ParticleTypes;
@@ -59,7 +68,9 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.TypeFilter;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.EntityHitResult;
+import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Box;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.GameRules;
@@ -72,17 +83,25 @@ import net.spell_engine.api.loot.LootConfig;
 import net.spell_engine.api.loot.LootHelper;
 import net.spell_engine.api.render.CustomModels;
 import net.spell_engine.api.spell.CustomSpellHandler;
+import net.spell_engine.api.spell.Sound;
+import net.spell_engine.api.spell.Spell;
 import net.spell_engine.client.gui.SpellTooltip;
 import net.spell_engine.internals.SpellHelper;
 import net.spell_engine.internals.SpellRegistry;
+import net.spell_engine.internals.WorldScheduler;
 import net.spell_engine.internals.casting.SpellCasterEntity;
 import net.spell_engine.particle.ParticleHelper;
 import net.spell_engine.particle.Particles;
+import net.spell_engine.utils.SoundHelper;
 import net.spell_engine.utils.TargetHelper;
+import net.spell_power.SpellPowerMod;
 import net.spell_power.api.MagicSchool;
 import net.spell_power.api.SpellDamageSource;
 import net.spell_power.api.SpellPower;
 import net.spell_power.api.attributes.CustomEntityAttribute;
+import net.spell_power.api.attributes.SpellAttributes;
+import net.spell_power.api.statuseffects.StatusEffects_SpellPower;
+import net.spell_power.internals.SpellStatusEffect;
 import net.tinyconfig.ConfigManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -105,13 +124,19 @@ public class Spellblades implements ModInitializer {
 	public static EntityType<HexbladePortal> HEXBLADEPORTAL;
 	public static EntityType<RifleProjectile> RIFLEPROJECTILE;
 	public static EntityType<CycloneEntity> CYCLONEENTITY;
-
+	public static EntityType<RedLaserEntity> REDLASERENTITY;
+	public static ServerConfig config;
 	public static final CustomEntityAttribute WARDING = new CustomEntityAttribute("attribute.name.spellbladenext.warding", 0,0,9999,new Identifier(MOD_ID,"warding"));
+	public static final CustomEntityAttribute CONVERTFROMFIRE = new CustomEntityAttribute("attribute.name.spellbladenext.convertfromfire", 100,100,9999,new Identifier(MOD_ID,"convertfromfire"));
+	public static final CustomEntityAttribute CONVERTFROMFROST = new CustomEntityAttribute("attribute.name.spellbladenext.convertfromfrost", 100,100,9999,new Identifier(MOD_ID,"convertfromfrost"));
+	public static final CustomEntityAttribute CONVERTFROMARCANE = new CustomEntityAttribute("attribute.name.spellbladenext.convertfromarcane", 100,100,9999,new Identifier(MOD_ID,"convertfromarcane"));
 
 	public static final Identifier SINCELASTHEX = new Identifier(MOD_ID, "threat");
 	public static final Identifier HEXRAID = new Identifier(MOD_ID, "hex");
 	public static final Block HEXBLADE = new Hexblade(FabricBlockSettings.copyOf(Blocks.IRON_BLOCK).strength(5.0F, 6.0F).requiresTool().requiresTool().sounds(BlockSoundGroup.METAL).nonOpaque());
 	public static final Item HEXBLADEITEM = new HexbladeBlockItem(HEXBLADE,new FabricItemSettings().maxCount(1));
+	public static final Item ASHES = new Ashes(new FabricItemSettings().maxCount(1));
+
 	public static ArrayList<attackevent> attackeventArrayList = new ArrayList<>();
 
 	public static final Item OFFERING = new Offering(new FabricItemSettings());
@@ -127,6 +152,8 @@ public class Spellblades implements ModInitializer {
 	public static Item RUNEGLEAM = new Item(new FabricItemSettings().maxCount(64));
 	public static Item MONKEYSTAFF = new MonkeyStaff(0,0,new FabricItemSettings());
 	public static Item PRISMATIC = new PrismaticEffigy(new FabricItemSettings());
+	public static Item THREAD = new Item(new FabricItemSettings().maxCount(64));
+
 /*
 	public static Item RIFLE = new Rifle(new FabricItemSettings().maxDamage(2000));
 */
@@ -136,6 +163,7 @@ public class Spellblades implements ModInitializer {
 
 	public static StatusEffect RunicAbsorption = new RunicAbsorption(StatusEffectCategory.BENEFICIAL, 0xff4bdd);
 	public static StatusEffect PORTALSICKNESS = new CustomEffect(StatusEffectCategory.HARMFUL, 0xff4bdd);
+	public static StatusEffect UNLEASH = new CustomEffect(StatusEffectCategory.BENEFICIAL, 0xff4bdd);
 
 	public static final Item NETHERDEBUG = new DebugNetherPortal(new FabricItemSettings().maxCount(1));
 
@@ -158,13 +186,45 @@ public class Spellblades implements ModInitializer {
 			.sanitize(true)
 			.constrain(LootConfig::constrainValues)
 			.build();
+	public static void diebeam(CustomSpellHandler.Data data1) {
+		Vec3d pos = data1.caster().getPos().add(0, data1.caster().getHeight() / 2, 0);
+
+		float range = SpellRegistry.getSpell(new Identifier(MOD_ID, "eldritchblast")).range;
+		Sound soundEvent;
+		soundEvent = SpellRegistry.getSpell(new Identifier(MOD_ID, "eldritchblast")).release.sound;
+		if (data1.caster().getWorld() instanceof ServerWorld world) {
+			SoundHelper.playSound(world, data1.caster(), soundEvent);
+		}
+		for (int i = 2; i < SpellRegistry.getSpell(new Identifier(MOD_ID, "eldritchblast")).range; i++) {
+			Vec3d pos2 = pos.add(data1.caster().getRotationVec(1.0F).multiply(i));
+			HitResult result = data1.caster().getWorld().raycast(new RaycastContext(data1.caster().getEyePos(), pos2, RaycastContext.ShapeType.COLLIDER, RaycastContext.FluidHandling.NONE, data1.caster()));
+			if (result.getType() != HitResult.Type.BLOCK && data1.caster().getWorld() instanceof ServerWorld world) {
+
+				for(ServerPlayerEntity player: PlayerLookup.tracking(data1.caster())) {
+					world.spawnParticles(player,ParticleTypes.SONIC_BOOM,true,pos2.getX(),pos2.getY(),pos2.getZ(),1,0,0,0,0);
+				}
+				world.spawnParticles((ServerPlayerEntity)data1.caster(),ParticleTypes.SONIC_BOOM,true,pos2.getX(),pos2.getY(),pos2.getZ(),1,0,0,0,0);
+
+
+			}
+		}
+		List<Entity> list = TargetHelper.targetsFromRaycast(data1.caster(), SpellRegistry.getSpell(new Identifier(MOD_ID, "eldritchblast")).range, (target) -> {
+			return !target.isSpectator() && target.canHit();
+		});
+		for (Entity entity : list) {
+			SpellHelper.performImpacts(data1.caster().getWorld(), data1.caster(), entity, data1.caster(), SpellRegistry.getSpell(new Identifier(MOD_ID, "eldritchblast")),
+					data1.impactContext());
+
+		}
+	}
 	@Override
 	public void onInitialize() {
 		SPELLBLADES = FabricItemGroup.builder()
 				.icon(() -> new ItemStack(Items.arcane_blade.item()))
 				.displayName(Text.translatable("itemGroup.spellbladenext.general"))
 				.build();
-
+		AutoConfig.register(ServerConfigWrapper.class, PartitioningSerializer.wrap(JanksonConfigSerializer::new));
+		config = AutoConfig.getConfigHolder(ServerConfigWrapper.class).getConfig().server;
 		Registry.register(Registries.ITEM,new Identifier(MOD_ID,"spelloil"),spellOil);
 		Registry.register(Registries.ITEM,new Identifier(MOD_ID,"whirlwindoil"),whirlwindOil);
 		Registry.register(Registries.ITEM,new Identifier(MOD_ID,"finalstrikeoil"),finalstrikeoil);
@@ -177,20 +237,29 @@ public class Spellblades implements ModInitializer {
 		Registry.register(Registries.ITEM,new Identifier(MOD_ID,"monkeystaff"),MONKEYSTAFF);
 		Registry.register(Registries.BLOCK,new Identifier(MOD_ID,"hexblade"),HEXBLADE);
 		Registry.register(Registries.ITEM, new Identifier(MOD_ID,"hexbladeitem"), HEXBLADEITEM);
+		Registry.register(Registries.ITEM, new Identifier(MOD_ID,"ashes"), ASHES);
+
 		Registry.register(Registries.ITEM, new Identifier(MOD_ID,"offering"), OFFERING);
 		Registry.register(Registries.ITEM, new Identifier(MOD_ID, "debug"), NETHERDEBUG);
 		Registry.register(Registries.ITEM, new Identifier(MOD_ID, "prismatic"), PRISMATIC);
+		Registry.register(Registries.ITEM, new Identifier(MOD_ID, "thread"), THREAD);
+
 /*
 		Registry.register(Registries.ITEM, new Identifier(MOD_ID, "rifle"), RIFLE);
 */
 		Registry.register(Registries.STATUS_EFFECT,new Identifier(MOD_ID,"hexed"),HEXED);
 		Registry.register(Registries.STATUS_EFFECT,new Identifier(MOD_ID,"magisterfriend"),MAGISTERFRIEND);
 		Registry.register(Registries.STATUS_EFFECT,new Identifier(MOD_ID,"portalsickness"),PORTALSICKNESS);
+		Registry.register(Registries.STATUS_EFFECT,new Identifier(MOD_ID,"unleash"),UNLEASH);
 
 		Registry.register(Registries.STATUS_EFFECT,new Identifier(MOD_ID,"runicabsorption"),RunicAbsorption);
 		Registry.register(Registries.CUSTOM_STAT, "threat", SINCELASTHEX);
 		Registry.register(Registries.CUSTOM_STAT, "hex", HEXRAID);
 		Registry.register(Registries.ATTRIBUTE,new Identifier(MOD_ID,"warding"),WARDING);
+		Registry.register(Registries.ATTRIBUTE,new Identifier(MOD_ID,"convertfromfire"),CONVERTFROMFIRE);
+		Registry.register(Registries.ATTRIBUTE,new Identifier(MOD_ID,"convertfromfrost"),CONVERTFROMFROST);
+		Registry.register(Registries.ATTRIBUTE,new Identifier(MOD_ID,"convertfromarcane"),CONVERTFROMARCANE);
+
 		lootConfig.refresh();
 		itemConfig.refresh();
 		Items.register(itemConfig.value.weapons);
@@ -221,6 +290,9 @@ public class Spellblades implements ModInitializer {
 			content.add(OFFERING);
 			content.add(NETHERDEBUG);
 			content.add(PRISMATIC);
+			content.add(THREAD);
+			content.add(ASHES);
+
 			/*content.add(RIFLE);*/
 		});
 		REAVER = Registry.register(
@@ -248,6 +320,177 @@ public class Spellblades implements ModInitializer {
 		SpellBooks.createAndRegister(new Identifier(MOD_ID,"frost_battlemage"),KEY);
 		SpellBooks.createAndRegister(new Identifier(MOD_ID,"fire_battlemage"),KEY);
 		SpellBooks.createAndRegister(new Identifier(MOD_ID,"arcane_battlemage"),KEY);
+		SpellBooks.createAndRegister(new Identifier(MOD_ID,"runic_echoes"),KEY);
+		SpellBooks.createAndRegister(new Identifier(MOD_ID,"phoenix"),KEY);
+		SpellBooks.createAndRegister(new Identifier(MOD_ID,"deathchill"),KEY);
+
+		CustomSpellHandler.register(new Identifier(MOD_ID,"bladestorm"),(data) -> {
+			CustomSpellHandler.Data data1 = (CustomSpellHandler.Data) data;
+			for(Entity entity : data1.targets()){
+				if(entity instanceof LivingEntity living){
+					CycloneEntity cyclone = new CycloneEntity(CYCLONEENTITY,entity.getWorld());
+					cyclone.setColor(5);
+					cyclone.setOwner(data1.caster());
+					cyclone.setPosition(data1.caster().getPos().getX(),data1.caster().getPos().getY(),data1.caster().getPos().getZ());
+					cyclone.target = entity;
+					cyclone.context = data1.impactContext();
+					entity.getWorld().spawnEntity(cyclone);
+				}
+			}
+			if(data1.targets().isEmpty()){
+				CycloneEntity cyclone = new CycloneEntity(CYCLONEENTITY,data1.caster().getWorld());
+				cyclone.setColor(5);
+				cyclone.setOwner(data1.caster());
+				cyclone.setPos(data1.caster().getPos().getX(),data1.caster().getPos().getY(),data1.caster().getPos().getZ());
+				cyclone.context = data1.impactContext();
+				data1.caster().getWorld().spawnEntity(cyclone);
+
+			}
+			if(data1.caster() instanceof PlayerDamageInterface damageInterface ) {
+				if(damageInterface.getDiebeamStacks() > 0) {
+					damageInterface.addDiebeamStack(-1);
+				}
+				else{
+					if(data1.caster() instanceof SpellCasterEntity caster){
+						caster.getCooldownManager().set(new Identifier(MOD_ID,"bladestorm"),160);
+					}
+				}
+			}
+			return true;
+		});
+		CustomSpellHandler.register(new Identifier(MOD_ID,"deathchill"),(data) -> {
+			CustomSpellHandler.Data data1 = (CustomSpellHandler.Data) data;
+			if(!FabricLoader.getInstance().isModLoaded("frostiful")){
+				data1.caster().setFrozenTicks(data1.caster().getFrozenTicks()+2+data1.caster().getMinFreezeDamageTicks()/(5*20));
+			}
+			else{
+				data1.caster().setFrozenTicks(data1.caster().getFrozenTicks()+25);
+
+			}
+			if(data1.progress() >= 0.25){
+			data1.caster().addStatusEffect(new StatusEffectInstance(StatusEffects.RESISTANCE,80,(int)(data1.progress()/0.25F)-1));
+			}
+			return false;
+		});
+		CustomSpellHandler.register(new Identifier(MOD_ID,"coldbuff"),(data) -> {
+			CustomSpellHandler.Data data1 = (CustomSpellHandler.Data) data;
+			int buff = 0;
+			Spell spell1 = SpellRegistry.getSpell(new Identifier(MOD_ID, "coldbuff"));
+
+			if(SpellAttributes.POWER.get(MagicSchool.FROST) != null && SpellAttributes.POWER.get(MagicSchool.FROST).statusEffect != null && data1.caster().hasStatusEffect(SpellAttributes.POWER.get(MagicSchool.FROST).statusEffect)
+					&& data1.caster().getStatusEffect(SpellAttributes.POWER.get(MagicSchool.FROST).statusEffect).getAmplifier() >= 3) {
+
+			}
+			else{
+				return false;
+			}
+			data1.caster().addStatusEffect(new StatusEffectInstance(StatusEffects.STRENGTH,160,4));
+			for(Entity entity : data1.targets()) {
+				if (!FabricLoader.getInstance().isModLoaded("frostiful")) {
+
+					entity.setFrozenTicks(entity.getFrozenTicks() + 200);
+				} else {
+					entity.setFrozenTicks(entity.getFrozenTicks() + 600 * 20);
+				}
+				ParticleHelper.sendBatches(entity, spell1.impact[0].particles);
+
+			}
+				data1.caster().setFrozenTicks(-600*20);
+
+				return true;
+		});
+		CustomSpellHandler.register(new Identifier(MOD_ID,"frostbloom0"),(data) -> {
+			CustomSpellHandler.Data data1 = (CustomSpellHandler.Data) data;
+
+			int repeats = (int) ((double)data1.caster().getFreezingScale()*4d);
+			int power = 0;
+			if(SpellAttributes.POWER.get(MagicSchool.FROST) != null && SpellAttributes.POWER.get(MagicSchool.FROST).statusEffect != null && data1.caster().getStatusEffect(SpellAttributes.POWER.get(MagicSchool.FROST).statusEffect) != null ){
+				power = data1.caster().getStatusEffect(SpellAttributes.POWER.get(MagicSchool.FROST).statusEffect).getAmplifier();
+
+			}
+				Spell spell1 = SpellRegistry.getSpell(new Identifier(MOD_ID, "frostbloom" + power));
+			List<Entity> list = TargetHelper.targetsFromArea(data1.caster(),spell1.range,spell1.release.target.area, target -> TargetHelper.allowedToHurt(data1.caster(),target) );
+			if(spell1 != null) {
+				if(spell1 != null) {
+					for(Entity target: list) {
+						SpellHelper.performImpacts(data1.caster().getWorld(), data1.caster(), target, data1.caster(), spell1, data1.impactContext(), false);
+						if(!FabricLoader.getInstance().isModLoaded("frostiful")) {
+
+							target.setFrozenTicks(target.getFrozenTicks() + 14);
+						}
+						else{
+							target.setFrozenTicks(target.getFrozenTicks() + 14*3);
+
+						}
+
+					}
+
+
+					ParticleHelper.sendBatches(data1.caster(), spell1.release.particles);
+
+				}
+			}
+			if(SpellAttributes.POWER.get(MagicSchool.FROST) != null && SpellAttributes.POWER.get(MagicSchool.FROST).statusEffect != null) {
+				if (power + 1 <= 3) {
+					data1.caster().addStatusEffect(new StatusEffectInstance(SpellAttributes.POWER.get(MagicSchool.FROST).statusEffect, 160, power+1));
+				}
+				else{
+					data1.caster().addStatusEffect(new StatusEffectInstance(SpellAttributes.POWER.get(MagicSchool.FROST).statusEffect, 160, power));
+
+				}
+			}
+			if(!FabricLoader.getInstance().isModLoaded("frostiful")) {
+
+				data1.caster().setFrozenTicks(data1.caster().getFrozenTicks() + 14);
+			}
+			else {
+				data1.caster().setFrozenTicks(data1.caster().getFrozenTicks() + 600);
+			}
+
+			return true;
+		});
+		CustomSpellHandler.register(new Identifier(MOD_ID,"echoes"),(data) -> {
+			CustomSpellHandler.Data data1 = (CustomSpellHandler.Data) data;
+			for(Entity entity : data1.targets()){
+				if(entity instanceof LivingEntity living){
+					if(living.getLastAttacker() == data1.caster()){
+						SpellHelper.performImpacts(data1.caster().getWorld(),data1.caster(),entity,data1.caster(),SpellRegistry.getSpell(new Identifier(MOD_ID,"echoes")),
+								data1.impactContext());
+						if(data1.caster() instanceof PlayerDamageInterface damageInterface ){
+							if(damageInterface.getDiebeamStacks() > 0) {
+								damageInterface.addDiebeamStack(-1);
+							}
+							else{
+								living.setAttacker(null);
+							}
+						}
+					}
+				}
+			}
+			if(data1.targets().isEmpty()){
+				return false;
+			}
+			return true;
+		});
+		CustomSpellHandler.register(new Identifier(MOD_ID,"eldritchblast"),(data) -> {
+			CustomSpellHandler.Data data1 = (CustomSpellHandler.Data) data;
+			Vec3d look = data1.caster().getRotationVec(1.0F).normalize().multiply((double)SpellRegistry.getSpell(new Identifier(MOD_ID,"eldritchblast")).range);
+			diebeam(data1);
+
+			if(data1.caster() instanceof PlayerDamageInterface damageInterface){
+			for(int ii = 0; ii < damageInterface.getDiebeamStacks(); ii++) {
+
+				((WorldScheduler)data1.caster().getWorld()).schedule(4+4*ii,()-> {
+					diebeam(data1);
+				});
+
+			}
+			damageInterface.resetDiebeamStack();
+			}
+
+
+			return true;
+		});
 
 		CustomSpellHandler.register(new Identifier(MOD_ID,"sniper"),(data) -> {
 			CustomSpellHandler.Data data1 = (CustomSpellHandler.Data) data;
@@ -272,7 +515,7 @@ public class Spellblades implements ModInitializer {
 		CustomSpellHandler.register(new Identifier(MOD_ID,"whirlingblades"),(data) -> {
 			MagicSchool actualSchool = MagicSchool.FIRE;
 			CustomSpellHandler.Data data1 = (CustomSpellHandler.Data) data;
-			float modifier = SpellRegistry.getSpell(new Identifier(MOD_ID,"frostvert")).impact[0].action.damage.spell_power_coefficient;
+			float modifier = SpellRegistry.getSpell(new Identifier(MOD_ID,"whirlingblades")).impact[0].action.damage.spell_power_coefficient;
 			data1.caster().velocityDirty = true;
 			data1.caster().velocityModified = true;
 				float f = data1.caster().getYaw();
@@ -335,24 +578,17 @@ public class Spellblades implements ModInitializer {
 
 			data1.caster().velocityDirty = true;
 			data1.caster().velocityModified = true;
+			data1.caster().fallDistance = 0;
 
-			data1.caster().addVelocity(0,1,0);
-			Attacks.attackAll(data1.caster(),data1.targets(),(float)modifier);
-			for(Entity entity: data1.targets()){
-				SpellPower.Result power = SpellPower.getSpellPower(actualSchool, (LivingEntity) data1.caster());
-				SpellPower.Vulnerability vulnerability = SpellPower.Vulnerability.none;
-				if(entity instanceof LivingEntity living) {
-					vulnerability = SpellPower.getVulnerability(living, actualSchool);
+			if(data1.progress() > 0.015F && data1.caster().isOnGround()){
+				List<Entity> list = TargetHelper.targetsFromArea(data1.caster(),data1.caster().getEyePos(),SpellRegistry.getSpell(new Identifier(MOD_ID, "frostvert")).range,new Spell.Release.Target.Area(), target -> TargetHelper.allowedToHurt(data1.caster(),target) );
+				for(Entity entity : list) {
+					SpellHelper.ImpactContext context = new SpellHelper.ImpactContext(1.0F,1.0F,null,data1.impactContext().power(), TargetHelper.TargetingMode.AREA);
+					SpellHelper.performImpacts(data1.caster().getWorld(), data1.caster(), entity, data1.caster(), SpellRegistry.getSpell(new Identifier(MOD_ID, "frostvert")), context);
 				}
-				double amount = modifier2 *  power.randomValue(vulnerability);
-				entity.timeUntilRegen = 0;
-
-				entity.damage(SpellDamageSource.player(actualSchool,data1.caster()), (float) amount);
-				ParticleHelper.sendBatches(entity,SpellRegistry.getSpell(new Identifier(MOD_ID,"frostvert")).impact[0].particles);
-				ParticleHelper.sendBatches(entity,SpellRegistry.getSpell(new Identifier(MOD_ID,"frostvert")).impact[1].particles);
-
+				return true;
 			}
-			return true;
+			return false;
 		});
 		CustomSpellHandler.register(new Identifier(MOD_ID,"finalstrike"),(data) -> {
 			MagicSchool actualSchool = MagicSchool.ARCANE;
@@ -408,6 +644,61 @@ public class Spellblades implements ModInitializer {
 				if(result.getPos() != null) {
 					data1.caster().requestTeleport(result.getPos().getX(),result.getPos().getY(),result.getPos().getZ());
 				}
+			}
+			return true;
+		});
+		CustomSpellHandler.register(new Identifier(MOD_ID,"phoenixdive"),(data) -> {
+			MagicSchool actualSchool = MagicSchool.ARCANE;
+			CustomSpellHandler.Data data1 = (CustomSpellHandler.Data) data;
+
+			BlockHitResult result = data1.caster().getWorld().raycast(new RaycastContext(data1.caster().getEyePos(),data1.caster().getEyePos().add(data1.caster().getRotationVector().multiply(SpellRegistry.getSpell(new Identifier(MOD_ID,"phoenixdive")).range)), RaycastContext.ShapeType.COLLIDER, RaycastContext.FluidHandling.NONE,data1.caster()));
+
+			if(result.getPos() != null) {
+				data1.caster().requestTeleport(result.getPos().getX(),result.getPos().getY(),result.getPos().getZ());
+
+
+			}
+			List<Entity> list = TargetHelper.targetsFromArea(data1.caster(),data1.caster().getEyePos(),8,new Spell.Release.Target.Area(), target -> TargetHelper.allowedToHurt(data1.caster(),target) );
+			for(Entity entity : list){
+			SpellHelper.performImpacts(data1.caster().getWorld(),data1.caster(),entity,data1.caster(),SpellRegistry.getSpell(new Identifier(MOD_ID,"phoenixdive")),data1.impactContext());
+			}
+			return true;
+		});
+		CustomSpellHandler.register(new Identifier(MOD_ID,"snuffout"),(data) -> {
+			MagicSchool actualSchool = MagicSchool.ARCANE;
+			CustomSpellHandler.Data data1 = (CustomSpellHandler.Data) data;
+			for(Entity entity : data1.targets()){
+				if(entity.isOnFire()) {
+					List<Entity> list = TargetHelper.targetsFromArea(entity, entity.getEyePos(), 8, new Spell.Release.Target.Area(), target -> TargetHelper.allowedToHurt(data1.caster(), target));
+					for (Entity entity1 : list) {
+						SpellHelper.performImpacts(data1.caster().getWorld(), data1.caster(), entity1, data1.caster(), SpellRegistry.getSpell(new Identifier(MOD_ID, "snuffout")), data1.impactContext());
+					}
+					entity.setFireTicks(0);
+					entity.setOnFire(false);
+
+				}
+			}
+			return true;
+		});
+		CustomSpellHandler.register(new Identifier(MOD_ID,"combustion"),(data) -> {
+			MagicSchool actualSchool = MagicSchool.ARCANE;
+			CustomSpellHandler.Data data1 = (CustomSpellHandler.Data) data;
+			for(Entity entity : data1.targets()){
+				if(entity.isOnFire()) {
+					List<Entity> list = TargetHelper.targetsFromArea(entity,entity.getEyePos(),4,new Spell.Release.Target.Area(), target -> TargetHelper.allowedToHurt(data1.caster(),target) );
+					for(Entity entity1 : list) {
+						SpellHelper.performImpacts(data1.caster().getWorld(), data1.caster(), entity1, data1.caster(), SpellRegistry.getSpell(new Identifier(MOD_ID, "combustion")), data1.impactContext());
+
+					}
+				}
+				else{
+					SpellHelper.performImpacts(data1.caster().getWorld(), data1.caster(), entity, data1.caster(), SpellRegistry.getSpell(new Identifier(MOD_ID, "combustion")), data1.impactContext());
+
+				}
+
+			}
+			if(data1.targets().isEmpty()){
+				return false;
 			}
 			return true;
 		});
@@ -487,6 +778,15 @@ public class Spellblades implements ModInitializer {
 				ENTITY_TYPE,
 				new Identifier(MOD_ID, "cycloneentity"),
 				FabricEntityTypeBuilder.<CycloneEntity>create(SpawnGroup.MISC, CycloneEntity::new)
+						.dimensions(EntityDimensions.fixed(4F, 2F)) // dimensions in Minecraft units of the render
+						.trackRangeBlocks(128)
+						.trackedUpdateRate(1)
+						.build()
+		);
+		REDLASERENTITY = Registry.register(
+				ENTITY_TYPE,
+				new Identifier(MOD_ID, "redlaser"),
+				FabricEntityTypeBuilder.<RedLaserEntity>create(SpawnGroup.MISC, RedLaserEntity::new)
 						.dimensions(EntityDimensions.fixed(0.5F, 0.5F)) // dimensions in Minecraft units of the render
 						.trackRangeBlocks(128)
 						.trackedUpdateRate(1)
@@ -567,8 +867,10 @@ public class Spellblades implements ModInitializer {
 			}
 			float modifier = SpellRegistry.getSpell(new Identifier(MOD_ID,"eviscerate")).impact[0].action.damage.spell_power_coefficient;
 			modifier *= 0.2;
+			modifier *= data1.caster().getAttributeValue(EntityAttributes.GENERIC_ATTACK_SPEED);
 			float modifier2 = SpellRegistry.getSpell(new Identifier(MOD_ID,"eviscerate")).impact[1].action.damage.spell_power_coefficient;
 			modifier2 *= 0.2;
+			modifier2 *= data1.caster().getAttributeValue(EntityAttributes.GENERIC_ATTACK_SPEED);
 
 			if(data1.caster() instanceof PlayerDamageInterface playerDamageInterface && playerDamageInterface.getLastAttacked() != null && data1.targets().contains(playerDamageInterface.getLastAttacked())) {
 				EntityAttributeModifier modifier1 = new EntityAttributeModifier(UUID.randomUUID(),"knockbackresist",1, EntityAttributeModifier.Operation.ADDITION);
@@ -734,7 +1036,7 @@ public class Spellblades implements ModInitializer {
 			CustomSpellHandler.Data data1 = (CustomSpellHandler.Data) data;
 			if(data1.caster().getWorld() instanceof ServerWorld world){
 				if(world.getEntitiesByType(TypeFilter.instanceOf(CycloneEntity.class), cyclone -> {
-					if( cyclone.getOwner() == data1.caster()){
+					if( cyclone.getOwner() == data1.caster() && cyclone.getColor() != 5){
 						return true;
 					}
 					return false;
@@ -746,8 +1048,9 @@ public class Spellblades implements ModInitializer {
 					data1.caster().getWorld().spawnEntity(cyclone);
 
 				}
+				eleWhirlwind(data1);
+
 			}
-			eleWhirlwind(data1);
 
 			return false;
 		});
@@ -758,10 +1061,11 @@ public class Spellblades implements ModInitializer {
 			float modifier = SpellRegistry.getSpell(new Identifier(MOD_ID,"whirlwind")).impact[0].action.damage.spell_power_coefficient;
 			modifier *= 0.4F+0.6F/(float)data1.targets().size()+(0.6F-0.6F/(float)data1.targets().size())*Math.min(3, EnchantmentHelper.getEquipmentLevel(Enchantments.SWEEPING,data1.caster()))/3;
 			modifier *= 0.2;
+			modifier *= Spellblades.config.spin_attack_coeff;
 			modifier *= data1.caster().getAttributeValue(EntityAttributes.GENERIC_ATTACK_SPEED);
 			if(data1.caster().getWorld() instanceof ServerWorld world){
 				if(world.getEntitiesByType(TypeFilter.instanceOf(CycloneEntity.class), cyclone -> {
-					if( cyclone.getOwner() == data1.caster()){
+					if( cyclone.getOwner() == data1.caster()&& cyclone.getColor() != 5){
 						return true;
 					}
 					return false;
@@ -774,8 +1078,9 @@ public class Spellblades implements ModInitializer {
 					data1.caster().getWorld().spawnEntity(cyclone);
 
 				}
+				Attacks.attackAll(data1.caster(),data1.targets(),(float)modifier);
+
 			}
-			Attacks.attackAll(data1.caster(),data1.targets(),(float)modifier);
 
 			return false;
 		});
@@ -784,10 +1089,12 @@ public class Spellblades implements ModInitializer {
 			CustomSpellHandler.Data data1 = (CustomSpellHandler.Data) data;
 			float modifier = SpellRegistry.getSpell(new Identifier(MOD_ID,"reckoning")).impact[0].action.damage.spell_power_coefficient;
 			modifier *= 0.2;
+			modifier *= Spellblades.config.spin_attack_coeff;
+
 			modifier *= data1.caster().getAttributeValue(EntityAttributes.GENERIC_ATTACK_SPEED);
 			if(data1.caster().getWorld() instanceof ServerWorld world){
 				if(world.getEntitiesByType(TypeFilter.instanceOf(CycloneEntity.class), cyclone -> {
-					if( cyclone.getOwner() == data1.caster()){
+					if( cyclone.getOwner() == data1.caster()&& cyclone.getColor() != 5){
 						return true;
 					}
 					return false;
@@ -800,17 +1107,19 @@ public class Spellblades implements ModInitializer {
 					data1.caster().getWorld().spawnEntity(cyclone);
 
 				}
+				Attacks.attackAll(data1.caster(),data1.targets(),(float)modifier);
+
 			}
-			Attacks.attackAll(data1.caster(),data1.targets(),(float)modifier);
 
 			return false;
 		});
 
 		CustomSpellHandler.register(new Identifier(MOD_ID,"maelstrom"),(data) -> {
 			CustomSpellHandler.Data data1 = (CustomSpellHandler.Data) data;
+
 			if(data1.caster().getWorld() instanceof ServerWorld world){
 				if(world.getEntitiesByType(TypeFilter.instanceOf(CycloneEntity.class), cyclone -> {
-					if( cyclone.getOwner() == data1.caster()){
+					if( cyclone.getOwner() == data1.caster()&& cyclone.getColor() != 5){
 						return true;
 					}
 					return false;
@@ -823,15 +1132,16 @@ public class Spellblades implements ModInitializer {
 					data1.caster().getWorld().spawnEntity(cyclone);
 
 				}
+				eleWhirlwind(data1);
+
 			}
-			eleWhirlwind(data1);
 			return false;
 		});
 		CustomSpellHandler.register(new Identifier(MOD_ID,"inferno"),(data) -> {
 			CustomSpellHandler.Data data1 = (CustomSpellHandler.Data) data;
 			if(data1.caster().getWorld() instanceof ServerWorld world){
 				if(world.getEntitiesByType(TypeFilter.instanceOf(CycloneEntity.class), cyclone -> {
-					if( cyclone.getOwner() == data1.caster()){
+					if( cyclone.getOwner() == data1.caster()&& cyclone.getColor() != 5){
 						return true;
 					}
 					return false;
@@ -843,8 +1153,9 @@ public class Spellblades implements ModInitializer {
 
 					data1.caster().getWorld().spawnEntity(cyclone);
 				}
+				eleWhirlwind(data1);
+
 			}
-			eleWhirlwind(data1);
 			return false;
 		});
 		CustomSpellHandler.register(new Identifier(MOD_ID,"smite"),(data) -> {
@@ -873,10 +1184,9 @@ public class Spellblades implements ModInitializer {
 				if (player.getWorld().getRegistryKey().equals(DIMENSIONKEY) && player.getY() < -32) {
 					player.requestTeleport(player.getX(), 150, player.getZ());
 				}
-				if (((int) (player.getWorld().getTimeOfDay() % 24000L)) % 1200 == 0 && server.getGameRules().getBoolean(SHOULD_INVADE)) {
+				if (((int) (player.getWorld().getTimeOfDay() % 24000L)) % 1200 == 0 && server.getGameRules().getBoolean(SHOULD_INVADE) &&server.getGameRules().getBoolean(GameRules.DO_DAYLIGHT_CYCLE) && Spellblades.config.hexblade_on) {
 
-					if (player.getWorld().getRegistryKey().equals(DIMENSIONKEY) && !player.hasStatusEffect(PORTALSICKNESS) && player.getWorld().isSkyVisible(player.getBlockPos().up())) {
-
+					if (player.getWorld().getRegistryKey().equals(DIMENSIONKEY) && !player.hasStatusEffect(PORTALSICKNESS)  && !(Math.abs(player.getPos().getX()) < config.hexblade_grace  && Math.abs(player.getPos().getZ()) < config.hexblade_grace) && player.getWorld().isSkyVisible(player.getBlockPos().up())) {
 						attackeventArrayList.add(new attackevent(player.getWorld(), player));
 					}
 

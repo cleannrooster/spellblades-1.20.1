@@ -18,7 +18,7 @@ public class CycloneModel<T extends CycloneEntity> extends GeoModel<CycloneEntit
         if(reaver.getColor() == 1) {
             return new Identifier(Spellblades.MOD_ID, "textures/mob/whirlwind.png");
         }
-        else if (reaver.getColor() == 2){
+        else if (reaver.getColor() == 2 || reaver.getColor() == 5){
             return new Identifier(Spellblades.MOD_ID, "textures/mob/maelstrom.png");
         }
         else if (reaver.getColor() == 3){

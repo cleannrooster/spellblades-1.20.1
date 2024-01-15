@@ -28,7 +28,7 @@ public class PlayerMixin implements PlayerDamageInterface {
     public Entity lastAttacked;
     public int lasthurt;
     public float damageAbsorbed;
-
+    public int diebeamstacks;
     public int repeats = 0;
     public boolean overrideDamageMultiplier = false;
     public boolean shouldUnFortify = false;
@@ -60,6 +60,21 @@ public class PlayerMixin implements PlayerDamageInterface {
     @Override
     public void absorbDamage(float i) {
         damageAbsorbed = damageAbsorbed + i;
+    }
+
+    @Override
+    public int getDiebeamStacks() {
+        return this.diebeamstacks;
+    }
+
+    @Override
+    public void addDiebeamStack(int i) {
+        this.diebeamstacks += i;
+    }
+
+    @Override
+    public void resetDiebeamStack() {
+        this.diebeamstacks = 0;
     }
 
     public void setLasthurt(int lasthurt) {
