@@ -4,7 +4,7 @@
     "item": "spellbladenext:runegleam_ingot"
   },
   "base": {
-    "item": "minecraft:netherite_boots"
+    "item": "minecraft:diamond_boots"
   },
   "result": {
     "item": "spellbladenext:gleaming_feet"

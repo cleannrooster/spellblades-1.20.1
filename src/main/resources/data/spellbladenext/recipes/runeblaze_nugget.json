@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "item": "spellbladenext:runeblaze_plate"
+    }
+  ],
+  "result": {
+    "item": "spellbladenext:runeblaze_nugget",
+    "count": 9
+  }
+}

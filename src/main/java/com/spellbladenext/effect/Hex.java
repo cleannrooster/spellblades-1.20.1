@@ -20,6 +20,7 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.stat.Stats;
 import net.minecraft.text.Text;
+import net.minecraft.util.Formatting;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.spell_engine.api.spell.Spell;
@@ -54,7 +55,12 @@ public class Hex extends StatusEffect {
 
             }
             if(reaver1 != null && reaver1.isScout() &&  reaver.nemesis == player && !reaver1.returninghome && !player.hasStatusEffect(StatusEffects.INVISIBILITY)){
-                reaver1.getBrain().remember(MemoryModuleType.WALK_TARGET,new WalkTarget(player,1.4F,1));
+                if(reaver.nemesis.distanceTo(reaver) > 2) {
+                    reaver1.getBrain().remember(MemoryModuleType.WALK_TARGET, new WalkTarget(player, 1.4F, 2));
+                }
+                else{
+                    reaver.getLookControl().lookAt(reaver.nemesis);
+                }
             }
 
         }
@@ -66,6 +72,13 @@ public class Hex extends StatusEffect {
         return true;
     }
 
+    @Override
+    public void onApplied(LivingEntity entity, AttributeContainer attributes, int amplifier) {
+        if(entity instanceof PlayerEntity player){
+            player.sendMessage(Text.translatable("Hexblade Magister").formatted(Formatting.LIGHT_PURPLE).append(": \"Greetings, rogue mage. Pay us your dues or pay with your life. You have until the Hex expires.\""));
+        }
+        super.onApplied(entity, attributes, amplifier);
+    }
 
     @Override
     public void onRemoved(LivingEntity livingEntity, AttributeContainer attributeMap, int i) {

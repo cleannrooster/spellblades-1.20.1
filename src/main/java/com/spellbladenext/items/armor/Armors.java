@@ -295,6 +295,115 @@ public class Armors {
                     ))
                     .put(entries)
                     .armorSet();;
+    public static final Armor.Set ashherald =
+            create(
+                    new Armor.CustomMaterial(
+                            "ashherald",
+                            35,
+                            10,
+                            SoundEvents.ITEM_ARMOR_EQUIP_CHAIN,
+                            () -> Ingredient.ofItems(Spellblades.RUNEBLAZENUGGET)
+                    ),
+                    ItemConfig.ArmorSet.with(
+                            new ItemConfig.ArmorSet.Piece(3)
+                                    .addAll(List.of(
+
+                                    )),
+                            new ItemConfig.ArmorSet.Piece(8)
+                                    .addAll(List.of(
+
+
+                                    )),
+                            new ItemConfig.ArmorSet.Piece(6)
+                                    .addAll(List.of(
+
+
+                                    )),
+                            new ItemConfig.ArmorSet.Piece(3)
+                                    .addAll(List.of(
+
+                                    ))
+                    )) .bundle(material -> new Armor.Set(Spellblades.MOD_ID,
+                            new HeraldArmor(material, ArmorItem.Type.HELMET, new Item.Settings(),List.of(MagicSchool.FIRE)),
+                            new HeraldArmor(material, ArmorItem.Type.CHESTPLATE,new Item.Settings(), List.of(MagicSchool.FIRE)),
+                            new HeraldArmor(material, ArmorItem.Type.LEGGINGS, new Item.Settings(),List.of(MagicSchool.FIRE)),
+                            new HeraldArmor(material, ArmorItem.Type.BOOTS,new Item.Settings(), List.of(MagicSchool.FIRE))
+                    ))
+                    .put(entries)
+                    .armorSet();;
+    public static final Armor.Set arcaneherald =
+            create(
+                    new Armor.CustomMaterial(
+                            "arcaneherald",
+                            35,
+                            10,
+                            SoundEvents.ITEM_ARMOR_EQUIP_CHAIN,
+                            () -> Ingredient.ofItems(Spellblades.RUNEGLEAMNUGGET)
+                    ),
+                    ItemConfig.ArmorSet.with(
+                            new ItemConfig.ArmorSet.Piece(3)
+                                    .addAll(List.of(
+
+                                    )),
+                            new ItemConfig.ArmorSet.Piece(8)
+                                    .addAll(List.of(
+
+
+                                    )),
+                            new ItemConfig.ArmorSet.Piece(6)
+                                    .addAll(List.of(
+
+
+                                    )),
+                            new ItemConfig.ArmorSet.Piece(3)
+                                    .addAll(List.of(
+
+                                    ))
+                    )) .bundle(material -> new Armor.Set(Spellblades.MOD_ID,
+                            new HeraldArmor(material, ArmorItem.Type.HELMET, new Item.Settings(),List.of(MagicSchool.ARCANE)),
+                            new HeraldArmor(material, ArmorItem.Type.CHESTPLATE,new Item.Settings(), List.of(MagicSchool.ARCANE)),
+                            new HeraldArmor(material, ArmorItem.Type.LEGGINGS, new Item.Settings(),List.of(MagicSchool.ARCANE)),
+                            new HeraldArmor(material, ArmorItem.Type.BOOTS,new Item.Settings(), List.of(MagicSchool.ARCANE))
+                    ))
+                    .put(entries)
+                    .armorSet();;
+    public static final Armor.Set frosherald =
+            create(
+                    new Armor.CustomMaterial(
+                            "frostherald",
+                            35,
+                            10,
+                            SoundEvents.ITEM_ARMOR_EQUIP_CHAIN,
+                            () -> Ingredient.ofItems(Spellblades.RUNEFROSTNUGGET)
+                    ),
+                    ItemConfig.ArmorSet.with(
+                            new ItemConfig.ArmorSet.Piece(3)
+                                    .addAll(List.of(
+
+                                    )),
+                            new ItemConfig.ArmorSet.Piece(8)
+                                    .addAll(List.of(
+
+
+                                    )),
+                            new ItemConfig.ArmorSet.Piece(6)
+                                    .addAll(List.of(
+
+
+                                    )),
+                            new ItemConfig.ArmorSet.Piece(3)
+                                    .addAll(List.of(
+
+                                    ))
+                    )) .bundle(material -> new Armor.Set(Spellblades.MOD_ID,
+                            new HeraldArmor(material, ArmorItem.Type.HELMET, new Item.Settings(),List.of(MagicSchool.FROST)),
+                            new HeraldArmor(material, ArmorItem.Type.CHESTPLATE,new Item.Settings(), List.of(MagicSchool.FROST)),
+                            new HeraldArmor(material, ArmorItem.Type.LEGGINGS, new Item.Settings(),List.of(MagicSchool.FROST)),
+                            new HeraldArmor(material, ArmorItem.Type.BOOTS,new Item.Settings(), List.of(MagicSchool.FROST))
+                    ))
+                    .put(entries)
+                    .armorSet();;
+
     public static final Armor.Set magus =
             create(
                     new Armor.CustomMaterial(
@@ -303,7 +412,7 @@ public class Armors {
                             10,
                             SoundEvents.ITEM_ARMOR_EQUIP_LEATHER,
                             () -> { return Ingredient.ofItems(
-                                    Spellblades.THREAD);
+                                    Spellblades.THREAD,Spellblades.RUNEBLAZENUGGET,Spellblades.RUNEFROSTNUGGET,Spellblades.RUNEGLEAMNUGGET);
                             }
 
                     ),

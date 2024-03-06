@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:smithing_transform",
+  "addition": {
+    "item": "spellbladenext:runefrost_plate"
+  },
+  "base": {
+    "item": "minecraft:golden_boots"
+  },
+  "result": {
+    "item": "spellbladenext:frostherald_feet"
+  },
+  "template": {
+    "item": "runes:frost_stone"
+  }
+}

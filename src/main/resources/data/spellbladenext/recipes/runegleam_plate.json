@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "A": {
+      "item": "spellbladenext:runegleam_ingot"
+    },
+    "D": {
+      "item": "spellbladenext:thread"
+    }
+  },
+  "pattern": [
+    "   ",
+    "ADA",
+    "   "
+  ],
+  "result": {
+    "item": "spellbladenext:runegleam_plate"
+  }
+}

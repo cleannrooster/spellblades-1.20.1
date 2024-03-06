@@ -1,0 +1,33 @@
+{
+  "display": {
+    "icon": {
+      "item": "spellbladenext:omni"
+    },
+    "title": "Incandescence",
+    "description": "Obtain Crystallised Omniscience",
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "parent": "spellbladenext:spellblades/magus",
+  "criteria": {
+    "arcane": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "spellbladenext:omni"
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "arcane"
+      ]
+  ]
+}

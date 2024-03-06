@@ -4,7 +4,7 @@
     "item": "spellbladenext:runefrost_ingot"
   },
   "base": {
-    "item": "minecraft:netherite_boots"
+    "item": "minecraft:diamond_boots"
   },
   "result": {
     "item": "spellbladenext:frozen_feet"

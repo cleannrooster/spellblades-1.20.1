@@ -4,7 +4,7 @@
     "item": "spellbladenext:runeblaze_ingot"
   },
   "base": {
-    "item": "minecraft:netherite_chestplate"
+    "item": "minecraft:diamond_chestplate"
   },
   "result": {
     "item": "spellbladenext:blazing_chest"

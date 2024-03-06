@@ -56,10 +56,26 @@ public class Items {
     private static Weapon.Entry starforge(String name, Weapon.CustomMaterial material, float damage, MagicSchool school) {
         return starforge(null, name, material, damage, school );
     }
+    private static Weapon.Entry voidforge(String name, Weapon.CustomMaterial material, float damage, MagicSchool school) {
+        return voidforge(null, name, material, damage, school );
+    }
+    private static Weapon.Entry thespark(String name, Weapon.CustomMaterial material, float damage, MagicSchool school) {
+        return thespark(null, name, material, damage, school );
+    }
     private static Weapon.Entry starforge(String requiredMod, String name, Weapon.CustomMaterial material, float damage,MagicSchool school) {
         var settings = new Item.Settings();
         var item = new Starforge(material, settings, 5, -2.4F, school);
         return entry(requiredMod, name, material, item, new ItemConfig.Weapon(damage, -2.4F));
+    }
+    private static Weapon.Entry voidforge(String requiredMod, String name, Weapon.CustomMaterial material, float damage,MagicSchool school) {
+        var settings = new Item.Settings();
+        var item = new Voidforge(material, settings, 0, -3F, school);
+        return entry(requiredMod, name, material, item, new ItemConfig.Weapon(damage, -3F));
+    }
+    private static Weapon.Entry thespark(String requiredMod, String name, Weapon.CustomMaterial material, float damage,MagicSchool school) {
+        var settings = new Item.Settings();
+        var item = new TheSpark(material, settings);
+        return entry(requiredMod, name, material, item, new ItemConfig.Weapon(damage, -3F));
     }
     private static Weapon.Entry blade(String requiredMod, String name, Weapon.CustomMaterial material, float damage,MagicSchool school) {
         var settings = new Item.Settings();
@@ -71,6 +87,8 @@ public class Items {
             .attribute(ItemConfig.Attribute.bonus(SpellAttributes.POWER.get(MagicSchool.FROST), 4))
             .attribute(ItemConfig.Attribute.bonus(SpellAttributes.POWER.get(MagicSchool.FIRE), 4))
             .attribute(ItemConfig.Attribute.bonus(SpellAttributes.POWER.get(MagicSchool.ARCANE), 4));
+    public static final Weapon.Entry VOIDFORGE = voidforge("voidforge",
+            Weapon.CustomMaterial.matching(ToolMaterials.NETHERITE, () -> Ingredient.ofItems(net.minecraft.item.Items.END_CRYSTAL)), 0F,MagicSchool.ARCANE);
 
     public static final Weapon.Entry frost_blade = blade("frost_blade",
             Weapon.CustomMaterial.matching(ToolMaterials.DIAMOND, () -> Ingredient.ofItems(net.minecraft.item.Items.PRISMARINE_SHARD)), 3F,MagicSchool.FROST)

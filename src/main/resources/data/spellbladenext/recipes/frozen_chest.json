@@ -4,7 +4,7 @@
     "item": "spellbladenext:runefrost_ingot"
   },
   "base": {
-    "item": "minecraft:netherite_chestplate"
+    "item": "minecraft:diamond_chestplate"
   },
   "result": {
     "item": "spellbladenext:frozen_chest"

@@ -1,5 +1,6 @@
 package com.spellbladenext;
 
+import com.google.common.base.Suppliers;
 import com.google.common.collect.ImmutableMultimap;
 import com.spellbladenext.block.Hexblade;
 import com.spellbladenext.block.HexbladeBlockItem;
@@ -8,10 +9,12 @@ import com.spellbladenext.config.ServerConfigWrapper;
 import com.spellbladenext.effect.CustomEffect;
 import com.spellbladenext.effect.Hex;
 import com.spellbladenext.effect.RunicAbsorption;
+import com.spellbladenext.effect.Slamming;
 import com.spellbladenext.entity.*;
 import com.spellbladenext.invasions.attackevent;
 import com.spellbladenext.items.*;
 import com.spellbladenext.items.Items;
+import com.spellbladenext.items.Omni;
 import com.spellbladenext.items.armor.Armors;
 import com.spellbladenext.items.attacks.Attacks;
 import com.spellbladenext.items.interfaces.PlayerDamageInterface;
@@ -19,7 +22,6 @@ import com.spellbladenext.items.loot.Default;
 import me.shedaniel.autoconfig.AutoConfig;
 import me.shedaniel.autoconfig.serializer.JanksonConfigSerializer;
 import me.shedaniel.autoconfig.serializer.PartitioningSerializer;
-import me.shedaniel.clothconfig2.api.ConfigBuilder;
 import net.fabricmc.api.ModInitializer;
 
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
@@ -36,8 +38,6 @@ import net.fabricmc.fabric.api.object.builder.v1.entity.FabricEntityTypeBuilder;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
-import net.minecraft.client.particle.Particle;
-import net.minecraft.client.util.ParticleUtil;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.enchantment.Enchantments;
 import net.minecraft.entity.*;
@@ -64,13 +64,13 @@ import net.minecraft.sound.SoundEvent;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.stat.Stats;
 import net.minecraft.text.Text;
+import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.TypeFilter;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.EntityHitResult;
 import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Box;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.GameRules;
@@ -85,31 +85,32 @@ import net.spell_engine.api.render.CustomModels;
 import net.spell_engine.api.spell.CustomSpellHandler;
 import net.spell_engine.api.spell.Sound;
 import net.spell_engine.api.spell.Spell;
-import net.spell_engine.client.gui.SpellTooltip;
 import net.spell_engine.internals.SpellHelper;
 import net.spell_engine.internals.SpellRegistry;
 import net.spell_engine.internals.WorldScheduler;
+import net.spell_engine.internals.casting.SpellCast;
 import net.spell_engine.internals.casting.SpellCasterEntity;
 import net.spell_engine.particle.ParticleHelper;
 import net.spell_engine.particle.Particles;
+import net.spell_engine.utils.AnimationHelper;
 import net.spell_engine.utils.SoundHelper;
 import net.spell_engine.utils.TargetHelper;
-import net.spell_power.SpellPowerMod;
 import net.spell_power.api.MagicSchool;
 import net.spell_power.api.SpellDamageSource;
 import net.spell_power.api.SpellPower;
 import net.spell_power.api.attributes.CustomEntityAttribute;
 import net.spell_power.api.attributes.SpellAttributes;
-import net.spell_power.api.statuseffects.StatusEffects_SpellPower;
-import net.spell_power.internals.SpellStatusEffect;
 import net.tinyconfig.ConfigManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.*;
+import java.util.function.Supplier;
 
 import static com.spellbladenext.items.attacks.Attacks.eleWhirlwind;
+import static java.lang.Math.*;
 import static net.minecraft.registry.Registries.ENTITY_TYPE;
+import static net.spell_engine.internals.SpellHelper.imposeCooldown;
 import static net.spell_engine.internals.SpellHelper.launchPoint;
 import static net.spell_power.api.SpellPower.getCriticalChance;
 
@@ -130,12 +131,17 @@ public class Spellblades implements ModInitializer {
 	public static final CustomEntityAttribute CONVERTFROMFIRE = new CustomEntityAttribute("attribute.name.spellbladenext.convertfromfire", 100,100,9999,new Identifier(MOD_ID,"convertfromfire"));
 	public static final CustomEntityAttribute CONVERTFROMFROST = new CustomEntityAttribute("attribute.name.spellbladenext.convertfromfrost", 100,100,9999,new Identifier(MOD_ID,"convertfromfrost"));
 	public static final CustomEntityAttribute CONVERTFROMARCANE = new CustomEntityAttribute("attribute.name.spellbladenext.convertfromarcane", 100,100,9999,new Identifier(MOD_ID,"convertfromarcane"));
+	public static final CustomEntityAttribute CONVERTTOFIRE = new CustomEntityAttribute("attribute.name.spellbladenext.converttofire", 100,100,9999,new Identifier(MOD_ID,"converttofire"));
+	public static final CustomEntityAttribute CONVERTTOFROST = new CustomEntityAttribute("attribute.name.spellbladenext.converttofrost", 100,100,9999,new Identifier(MOD_ID,"converttofrost"));
+	public static final CustomEntityAttribute CONVERTTOARCANE = new CustomEntityAttribute("attribute.name.spellbladenext.converttoarcane", 100,100,9999,new Identifier(MOD_ID,"converttoarcane"));
+	public static final CustomEntityAttribute CONVERTTOHEAL = new CustomEntityAttribute("attribute.name.spellbladenext.converttoheal", 100,100,9999,new Identifier(MOD_ID,"converttoheal"));
 
 	public static final Identifier SINCELASTHEX = new Identifier(MOD_ID, "threat");
 	public static final Identifier HEXRAID = new Identifier(MOD_ID, "hex");
 	public static final Block HEXBLADE = new Hexblade(FabricBlockSettings.copyOf(Blocks.IRON_BLOCK).strength(5.0F, 6.0F).requiresTool().requiresTool().sounds(BlockSoundGroup.METAL).nonOpaque());
 	public static final Item HEXBLADEITEM = new HexbladeBlockItem(HEXBLADE,new FabricItemSettings().maxCount(1));
 	public static final Item ASHES = new Ashes(new FabricItemSettings().maxCount(1));
+	public static final Item VOID = new Omni(new FabricItemSettings().maxCount(1));
 
 	public static ArrayList<attackevent> attackeventArrayList = new ArrayList<>();
 
@@ -150,6 +156,13 @@ public class Spellblades implements ModInitializer {
 	public static Item RUNEBLAZE = new Item(new FabricItemSettings().maxCount(64));
 	public static Item RUNEFROST = new Item(new FabricItemSettings().maxCount(64));
 	public static Item RUNEGLEAM = new Item(new FabricItemSettings().maxCount(64));
+	public static Item RUNEBLAZEPLATE = new Item(new FabricItemSettings().maxCount(64));
+	public static Item RUNEFROSTPLATE = new Item(new FabricItemSettings().maxCount(64));
+	public static Item RUNEGLEAMPLATE = new Item(new FabricItemSettings().maxCount(64));
+	public static Item RUNEBLAZENUGGET = new Item(new FabricItemSettings().maxCount(64));
+	public static Item RUNEFROSTNUGGET = new Item(new FabricItemSettings().maxCount(64));
+	public static Item RUNEGLEAMNUGGET = new Item(new FabricItemSettings().maxCount(64));
+
 	public static Item MONKEYSTAFF = new MonkeyStaff(0,0,new FabricItemSettings());
 	public static Item PRISMATIC = new PrismaticEffigy(new FabricItemSettings());
 	public static Item THREAD = new Item(new FabricItemSettings().maxCount(64));
@@ -164,6 +177,7 @@ public class Spellblades implements ModInitializer {
 	public static StatusEffect RunicAbsorption = new RunicAbsorption(StatusEffectCategory.BENEFICIAL, 0xff4bdd);
 	public static StatusEffect PORTALSICKNESS = new CustomEffect(StatusEffectCategory.HARMFUL, 0xff4bdd);
 	public static StatusEffect UNLEASH = new CustomEffect(StatusEffectCategory.BENEFICIAL, 0xff4bdd);
+	public static StatusEffect SLAMMING = new Slamming(StatusEffectCategory.BENEFICIAL, 0xff4bdd);
 
 	public static final Item NETHERDEBUG = new DebugNetherPortal(new FabricItemSettings().maxCount(1));
 
@@ -234,10 +248,19 @@ public class Spellblades implements ModInitializer {
 		Registry.register(Registries.ITEM,new Identifier(MOD_ID,"runeblaze_ingot"),RUNEBLAZE);
 		Registry.register(Registries.ITEM,new Identifier(MOD_ID,"runefrost_ingot"),RUNEFROST);
 		Registry.register(Registries.ITEM,new Identifier(MOD_ID,"runegleam_ingot"),RUNEGLEAM);
+
+		Registry.register(Registries.ITEM,new Identifier(MOD_ID,"runeblaze_plate"),RUNEBLAZEPLATE);
+		Registry.register(Registries.ITEM,new Identifier(MOD_ID,"runefrost_plate"),RUNEFROSTPLATE);
+		Registry.register(Registries.ITEM,new Identifier(MOD_ID,"runegleam_plate"),RUNEGLEAMPLATE);
+
+		Registry.register(Registries.ITEM,new Identifier(MOD_ID,"runeblaze_nugget"),RUNEBLAZENUGGET);
+		Registry.register(Registries.ITEM,new Identifier(MOD_ID,"runefrost_nugget"),RUNEFROSTNUGGET);
+		Registry.register(Registries.ITEM,new Identifier(MOD_ID,"runegleam_nugget"),RUNEGLEAMNUGGET);
 		Registry.register(Registries.ITEM,new Identifier(MOD_ID,"monkeystaff"),MONKEYSTAFF);
 		Registry.register(Registries.BLOCK,new Identifier(MOD_ID,"hexblade"),HEXBLADE);
 		Registry.register(Registries.ITEM, new Identifier(MOD_ID,"hexbladeitem"), HEXBLADEITEM);
 		Registry.register(Registries.ITEM, new Identifier(MOD_ID,"ashes"), ASHES);
+		Registry.register(Registries.ITEM, new Identifier(MOD_ID,"omni"), VOID);
 
 		Registry.register(Registries.ITEM, new Identifier(MOD_ID,"offering"), OFFERING);
 		Registry.register(Registries.ITEM, new Identifier(MOD_ID, "debug"), NETHERDEBUG);
@@ -251,6 +274,7 @@ public class Spellblades implements ModInitializer {
 		Registry.register(Registries.STATUS_EFFECT,new Identifier(MOD_ID,"magisterfriend"),MAGISTERFRIEND);
 		Registry.register(Registries.STATUS_EFFECT,new Identifier(MOD_ID,"portalsickness"),PORTALSICKNESS);
 		Registry.register(Registries.STATUS_EFFECT,new Identifier(MOD_ID,"unleash"),UNLEASH);
+		Registry.register(Registries.STATUS_EFFECT,new Identifier(MOD_ID,"slamming"),SLAMMING);
 
 		Registry.register(Registries.STATUS_EFFECT,new Identifier(MOD_ID,"runicabsorption"),RunicAbsorption);
 		Registry.register(Registries.CUSTOM_STAT, "threat", SINCELASTHEX);
@@ -259,6 +283,10 @@ public class Spellblades implements ModInitializer {
 		Registry.register(Registries.ATTRIBUTE,new Identifier(MOD_ID,"convertfromfire"),CONVERTFROMFIRE);
 		Registry.register(Registries.ATTRIBUTE,new Identifier(MOD_ID,"convertfromfrost"),CONVERTFROMFROST);
 		Registry.register(Registries.ATTRIBUTE,new Identifier(MOD_ID,"convertfromarcane"),CONVERTFROMARCANE);
+		Registry.register(Registries.ATTRIBUTE,new Identifier(MOD_ID,"converttofire"),CONVERTTOFIRE);
+		Registry.register(Registries.ATTRIBUTE,new Identifier(MOD_ID,"converttofrost"),CONVERTTOFROST);
+		Registry.register(Registries.ATTRIBUTE,new Identifier(MOD_ID,"converttoarcane"),CONVERTTOARCANE);
+		Registry.register(Registries.ATTRIBUTE,new Identifier(MOD_ID,"converttoheal"),CONVERTTOHEAL);
 
 		lootConfig.refresh();
 		itemConfig.refresh();
@@ -285,6 +313,12 @@ public class Spellblades implements ModInitializer {
 			content.add(RUNEBLAZE);
 			content.add(RUNEGLEAM);
 			content.add(RUNEFROST);
+			content.add(RUNEBLAZEPLATE);
+			content.add(RUNEGLEAMPLATE);
+			content.add(RUNEFROSTPLATE);
+			content.add(RUNEBLAZENUGGET);
+			content.add(RUNEGLEAMNUGGET);
+			content.add(RUNEFROSTNUGGET);
 			content.add(MONKEYSTAFF);
 			content.add(HEXBLADEITEM);
 			content.add(OFFERING);
@@ -292,6 +326,7 @@ public class Spellblades implements ModInitializer {
 			content.add(PRISMATIC);
 			content.add(THREAD);
 			content.add(ASHES);
+			content.add(VOID);
 
 			/*content.add(RIFLE);*/
 		});
@@ -573,21 +608,46 @@ public class Spellblades implements ModInitializer {
 		CustomSpellHandler.register(new Identifier(MOD_ID,"frostvert"),(data) -> {
 			MagicSchool actualSchool = MagicSchool.FIRE;
 			CustomSpellHandler.Data data1 = (CustomSpellHandler.Data) data;
+			if( data1.caster().isOnGround() && data1.caster() instanceof PlayerEntity && !data1.caster().getWorld().isClient()){
+				List<Entity> list = TargetHelper.targetsFromArea(data1.caster(),data1.caster().getEyePos(), SpellRegistry.getSpell(new Identifier(MOD_ID, "frostvert")).range,new Spell.Release.Target.Area(), target -> TargetHelper.allowedToHurt(data1.caster(),target) );
+				for(Entity entity : list) {
+					if (entity instanceof LivingEntity living) {
+						SpellHelper.ImpactContext context = new SpellHelper.ImpactContext(1.0F, 1.0F, null, SpellPower.getSpellPower(MagicSchool.FIRE,data1.caster()), TargetHelper.TargetingMode.AREA);
+						SpellHelper.performImpacts(data1.caster().getWorld(), data1.caster(), entity, data1.caster(), SpellRegistry.getSpell(new Identifier(MOD_ID, "frostvert")), context);
+
+					}
+				}
+				Supplier<Collection<ServerPlayerEntity>> trackingPlayers = Suppliers.memoize(() -> {
+					Collection<ServerPlayerEntity> playerEntities = PlayerLookup.tracking(data1.caster());
+					return playerEntities;
+				});
+
+				ParticleHelper.sendBatches(data1.caster(), SpellRegistry.getSpell(new Identifier(MOD_ID, "frostvert")).release.particles);
+				SoundHelper.playSound(data1.caster().getWorld(), data1.caster(), SpellRegistry.getSpell(new Identifier(MOD_ID, "frostvert")).release.sound);
+				AnimationHelper.sendAnimation((PlayerEntity) data1.caster(), (Collection)trackingPlayers.get(), SpellCast.Animation.RELEASE, SpellRegistry.getSpell(new Identifier(MOD_ID, "frostvert")).release.animation, 1);
+				return true;
+			}
 			float modifier = SpellRegistry.getSpell(new Identifier(MOD_ID,"frostvert")).impact[0].action.damage.spell_power_coefficient;
 			float modifier2 = SpellRegistry.getSpell(new Identifier(MOD_ID,"frostvert")).impact[1].action.damage.spell_power_coefficient;
 
+			data1.caster().fallDistance = 0;
 			data1.caster().velocityDirty = true;
 			data1.caster().velocityModified = true;
-			data1.caster().fallDistance = 0;
-
-			if(data1.progress() > 0.015F && data1.caster().isOnGround()){
-				List<Entity> list = TargetHelper.targetsFromArea(data1.caster(),data1.caster().getEyePos(),SpellRegistry.getSpell(new Identifier(MOD_ID, "frostvert")).range,new Spell.Release.Target.Area(), target -> TargetHelper.allowedToHurt(data1.caster(),target) );
-				for(Entity entity : list) {
-					SpellHelper.ImpactContext context = new SpellHelper.ImpactContext(1.0F,1.0F,null,data1.impactContext().power(), TargetHelper.TargetingMode.AREA);
-					SpellHelper.performImpacts(data1.caster().getWorld(), data1.caster(), entity, data1.caster(), SpellRegistry.getSpell(new Identifier(MOD_ID, "frostvert")), context);
-				}
-				return true;
-			}
+			float f = data1.caster().getYaw();
+			float g = data1.caster().getPitch();
+			float h = -MathHelper.sin(f * 0.017453292F) * MathHelper.cos(g * 0.017453292F);
+			float k = -MathHelper.sin(g * 0.017453292F);
+			float l = MathHelper.cos(f * 0.017453292F) * MathHelper.cos(g * 0.017453292F);
+			float m = MathHelper.sqrt(h * h + k * k + l * l);
+			float n = 3.0F * ((1.0F + (float)3) / 4.0F);
+			h *= n / m;
+			k *= n / m;
+			l *= n / m;
+			data1.caster().addVelocity((double)h*0.6, (double)1, (double)l*0.6);
+			data1.caster().addStatusEffect(new StatusEffectInstance(SLAMMING,100,0,false,false));
+			data1.caster().setOnGround(false);
+			data1.caster().setPosition(data1.caster().getPos().add(0,0.2,0));
+			imposeCooldown(data1.caster(), new Identifier(MOD_ID,"frostvert"), SpellRegistry.getSpell(new Identifier(MOD_ID,"frostvert")), data1.progress());
 			return false;
 		});
 		CustomSpellHandler.register(new Identifier(MOD_ID,"finalstrike"),(data) -> {
@@ -684,23 +744,20 @@ public class Spellblades implements ModInitializer {
 			MagicSchool actualSchool = MagicSchool.ARCANE;
 			CustomSpellHandler.Data data1 = (CustomSpellHandler.Data) data;
 			for(Entity entity : data1.targets()){
-				if(entity.isOnFire()) {
-					List<Entity> list = TargetHelper.targetsFromArea(entity,entity.getEyePos(),4,new Spell.Release.Target.Area(), target -> TargetHelper.allowedToHurt(data1.caster(),target) );
-					for(Entity entity1 : list) {
-						SpellHelper.performImpacts(data1.caster().getWorld(), data1.caster(), entity1, data1.caster(), SpellRegistry.getSpell(new Identifier(MOD_ID, "combustion")), data1.impactContext());
+				double value = data1.impactContext().power().randomValue();
+				if(entity.isOnFire() && entity instanceof LivingEntity living && data1.caster().age % (int)(20/Math.min(value,20)) == 0){
 
+					if(value > 20){
+						living.damage(SpellDamageSource.player(MagicSchool.FIRE,data1.caster()), (float) (value/20-1));
 					}
-				}
-				else{
-					SpellHelper.performImpacts(data1.caster().getWorld(), data1.caster(), entity, data1.caster(), SpellRegistry.getSpell(new Identifier(MOD_ID, "combustion")), data1.impactContext());
-
+					living.hurtTime = 0;
+					living.timeUntilRegen = 0;
+					living.setFireTicks(40);
 				}
 
 			}
-			if(data1.targets().isEmpty()){
-				return false;
-			}
-			return true;
+
+			return false;
 		});
 		CustomSpellHandler.register(new Identifier(MOD_ID,"frostblink"),(data) -> {
 			MagicSchool actualSchool = MagicSchool.ARCANE;
@@ -817,9 +874,11 @@ public class Spellblades implements ModInitializer {
 
 				}
 				LivingEntity closest = data1.caster().getWorld().getClosestEntity(list,TargetPredicate.DEFAULT, data1.caster(),data1.caster().getX(),data1.caster().getY(),data1.caster().getZ());
+				BlockPos pos = new BlockPos((int) (closest.getX()-((closest.getWidth()+1)*data1.caster().getRotationVec(1.0F).subtract(0,data1.caster().getRotationVec(1.0F).getY(),0).normalize().getX())),(int) closest.getY(),(int) (closest.getZ()-((closest.getWidth()+1)*data1.caster().getRotationVec(1.0F).subtract(0,data1.caster().getRotationVec(1.0F).getY(),0).normalize().getZ())));
+				Vec3d posvec = new Vec3d(closest.getX()-((closest.getWidth()+1)*data1.caster().getRotationVec(1.0F).subtract(0,data1.caster().getRotationVec(1.0F).getY(),0).normalize().getX()),closest.getY(),closest.getZ()-((closest.getWidth()+1)*data1.caster().getRotationVec(1.0F).subtract(0,data1.caster().getRotationVec(1.0F).getY(),0).normalize().getZ()));
 
-				if(closest!= null) {
-					data1.caster().requestTeleport(closest.getX()-((closest.getWidth()+1)*data1.caster().getRotationVec(1.0F).subtract(0,data1.caster().getRotationVec(1.0F).getY(),0).normalize().getX()),closest.getY(),closest.getZ()-((closest.getWidth()+1)*data1.caster().getRotationVec(1.0F).subtract(0,data1.caster().getRotationVec(1.0F).getY(),0).normalize().getZ()));
+				if(closest!= null  && !closest.getWorld().getBlockState(pos).shouldSuffocate(closest.getWorld(),pos) && !closest.getWorld().getBlockState(pos.up()).shouldSuffocate(closest.getWorld(),pos.up())) {
+					data1.caster().requestTeleport(posvec.getX(),posvec.getY(),posvec.getZ());
 
 					Attacks.attackAll(data1.caster(), List.of(closest), modifier);
 					SpellPower.Result power = SpellPower.getSpellPower(MagicSchool.FIRE, (LivingEntity) data1.caster());
@@ -990,6 +1049,63 @@ public class Spellblades implements ModInitializer {
 
 				entity.damage(SpellDamageSource.player(actualSchool,data1.caster()), (float) amount);
 			}
+
+			int iii = -200;
+			for (int i = 0; i < 5; i++) {
+
+				for (int ii = 0; ii < 80; ii++) {
+
+					iii++;
+
+					int finalIii = iii;
+					int finalI = i;
+					int finalIi = ii;
+					((WorldScheduler)data1.caster().getWorld()).schedule(i+1,() ->{
+						if(data1.caster().getWorld() instanceof ServerWorld serverWorld) {
+							double x = 0;
+							double x2 = 0;
+
+							double z = 0;
+							x =  ((4.5*data1.caster().getWidth() + 2*data1.caster().getWidth() * sin(20 *  ((double) finalIii /(double)(4*31.74)))) * cos(((double) finalIii /(double)(4*31.74))));
+							x2 =  -((4.5*data1.caster().getWidth() + 2*data1.caster().getWidth() * sin(20 *  ((double) finalIii /(double)(4*31.74)))) * cos(((double) finalIii /(double)(4*31.74))));
+
+							z =  ((4.5*data1.caster().getWidth() + 2*data1.caster().getWidth() * sin(20 * ((double) finalIii /(double)(4*31.74)))) * sin(((double) finalIii /(double)(4*31.74))));
+							float f7 = data1.caster().getYaw() % 360;
+							float f = data1.caster().getPitch();
+							Vec3d vec3d = Attacks.rotate(x,0,z,Math.toRadians(-f7),0,0);
+							Vec3d vec3d2 = Attacks.rotate(x2,0,z,Math.toRadians(-f7),0,0);
+							Vec3d vec3d3 = vec3d.add(data1.caster().getEyePos().getX(),data1.caster().getEyeY(),data1.caster().getEyePos().getZ());
+							Vec3d vec3d4 = vec3d2.add(data1.caster().getEyePos().getX(),data1.caster().getEyeY(),data1.caster().getEyePos().getZ());
+
+							double y = data1.caster().getY()+data1.caster().getHeight()/2;
+
+
+
+
+							for(ServerPlayerEntity player : PlayerLookup.tracking(data1.caster())) {
+								if (finalIi % 2 == 1) {
+									serverWorld.spawnParticles(player, Particles.snowflake.particleType,true, vec3d3.getX(), y, vec3d3.getZ(), 1, 0, 0, 0, 0);
+									serverWorld.spawnParticles(player , Particles.snowflake.particleType,true, vec3d4.getX(), y, vec3d4.getZ(), 1, 0, 0, 0, 0);
+								}
+								serverWorld.spawnParticles(player,Particles.frost_shard.particleType, true, vec3d3.getX(), y, vec3d3.getZ(), 1, 0, 0, 0, 0);
+								serverWorld.spawnParticles(player,Particles.frost_shard.particleType, true, vec3d4.getX(), y, vec3d4.getZ(), 1, 0, 0, 0, 0);
+							}
+							if(data1.caster() instanceof ServerPlayerEntity player) {
+								if (finalIi % 2 == 1) {
+									serverWorld.spawnParticles(player, Particles.snowflake.particleType, true, vec3d3.getX(), y, vec3d3.getZ(), 1, 0, 0, 0, 0);
+									serverWorld.spawnParticles(player, Particles.snowflake.particleType, true, vec3d4.getX(), y, vec3d4.getZ(), 1, 0, 0, 0, 0);
+								}
+								serverWorld.spawnParticles(player, Particles.frost_shard.particleType, true, vec3d3.getX(), y, vec3d3.getZ(), 1, 0, 0, 0, 0);
+								serverWorld.spawnParticles(player, Particles.frost_shard.particleType, true, vec3d4.getX(), y, vec3d4.getZ(), 1, 0, 0, 0, 0);
+							}
+						}
+					});
+
+				}
+
+
+			}
+
 			return true;
 		});
 		CustomSpellHandler.register(new Identifier(MOD_ID,"fireflourish"),(data) -> {
@@ -1009,6 +1125,60 @@ public class Spellblades implements ModInitializer {
 				entity.timeUntilRegen = 0;
 
 				entity.damage(SpellDamageSource.player(actualSchool,data1.caster()), (float) amount);
+			}
+			int iii = -200;
+			for (int i = 0; i < 5; i++) {
+
+				for (int ii = 0; ii < 80; ii++) {
+
+					iii++;
+
+					int finalIii = iii;
+					int finalI = i;
+					int finalIi = ii;
+					((WorldScheduler)data1.caster().getWorld()).schedule(i+1,() ->{
+						if(data1.caster().getWorld() instanceof ServerWorld serverWorld) {
+							double x = 0;
+							double x2 = 0;
+
+							double z = 0;
+							x =  ((4.5*data1.caster().getWidth() + 2*data1.caster().getWidth() * sin(20 *  ((double) finalIii /(double)(4*31.74)))) * cos(((double) finalIii /(double)(4*31.74))));
+							x2 =  -((4.5*data1.caster().getWidth() + 2*data1.caster().getWidth() * sin(20 *  ((double) finalIii /(double)(4*31.74)))) * cos(((double) finalIii /(double)(4*31.74))));
+
+							z =  ((4.5*data1.caster().getWidth() + 2*data1.caster().getWidth() * sin(20 * ((double) finalIii /(double)(4*31.74)))) * sin(((double) finalIii /(double)(4*31.74))));
+							float f7 = data1.caster().getYaw() % 360;
+							float f = data1.caster().getPitch();
+							Vec3d vec3d = Attacks.rotate(x,0,z,Math.toRadians(-f7),0,0);
+							Vec3d vec3d2 = Attacks.rotate(x2,0,z,Math.toRadians(-f7),0,0);
+							Vec3d vec3d3 = vec3d.add(data1.caster().getEyePos().getX(),data1.caster().getEyeY(),data1.caster().getEyePos().getZ());
+							Vec3d vec3d4 = vec3d2.add(data1.caster().getEyePos().getX(),data1.caster().getEyeY(),data1.caster().getEyePos().getZ());
+
+							double y = data1.caster().getY()+data1.caster().getHeight()/2;
+
+
+
+							for(ServerPlayerEntity player : PlayerLookup.tracking(data1.caster())) {
+								if (finalIi % 2 == 1) {
+									serverWorld.spawnParticles(player, ParticleTypes.SMOKE,true, vec3d3.getX(), y, vec3d3.getZ(), 1, 0, 0, 0, 0);
+									serverWorld.spawnParticles(player , ParticleTypes.SMOKE,true, vec3d4.getX(), y, vec3d4.getZ(), 1, 0, 0, 0, 0);
+								}
+								serverWorld.spawnParticles(player,Particles.flame.particleType, true, vec3d3.getX(), y, vec3d3.getZ(), 1, 0, 0, 0, 0);
+								serverWorld.spawnParticles(player,Particles.flame.particleType, true, vec3d4.getX(), y, vec3d4.getZ(), 1, 0, 0, 0, 0);
+							}
+							if(data1.caster() instanceof ServerPlayerEntity player) {
+								if (finalIi % 2 == 1) {
+									serverWorld.spawnParticles(player, ParticleTypes.SMOKE, true, vec3d3.getX(), y, vec3d3.getZ(), 1, 0, 0, 0, 0);
+									serverWorld.spawnParticles(player, ParticleTypes.SMOKE, true, vec3d4.getX(), y, vec3d4.getZ(), 1, 0, 0, 0, 0);
+								}
+								serverWorld.spawnParticles(player, Particles.flame.particleType, true, vec3d3.getX(), y, vec3d3.getZ(), 1, 0, 0, 0, 0);
+								serverWorld.spawnParticles(player, Particles.flame.particleType, true, vec3d4.getX(), y, vec3d4.getZ(), 1, 0, 0, 0, 0);
+							}
+						}
+					});
+
+				}
+
+
 			}
 			return true;
 		});
@@ -1030,6 +1200,62 @@ public class Spellblades implements ModInitializer {
 
 				entity.damage(SpellDamageSource.player(actualSchool,data1.caster()), (float) amount);
 			}
+			int iii = -200;
+			for (int i = 0; i < 5; i++) {
+
+				for (int ii = 0; ii < 80; ii++) {
+
+					iii++;
+
+					int finalIii = iii;
+					int finalI = i;
+					int finalIi = ii;
+					((WorldScheduler)data1.caster().getWorld()).schedule(i+1,() ->{
+						if(data1.caster().getWorld() instanceof ServerWorld serverWorld) {
+							double x = 0;
+							double x2 = 0;
+
+							double z = 0;
+							x =  ((4.5*data1.caster().getWidth() + 2*data1.caster().getWidth() * sin(20 *  ((double) finalIii /(double)(4*31.74)))) * cos(((double) finalIii /(double)(4*31.74))));
+							x2 =  -((4.5*data1.caster().getWidth() + 2*data1.caster().getWidth() * sin(20 *  ((double) finalIii /(double)(4*31.74)))) * cos(((double) finalIii /(double)(4*31.74))));
+
+							z =  ((4.5*data1.caster().getWidth() + 2*data1.caster().getWidth() * sin(20 * ((double) finalIii /(double)(4*31.74)))) * sin(((double) finalIii /(double)(4*31.74))));
+							float f7 = data1.caster().getYaw() % 360;
+							float f = data1.caster().getPitch();
+							Vec3d vec3d = Attacks.rotate(x,0,z,Math.toRadians(-f7),0,0);
+							Vec3d vec3d2 = Attacks.rotate(x2,0,z,Math.toRadians(-f7),0,0);
+							Vec3d vec3d3 = vec3d.add(data1.caster().getEyePos().getX(),data1.caster().getEyeY(),data1.caster().getEyePos().getZ());
+							Vec3d vec3d4 = vec3d2.add(data1.caster().getEyePos().getX(),data1.caster().getEyeY(),data1.caster().getEyePos().getZ());
+
+							double y = data1.caster().getY()+data1.caster().getHeight()/2;
+
+
+
+							for(ServerPlayerEntity player : PlayerLookup.tracking(data1.caster())) {
+								if (finalIi % 2 == 1) {
+									serverWorld.spawnParticles(player, ParticleTypes.FIREWORK,true, vec3d3.getX(), y, vec3d3.getZ(), 1, 0, 0, 0, 0);
+									serverWorld.spawnParticles(player , ParticleTypes.FIREWORK,true, vec3d4.getX(), y, vec3d4.getZ(), 1, 0, 0, 0, 0);
+								}
+								serverWorld.spawnParticles(player,Particles.arcane_spell.particleType, true, vec3d3.getX(), y, vec3d3.getZ(), 1, 0, 0, 0, 0);
+								serverWorld.spawnParticles(player,Particles.arcane_spell.particleType, true, vec3d4.getX(), y, vec3d4.getZ(), 1, 0, 0, 0, 0);
+							}
+							if(data1.caster() instanceof ServerPlayerEntity player) {
+								if (finalIi % 2 == 1) {
+									serverWorld.spawnParticles(player, ParticleTypes.FIREWORK, true, vec3d3.getX(), y, vec3d3.getZ(), 1, 0, 0, 0, 0);
+									serverWorld.spawnParticles(player, ParticleTypes.FIREWORK, true, vec3d4.getX(), y, vec3d4.getZ(), 1, 0, 0, 0, 0);
+								}
+								serverWorld.spawnParticles(player, Particles.arcane_spell.particleType, true, vec3d3.getX(), y, vec3d3.getZ(), 1, 0, 0, 0, 0);
+								serverWorld.spawnParticles(player, Particles.arcane_spell.particleType, true, vec3d4.getX(), y, vec3d4.getZ(), 1, 0, 0, 0, 0);
+							}
+
+						}
+					});
+
+				}
+
+
+			}
+
 			return true;
 		});
 		CustomSpellHandler.register(new Identifier(MOD_ID,"tempest"),(data) -> {
@@ -1192,7 +1418,9 @@ public class Spellblades implements ModInitializer {
 
 
 					if (player.getStatHandler().getStat(Stats.CUSTOM.getOrCreateStat(HEXRAID)) > 0 && !player.hasStatusEffect(PORTALSICKNESS)) {
-
+						if(player.getStatHandler().getStat(Stats.CUSTOM.getOrCreateStat(SINCELASTHEX)) == 9){
+							player.sendMessage(Text.translatable("Your use of magic has not gone unnoticed.").formatted(Formatting.LIGHT_PURPLE));
+						}
 						player.increaseStat(SINCELASTHEX, 1);
 						if (!player.hasStatusEffect(HEXED) && player.getStatHandler().getStat(Stats.CUSTOM.getOrCreateStat(SINCELASTHEX)) > 10 && player.getRandom().nextFloat() < 0.01 * (player.getStatHandler().getStat(Stats.CUSTOM.getOrCreateStat(HEXRAID)) / 100F) * Math.pow((1.02930223664), player.getStatHandler().getStat(Stats.CUSTOM.getOrCreateStat(SINCELASTHEX)))) {
 							Optional<BlockPos> pos2 = BlockPos.findClosest(player.getBlockPos(), 64, 128,

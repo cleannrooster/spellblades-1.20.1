@@ -1,0 +1,71 @@
+{
+	"format_version": "1.12.0",
+	"minecraft:geometry": [
+		{
+			"description": {
+				"identifier": "geometry.unknown",
+				"texture_width": 92,
+				"texture_height": 92,
+				"visible_bounds_width": 3,
+				"visible_bounds_height": 3.5,
+				"visible_bounds_offset": [0, 1.25, 0]
+			},
+			"bones": [
+
+				{
+					"name": "bipedBody",
+					"pivot": [0, 24, 0],
+					"cubes": [
+						{"origin": [-5, 6, 1], "size": [10, 8, 2], "pivot": [0, 14, 3], "rotation": [17.5, 0, 0], "uv": [59, 44]}
+					]
+				},
+				{
+					"name": "armorBody",
+					"parent": "bipedBody",
+					"pivot": [0, 24, 0.5],
+					"cubes": [
+						{"origin": [-5, 15.5, -3], "size": [10, 9, 6], "uv": [0, 4]},
+						{"origin": [-5.5, 16.25, 2], "size": [11, 9, 3], "inflate": 0.5, "pivot": [0, 20.75, 4], "rotation": [12.5, 0, 0], "uv": [60, 32]},
+						{"origin": [-5, 9.5, -3], "size": [10, 4, 6], "uv": [0, 30]},
+						{"origin": [-4.5, 13.5, -2.5], "size": [9, 2, 5], "uv": [0, 20]}
+					]
+				},
+				{
+					"name": "armorbelt",
+					"parent": "bipedBody",
+					"pivot": [0, 24, 0]
+				},
+				{
+					"name": "bipedRightArm",
+					"pivot": [-5, 22, 0]
+				},
+				{
+					"name": "armorRightArm",
+					"parent": "bipedRightArm",
+					"pivot": [-5, 22, 0],
+					"cubes": [
+						{"origin": [-8, 12, -2], "size": [4, 12, 4], "inflate": 0.5, "uv": [0, 70], "mirror": true},
+						{"origin": [-10.75, 20.75, -3.5], "size": [6, 5, 7], "pivot": [-6, 22.75, 0], "rotation": [0, 0, -17.5], "uv": [16, 75], "mirror": true},
+						{"origin": [-11.75, 20.75, -3.5], "size": [1, 1, 7], "pivot": [-6, 22.75, 0], "rotation": [0, 0, -17.5], "uv": [25, 53], "mirror": true},
+						{"origin": [-5.75, 25.75, -3.5], "size": [1, 2, 7], "pivot": [-6, 22.75, 0], "rotation": [0, 0, -17.5], "uv": [26, 44]}
+					]
+				},
+				{
+					"name": "bipedLeftArm",
+					"pivot": [5, 22, 0]
+				},
+				{
+					"name": "armorLeftArm",
+					"parent": "bipedLeftArm",
+					"pivot": [5, 22, 0],
+					"cubes": [
+						{"origin": [4, 12, -2], "size": [4, 12, 4], "inflate": 0.5, "uv": [0, 70]},
+						{"origin": [4.75, 20.75, -3.5], "size": [6, 5, 7], "pivot": [6, 22.75, 0], "rotation": [0, 0, 17.5], "uv": [16, 75]},
+						{"origin": [10.75, 20.75, -3.5], "size": [1, 1, 7], "pivot": [6, 22.75, 0], "rotation": [0, 0, 17.5], "uv": [25, 53]},
+						{"origin": [4.75, 25.75, -3.5], "size": [1, 2, 7], "pivot": [6, 22.75, 0], "rotation": [0, 0, 17.5], "uv": [26, 44]}
+					]
+				}
+			]
+		}
+	]
+}

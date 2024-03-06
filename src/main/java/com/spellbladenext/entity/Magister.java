@@ -25,6 +25,8 @@ import net.minecraft.entity.ai.goal.SwimGoal;
 import net.minecraft.entity.attribute.DefaultAttributeContainer;
 import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.damage.DamageSource;
+import net.minecraft.entity.effect.StatusEffectInstance;
+import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.mob.HostileEntity;
 import net.minecraft.entity.mob.PathAwareEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -214,6 +216,9 @@ public class Magister extends PathAwareEntity implements InventoryOwner, GeoEnti
     @Override
     public void tick() {
         super.tick();
+        if(this.getMainHandStack().isEmpty() && this.age < 200){
+            this.addStatusEffect(new StatusEffectInstance(StatusEffects.RESISTANCE,5,4));
+        }
 
         if(this.getWorld() instanceof ServerWorld serverWorld && serverWorld.getEntitiesByType(Spellblades.REAVER,LivingEntity::isAlive).size()>32){
             this.playSoundIfNotSilent(SoundEvents.ITEM_CHORUS_FRUIT_TELEPORT);
@@ -313,6 +318,9 @@ public class Magister extends PathAwareEntity implements InventoryOwner, GeoEnti
 
     @Override
     public boolean damage(DamageSource damageSource, float f) {
+        if(this.getMainHandStack().isEmpty() && this.age < 200){
+            return false;
+        }
         if(damageSource.getSource() instanceof PlayerEntity player && this.isScout() && this.getHealth()/this.getMaxHealth() <= 0.5 && this.getMainHandStack().isEmpty()){
             this.tryEquip(new ItemStack(com.spellbladenext.items.Items.arcane_blade.item()));
 

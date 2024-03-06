@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "A": {
+      "item": "spellbladenext:thread"
+    },
+    "C": {
+      "item": "minecraft:totem_of_undying"
+    }
+  },
+  "pattern": [
+    " A ",
+    "A A",
+    " C "
+  ],
+  "result": {
+    "item": "spellbladenext:omni"
+  }
+}

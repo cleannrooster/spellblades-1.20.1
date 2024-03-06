@@ -8,7 +8,9 @@
 		"ItemEntityMixin",
 		"NaturalSpawnerMixin",
 		"ItemStackMixin",
-		"AttributeMixin"
+		"AttributeMixin",
+		"SpellCasterMixin"
+
 	],
 	"client": [
 		"EntityRenderDispatcherMixin",

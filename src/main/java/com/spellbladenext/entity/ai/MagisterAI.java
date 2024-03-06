@@ -61,7 +61,7 @@ public class MagisterAI {
     }
 
     private static void initCoreActivity(Magister reaver, Brain<Magister> brain) {
-        brain.setTaskList(Activity.CORE, 0, ImmutableList.of(new LookAroundTask(45, 90), new WanderAroundTask(), FindWalkTargetTask.create(0.75F),   OpenDoorsTask.create(),  ForgetAngryAtTargetTask.create()));
+        brain.setTaskList(Activity.CORE, 0, ImmutableList.of(new LookAroundTask(45, 90), new WanderAroundTask(), TaskTriggerer.runIf(piglin -> !(reaver.isScout && reaver.nemesis != null), FindWalkTargetTask.create(0.75F)),   OpenDoorsTask.create(),  ForgetAngryAtTargetTask.create()));
     }
 
     private static void initIdleActivity(Magister reaver, Brain<Magister> brain) {

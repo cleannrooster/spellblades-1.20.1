@@ -9,6 +9,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.util.math.Vec3d;
 import net.spell_engine.api.spell.CustomSpellHandler;
 import net.spell_engine.internals.casting.SpellCasterEntity;
 import net.spell_power.api.MagicSchool;
@@ -33,7 +34,30 @@ public class Attacks {
             damager.override(false);
         }
     }
+    public static Vec3d rotate(double x, double y, double z, double pitch, double roll, double yaw) {
+        double cosa = Math.cos(yaw);
+        double sina = Math.sin(yaw);
 
+        double cosb = Math.cos(pitch);
+        double sinb = Math.sin(pitch);
+        double cosc = Math.cos(roll);
+        double sinc = Math.sin(roll);
+
+        double Axx = cosa * cosb;
+        double Axy = cosa * sinb * sinc - sina * cosc;
+        double Axz = cosa * sinb * cosc + sina * sinc;
+
+        double Ayx = sina * cosb;
+        double Ayy = sina * sinb * sinc + cosa * cosc;
+        double Ayz = sina * sinb * cosc - cosa * sinc;
+
+        double Azx = -sinb;
+        double Azy = cosb * sinc;
+        double Azz = cosb * cosc;
+
+        Vec3d vec3 = new Vec3d(Axx * x + Axy * y + Axz * z,Ayx * x + Ayy * y + Ayz * z,Azx * x + Azy * y + Azz * z);
+        return vec3;
+    }
     public static void eleWhirlwind(CustomSpellHandler.Data data1) {
         if(((SpellCasterEntity) data1.caster()).getCurrentSpell() != null){
         MagicSchool actualSchool = ((SpellCasterEntity) data1.caster()).getCurrentSpell().school;

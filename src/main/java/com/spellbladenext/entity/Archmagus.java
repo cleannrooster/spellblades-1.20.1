@@ -136,6 +136,8 @@ public class Archmagus extends HostileEntity implements InventoryOwner, GeoEntit
     public boolean spawnedfromitem = false;
     public int tier = 0;
     public static final TrackedData<Integer> TIER;
+    public static final TrackedData<Integer> BIDINGTIME;
+
     public static final TrackedData<Boolean> FLOATING;
     public static final TrackedData<Boolean> FLYING;
     public static final TrackedData<Boolean> DOWN2;
@@ -153,6 +155,8 @@ public class Archmagus extends HostileEntity implements InventoryOwner, GeoEntit
         FLYING = DataTracker.registerData(Archmagus.class, TrackedDataHandlerRegistry.BOOLEAN);
         JUMPING = DataTracker.registerData(Archmagus.class, TrackedDataHandlerRegistry.BOOLEAN);
         BIDED = DataTracker.registerData(Archmagus.class, TrackedDataHandlerRegistry.BOOLEAN);
+        BIDINGTIME = DataTracker.registerData(Archmagus.class, TrackedDataHandlerRegistry.INTEGER);
+
         DOWN2 = DataTracker.registerData(Archmagus.class, TrackedDataHandlerRegistry.BOOLEAN);
 
     }
@@ -171,6 +175,8 @@ public class Archmagus extends HostileEntity implements InventoryOwner, GeoEntit
     protected void initDataTracker() {
         super.initDataTracker();
         this.dataTracker.startTracking(TIER, 0);
+        this.dataTracker.startTracking(BIDINGTIME, 0);
+
         this.dataTracker.startTracking(modifier, 0);
 
         this.dataTracker.startTracking(FLOATING, false);
@@ -192,6 +198,8 @@ public class Archmagus extends HostileEntity implements InventoryOwner, GeoEntit
 
 
         compoundTag.putInt("Tier", (Integer) this.dataTracker.get(TIER));
+        compoundTag.putInt("Bidingtime", (Integer) this.dataTracker.get(BIDINGTIME));
+
         compoundTag.putInt("Modifier", (Integer) this.dataTracker.get(modifier));
 
         compoundTag.putBoolean("Item1",this.spawnedfromitem);
@@ -212,6 +220,9 @@ public class Archmagus extends HostileEntity implements InventoryOwner, GeoEntit
 
         if (compoundTag.contains("Tier")) {
             this.dataTracker.set(TIER, compoundTag.getInt("Tier"));
+        }
+        if (compoundTag.contains("Bidingtime")) {
+            this.dataTracker.set(BIDINGTIME, compoundTag.getInt("Bidingtime"));
         }
         if (compoundTag.contains("Modifier")) {
             this.dataTracker.set(modifier, compoundTag.getInt("Modifier"));
@@ -360,8 +371,9 @@ public class Archmagus extends HostileEntity implements InventoryOwner, GeoEntit
     @Override
     protected void updatePostDeath() {
         if(this.getServer() != null && this.getServer().getWorld(World.OVERWORLD) != null && (this.getServer().getWorld(World.OVERWORLD).isThundering() || this.getServer().getWorld(World.OVERWORLD).isRaining())) {
-
-            this.getServer().getWorld(World.OVERWORLD).setWeather(0, 12000, false, false);
+            if(Spellblades.config.magusWeather) {
+                this.getServer().getWorld(World.OVERWORLD).setWeather(0, 12000, false, false);
+            }
         }
         super.updatePostDeath();
     }
@@ -376,22 +388,26 @@ public class Archmagus extends HostileEntity implements InventoryOwner, GeoEntit
         this.biding = this.getHealth() < this.getMaxHealth() / 2 && !this.getDataTracker().get(BIDED);
         if(this.getDataTracker().get(BIDED)){
             if(this.getServer() != null && this.getServer().getWorld(World.OVERWORLD) != null &&!this.getServer().getWorld(World.OVERWORLD).isThundering()){
-                this.getServer().getWorld(World.OVERWORLD).setWeather(0,12000,true,true);
+                if(Spellblades.config.magusWeather) {
+
+                    this.getServer().getWorld(World.OVERWORLD).setWeather(0, 12000, true, true);
+                }
 
             }
         }
+        if(this.getDataTracker().get(BIDINGTIME) >= 20*30){
+            this.getDataTracker().set(BIDED,true);
+            this.biding = false;
+        }
         if(this.biding){
             if(this.getServer() != null && this.getServer().getWorld(World.OVERWORLD) != null &&!this.getServer().getWorld(World.OVERWORLD).isRaining()){
-                this.getServer().getWorld(World.OVERWORLD).setWeather(0,12000,true,false);
+                if(Spellblades.config.magusWeather) {
 
+                    this.getServer().getWorld(World.OVERWORLD).setWeather(0, 12000, true, false);
+                }
             }
-            if(this.bidingtime < 20*30){
-                this.bidingtime++;
-            }
-            else{
-                this.getDataTracker().set(BIDED,true);
-                this.biding = false;
-            }
+            this.getDataTracker().set(BIDINGTIME,this.getDataTracker().get(BIDINGTIME)+1);
+
             if(this.age % (20 * 5) == 0 && !this.getWorld().isClient()){
                 Optional<HexbladePortal> frame = piglinsummon.summonNetherPortal(this.getWorld(),this,false);
                 frame.ifPresent(hexbladePortal -> {
@@ -437,7 +453,7 @@ public class Archmagus extends HostileEntity implements InventoryOwner, GeoEntit
                     chatFormatting = Formatting.RED;
 
                 }
-                player.sendMessage(Text.translatable("Magus' Barrier is shredded by your " + string + " power. Barrier Strength: "+ max(0,(95-this.getDataTracker().get(modifier))) + "%.").formatted(chatFormatting), true);
+                player.sendMessage(Text.translatable("Magus' Barrier is weak to " + string + " power. Barrier Strength: "+ max(0,(95-this.getDataTracker().get(modifier))) + "%.").formatted(chatFormatting), true);
             });
         }
         if (this.age % 5 == 0 && this.getWorld() instanceof ServerWorld level) {

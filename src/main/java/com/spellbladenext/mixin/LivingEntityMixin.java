@@ -1,5 +1,6 @@
 package com.spellbladenext.mixin;
 
+import com.google.common.collect.Maps;
 import com.spellbladenext.Spellblades;
 import com.spellbladenext.config.ServerConfig;
 import com.spellbladenext.items.Orb;
@@ -9,10 +10,7 @@ import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.attribute.AttributeContainer;
-import net.minecraft.entity.attribute.DefaultAttributeContainer;
-import net.minecraft.entity.attribute.EntityAttribute;
-import net.minecraft.entity.attribute.EntityAttributes;
+import net.minecraft.entity.attribute.*;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.damage.DamageType;
 import net.minecraft.entity.damage.DamageTypes;
@@ -25,11 +23,13 @@ import net.minecraft.registry.Registry;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.math.Vec3d;
 import net.spell_engine.api.spell.Spell;
 import net.spell_engine.internals.SpellContainerHelper;
 import net.spell_engine.internals.SpellHelper;
 import net.spell_engine.internals.SpellRegistry;
+import net.spell_engine.internals.WorldScheduler;
 import net.spell_engine.particle.ParticleHelper;
 import net.spell_engine.utils.TargetHelper;
 import net.spell_power.api.MagicSchool;
@@ -39,13 +39,16 @@ import net.spell_power.api.attributes.SpellAttributes;
 import net.spell_power.mixin.DamageSourcesAccessor;
 import net.spell_engine.internals.casting.SpellCasterEntity;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
+import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Predicate;
 
 import static com.spellbladenext.Spellblades.*;
@@ -63,8 +66,18 @@ public class LivingEntityMixin {
             }
         }
     }
+    @Shadow
+    private  DefaultedList<ItemStack> syncedHandStacks;
+    @Shadow
+    private  DefaultedList<ItemStack> syncedArmorStacks;
 
+    private ItemStack getSyncedHandStack(EquipmentSlot slot) {
+        return (ItemStack)this.syncedHandStacks.get(slot.getEntitySlotId());
+    }
 
+    private ItemStack getSyncedArmorStack(EquipmentSlot slot) {
+        return (ItemStack)this.syncedArmorStacks.get(slot.getEntitySlotId());
+    }
 
     @Inject(at = @At("HEAD"), method = "onAttacking", cancellable = true)
     public void onAttackingSpellbladesMixin(Entity target, CallbackInfo info) {
@@ -81,10 +94,66 @@ public class LivingEntityMixin {
 
             }
         }
+        if (!living.getWorld().isClient() && living instanceof PlayerEntity player && living instanceof SpellCasterEntity caster && living instanceof PlayerDamageInterface damageInterface &&
+                SpellContainerHelper.containerWithProxy(living.getMainHandStack(), player) != null && SpellContainerHelper.containerWithProxy(player.getMainHandStack(), player).spell_ids != null && SpellContainerHelper.containerWithProxy(player.getMainHandStack(), player).spell_ids.contains("spellbladenext:combustion")) {
+            target.setOnFireFor(2);
+        }
     }
-    @Inject(at = @At("HEAD"), method = "tick", cancellable = true)
-    public void tick_SB_HEAD(CallbackInfo info) {
+    @Inject(at = @At("HEAD"), method = "Lnet/minecraft/entity/LivingEntity;sendEquipmentChanges(Ljava/util/Map;)V", cancellable = true)
+    private void sendEquipmentChanges(Map<EquipmentSlot, ItemStack> equipmentChanges, CallbackInfo callbackInfo) {
         LivingEntity living = (LivingEntity) (Object) this;
+        Map<EquipmentSlot, ItemStack> map = null;
+        EquipmentSlot[] var2 = EquipmentSlot.values();
+        int var3 = var2.length;
+
+        for(int var4 = 0; var4 < var3; ++var4) {
+            EquipmentSlot equipmentSlot = var2[var4];
+            ItemStack itemStack;
+            if(equipmentSlot.getType().equals(EquipmentSlot.Type.ARMOR)) {
+                itemStack = this.getSyncedArmorStack(equipmentSlot);
+
+            ItemStack itemStack2 = living.getEquippedStack(equipmentSlot);
+            if (living.areItemsDifferent(itemStack, itemStack2)) {
+                float toremove = 0;
+                Collection<EntityAttributeModifier> modifiers = itemStack.getAttributeModifiers(equipmentSlot).get(WARDING);
+                Collection<EntityAttributeModifier> modifiers2 = itemStack2.getAttributeModifiers(equipmentSlot).get(WARDING);
+
+                for (EntityAttributeModifier modifier : modifiers) {
+                    if (modifier.getOperation().equals(EntityAttributeModifier.Operation.ADDITION)) {
+                        toremove -= modifier.getValue();
+                    }
+                }
+                for (EntityAttributeModifier modifier : modifiers2) {
+                    if (modifier.getOperation().equals(EntityAttributeModifier.Operation.ADDITION)) {
+                        toremove += modifier.getValue();
+                    }
+                }
+                Collection<EntityAttributeModifier> modifiers3 = living.getAttributeInstance(WARDING).getModifiers(EntityAttributeModifier.Operation.MULTIPLY_BASE);
+                Collection<EntityAttributeModifier> modifiers4 = living.getAttributeInstance(WARDING).getModifiers(EntityAttributeModifier.Operation.MULTIPLY_TOTAL);
+                float mult = 1;
+                for (EntityAttributeModifier modifier : modifiers3) {
+                    mult += modifier.getValue();
+                }
+                toremove *= mult;
+                for (EntityAttributeModifier modifier : modifiers4) {
+                    toremove *= 1+modifier.getValue();
+                }
+                if (toremove < 0 && !living.getWorld().isClient()) {
+                    living.setAbsorptionAmount(living.getAbsorptionAmount() + toremove);
+                    if (living instanceof PlayerDamageInterface playerDamageInterface) {
+                        playerDamageInterface.resetDamageAbsorbed();
+                    }
+                }
+
+            }
+            }
+        }
+    }
+        @Inject(at = @At("HEAD"), method = "tick", cancellable = true)
+    public void tick_SB_HEAD(CallbackInfo info) {
+
+            LivingEntity living = (LivingEntity) (Object) this;
+
         if(!living.getWorld().isClient() && living instanceof PlayerEntity player && living instanceof SpellCasterEntity caster && living instanceof PlayerDamageInterface damageInterface  &&
                 SpellContainerHelper.containerWithProxy(living.getMainHandStack(), player) != null && SpellContainerHelper.containerWithProxy(player.getMainHandStack(), player).spell_ids != null && SpellContainerHelper.containerWithProxy(player.getMainHandStack(), player).spell_ids.contains("spellbladenext:echoes")){
             if(damageInterface.getDiebeamStacks() < 3 &&  living.age % 80 == 0) {
@@ -131,6 +200,10 @@ public class LivingEntityMixin {
         info.getReturnValue().add(CONVERTFROMFIRE);
         info.getReturnValue().add(CONVERTFROMFROST);
         info.getReturnValue().add(CONVERTFROMARCANE);
+        info.getReturnValue().add(CONVERTTOFIRE);
+        info.getReturnValue().add(CONVERTTOFROST);
+        info.getReturnValue().add(CONVERTTOARCANE);
+        info.getReturnValue().add(CONVERTTOHEAL);
 
     }
         @ModifyVariable(at = @At("HEAD"), method = "applyMovementInput", index = 1)
@@ -144,11 +217,12 @@ public class LivingEntityMixin {
             return vec3d;
         }
     }
-    @Inject(at = @At("HEAD"), method = "onEquipStack", cancellable = true)
+    @Inject(at = @At("TAIL"), method = "onEquipStack", cancellable = true)
     public void onEquipStackSpellblades(EquipmentSlot slot, ItemStack oldStack, ItemStack newStack, CallbackInfo info) {
-        if(newStack.getAttributeModifiers(slot).containsKey(Spellblades.WARDING)){
-            LivingEntity entity = (LivingEntity) (Object) this;
-            if(entity instanceof PlayerDamageInterface playerDamageInterface){
+        LivingEntity entity = (LivingEntity) (Object) this;
+
+        if(newStack.getAttributeModifiers(slot).containsKey(Spellblades.WARDING)) {
+            if(entity instanceof PlayerDamageInterface playerDamageInterface) {
                 playerDamageInterface.resetDamageAbsorbed();
             }
         }
@@ -196,76 +270,81 @@ public class LivingEntityMixin {
 
                 }
             }
-            if (player1.getMainHandStack().getItem() instanceof Starforge) {
-                Predicate<Entity> selectionPredicate = (target2) -> {
-                    return (TargetHelper.actionAllowed(TargetHelper.TargetingMode.AREA, TargetHelper.Intent.HARMFUL, player1, target2)
-                    );
-                };
-                Spell spell = SpellRegistry.getSpell(new Identifier(MOD_ID, "fireoverdrive"));
+            ((WorldScheduler)player1.getWorld()).schedule(5,() -> {
+                if (player1.getMainHandStack().getItem() instanceof Starforge) {
+                    Predicate<Entity> selectionPredicate = (target2) -> {
+                        return (TargetHelper.actionAllowed(TargetHelper.TargetingMode.AREA, TargetHelper.Intent.HARMFUL, player1, target2)
+                        );
+                    };
+                    Spell spell = SpellRegistry.getSpell(new Identifier(MOD_ID, "fireoverdrive"));
 
-                if (player1 instanceof SpellCasterEntity entity && ammoForSpell(player1, spell, stack).satisfied() && !entity.getCooldownManager().isCoolingDown(new Identifier(MOD_ID, "fireoverdrive"))) {
-                    entity.getCooldownManager().set(new Identifier(MOD_ID, "fireoverdrive"), (int) (20 * SpellHelper.getCooldownDuration(player1, spell)));
+                    if (player1 instanceof SpellCasterEntity entity && ammoForSpell(player1, spell, stack).satisfied() && !entity.getCooldownManager().isCoolingDown(new Identifier(MOD_ID, "fireoverdrive"))) {
+                        entity.getCooldownManager().set(new Identifier(MOD_ID, "fireoverdrive"), (int) (20 * SpellHelper.getCooldownDuration(player1, spell)));
 
-                    int i = 0;
-                    List<Entity> targets = player1.getWorld().getOtherEntities(player1, player1.getBoundingBox().expand(spell.range), selectionPredicate);
+                        int i = 0;
+                        List<Entity> targets = player1.getWorld().getOtherEntities(player1, player1.getBoundingBox().expand(spell.range), selectionPredicate);
 
-                    SpellHelper.ImpactContext context = new SpellHelper.ImpactContext(1.0F, 1.0F, (Vec3d) null, SpellPower.getSpellPower(spell.school, player1), impactTargetingMode(spell));
+                        SpellHelper.ImpactContext context = new SpellHelper.ImpactContext(1.0F, 1.0F, (Vec3d) null, SpellPower.getSpellPower(spell.school, player1), impactTargetingMode(spell));
 
-                    for (Entity target1 : targets) {
-                        SpellHelper.performImpacts(player1.getWorld(), player1, target1, player1, SpellRegistry.getSpell(new Identifier(MOD_ID, "fireoverdrive")), new SpellHelper.ImpactContext());
-                    }
-                    ParticleHelper.sendBatches(player1, spell.release.particles);
-                    SpellHelper.AmmoResult ammoResult = ammoForSpell(player1, spell, stack);
-                    if (ammoResult.ammo() != null) {
-                        for (int ii = 0; ii < player1.getInventory().size(); ++ii) {
-                            ItemStack stack1 = player1.getInventory().getStack(ii);
-                            if (stack1.isOf(ammoResult.ammo().getItem())) {
-                                stack1.decrement(1);
-                                if (stack1.isEmpty()) {
-                                    player1.getInventory().removeOne(stack1);
+                        for (Entity target1 : targets) {
+                            SpellHelper.performImpacts(player1.getWorld(), player1, target1, player1, SpellRegistry.getSpell(new Identifier(MOD_ID, "fireoverdrive")), new SpellHelper.ImpactContext());
+                        }
+                        ParticleHelper.sendBatches(player1, spell.release.particles);
+                        SpellHelper.AmmoResult ammoResult = ammoForSpell(player1, spell, stack);
+                        if (ammoResult.ammo() != null) {
+                            for (int ii = 0; ii < player1.getInventory().size(); ++ii) {
+                                ItemStack stack1 = player1.getInventory().getStack(ii);
+                                if (stack1.isOf(ammoResult.ammo().getItem())) {
+                                    stack1.decrement(1);
+                                    if (stack1.isEmpty()) {
+                                        player1.getInventory().removeOne(stack1);
+                                    }
+                                    break;
                                 }
-                                break;
                             }
                         }
-                    }
 
+                    }
                 }
-            }
-            if (player1.getMainHandStack().getItem() instanceof Starforge) {
-                Predicate<Entity> selectionPredicate = (target2) -> {
-                    return (TargetHelper.actionAllowed(TargetHelper.TargetingMode.AREA, TargetHelper.Intent.HARMFUL, player1, target2)
-                    );
-                };
-                Spell spell = SpellRegistry.getSpell(new Identifier(MOD_ID, "frostoverdrive"));
+            });
+            ((WorldScheduler)player1.getWorld()).schedule(10,() -> {
 
-                if (player1 instanceof SpellCasterEntity entity && ammoForSpell(player1, spell, stack).satisfied() && !entity.getCooldownManager().isCoolingDown(new Identifier(MOD_ID, "frostoverdrive"))) {
-                    entity.getCooldownManager().set(new Identifier(MOD_ID, "frostoverdrive"), (int) (20 * SpellHelper.getCooldownDuration(player1, spell)));
+                if (player1.getMainHandStack().getItem() instanceof Starforge) {
+                    Predicate<Entity> selectionPredicate = (target2) -> {
+                        return (TargetHelper.actionAllowed(TargetHelper.TargetingMode.AREA, TargetHelper.Intent.HARMFUL, player1, target2)
+                        );
+                    };
+                    Spell spell = SpellRegistry.getSpell(new Identifier(MOD_ID, "frostoverdrive"));
 
-                    int i = 0;
-                    List<Entity> targets = player1.getWorld().getOtherEntities(player1, player1.getBoundingBox().expand(spell.range), selectionPredicate);
+                    if (player1 instanceof SpellCasterEntity entity && ammoForSpell(player1, spell, stack).satisfied() && !entity.getCooldownManager().isCoolingDown(new Identifier(MOD_ID, "frostoverdrive"))) {
+                        entity.getCooldownManager().set(new Identifier(MOD_ID, "frostoverdrive"), (int) (20 * SpellHelper.getCooldownDuration(player1, spell)));
 
-                    SpellHelper.ImpactContext context = new SpellHelper.ImpactContext(1.0F, 1.0F, (Vec3d) null, SpellPower.getSpellPower(spell.school, player1), impactTargetingMode(spell));
+                        int i = 0;
+                        List<Entity> targets = player1.getWorld().getOtherEntities(player1, player1.getBoundingBox().expand(spell.range), selectionPredicate);
 
-                    for (Entity target1 : targets) {
-                        SpellHelper.performImpacts(player1.getWorld(), player1, target1, player1, SpellRegistry.getSpell(new Identifier(MOD_ID, "frostoverdrive")), new SpellHelper.ImpactContext());
-                    }
-                    ParticleHelper.sendBatches(player1, spell.release.particles);
-                    SpellHelper.AmmoResult ammoResult = ammoForSpell(player1, spell, stack);
-                    if (ammoResult.ammo() != null) {
-                        for (int ii = 0; ii < player1.getInventory().size(); ++ii) {
-                            ItemStack stack1 = player1.getInventory().getStack(ii);
-                            if (stack1.isOf(ammoResult.ammo().getItem())) {
-                                stack1.decrement(1);
-                                if (stack1.isEmpty()) {
-                                    player1.getInventory().removeOne(stack1);
+                        SpellHelper.ImpactContext context = new SpellHelper.ImpactContext(1.0F, 1.0F, (Vec3d) null, SpellPower.getSpellPower(spell.school, player1), impactTargetingMode(spell));
+
+                        for (Entity target1 : targets) {
+                            SpellHelper.performImpacts(player1.getWorld(), player1, target1, player1, SpellRegistry.getSpell(new Identifier(MOD_ID, "frostoverdrive")), new SpellHelper.ImpactContext());
+                        }
+                        ParticleHelper.sendBatches(player1, spell.release.particles);
+                        SpellHelper.AmmoResult ammoResult = ammoForSpell(player1, spell, stack);
+                        if (ammoResult.ammo() != null) {
+                            for (int ii = 0; ii < player1.getInventory().size(); ++ii) {
+                                ItemStack stack1 = player1.getInventory().getStack(ii);
+                                if (stack1.isOf(ammoResult.ammo().getItem())) {
+                                    stack1.decrement(1);
+                                    if (stack1.isEmpty()) {
+                                        player1.getInventory().removeOne(stack1);
+                                    }
+                                    break;
                                 }
-                                break;
                             }
                         }
-                    }
 
+                    }
                 }
-            }
+            });
         }
         if((player.getType().equals(registry.entryOf(DamageTypes.MAGIC).value()) || player.getType().equals(registry.entryOf(DamageTypes.INDIRECT_MAGIC).value())) && player.getAttacker() instanceof PlayerEntity player3){
             player3.increaseStat(HEXRAID, (int) Math.ceil(f));

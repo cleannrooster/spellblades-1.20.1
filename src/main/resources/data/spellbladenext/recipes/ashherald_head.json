@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:smithing_transform",
+  "addition": {
+    "item": "spellbladenext:runeblaze_plate"
+  },
+  "base": {
+    "item": "minecraft:golden_helmet"
+  },
+  "result": {
+    "item": "spellbladenext:ashherald_head"
+  },
+  "template": {
+    "item": "runes:fire_stone"
+  }
+}

@@ -4,7 +4,7 @@
     "item": "spellbladenext:runefrost_ingot"
   },
   "base": {
-    "item": "minecraft:netherite_leggings"
+    "item": "minecraft:diamond_leggings"
   },
   "result": {
     "item": "spellbladenext:frozen_legs"

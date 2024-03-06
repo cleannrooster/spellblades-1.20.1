@@ -82,9 +82,11 @@ public class Starforge extends SwordItem implements ConfigurableAttributes {
 
     @Override
     public void appendTooltip(ItemStack itemStack, @Nullable World level, List<Text> list, TooltipContext tooltipFlag) {
-       list.add(Text.translatable("Triggers Elemental Novas on hit, with a 1 second base cooldown and a 0.8 coefficient."));
-        list.add(Text.translatable("Requires runes of the right type, or Spell Infinity."));
-
+        if(!(this instanceof Voidforge)) {
+            list.add(Text.translatable("Triggers Elemental Novas on hit, with a 1 second base cooldown and a 0.8 coefficient."));
+            list.add(Text.translatable("Requires runes of the right type, or Spell Infinity."));
+            list.add(Text.translatable("The end is written into the beginning.").formatted(Formatting.RED).formatted(Formatting.ITALIC));
+        }
         super.appendTooltip(itemStack,level,list,tooltipFlag);
     }
 }

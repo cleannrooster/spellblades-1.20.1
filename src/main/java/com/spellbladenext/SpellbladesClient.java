@@ -40,30 +40,7 @@ public class SpellbladesClient implements ClientModInitializer {
                     World level = server.world;
 
                     if (player != null && level != null) {
-                        if (SpellRegistry.getSpell(new Identifier(MOD_ID, "frostvert")) != null && player instanceof SpellCasterClient client && client.getSpellCastProgress() != null) {
-                            double speed = player.getAttributeValue(EntityAttributes.GENERIC_MOVEMENT_SPEED) * player.getAttributeValue(SpellAttributes.HASTE.attribute) * 0.01 * 4;
-                            BlockHitResult result = level.raycast(new RaycastContext(player.getPos(), player.getPos().add(0, -2, 0), RaycastContext.ShapeType.COLLIDER, RaycastContext.FluidHandling.ANY, player));
-                            if (player.isSneaking()) {
-                                speed *= 0;
-                            }
-                            double modifier = 0;
-                            if (result.getType() == HitResult.Type.BLOCK) {
-                                modifier = 1;
-                            }
 
-                            Spell spell = SpellRegistry.getSpell(new Identifier(MOD_ID, "frostvert"));
-
-                            if (player instanceof SpellCasterEntity caster) {
-
-                                if (Objects.equals(caster.getCurrentSpell(), SpellRegistry.getSpell(new Identifier(MOD_ID, "frostvert")))) {
-                                    Vec3d vec3d = player.getRotationVec(1).subtract(0, player.getRotationVec(1).y, 0).normalize().multiply(speed, speed * modifier, speed).add(0, player.getVelocity().y, 0);
-                                    player.setVelocity(vec3d);
-
-                                    player.addVelocity(0, Math.max(-2,2 * (1 - (0.2 + client.getSpellCastProgress().ratio()*13) * 2)* player.getAttributeValue(SpellAttributes.HASTE.attribute) * 0.01), 0);
-                                }
-                            }
-
-                        }
                         if (SpellRegistry.getSpell(new Identifier(MOD_ID, "maelstrom")) != null) {
                             double speed = player.getAttributeValue(EntityAttributes.GENERIC_MOVEMENT_SPEED) * player.getAttributeValue(SpellAttributes.HASTE.attribute) * 0.01 * 4;
                             BlockHitResult result = level.raycast(new RaycastContext(player.getPos(), player.getPos().add(0, -2, 0), RaycastContext.ShapeType.COLLIDER, RaycastContext.FluidHandling.ANY, player));

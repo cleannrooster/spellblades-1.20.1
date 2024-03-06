@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "item": "spellbladenext:runegleam_plate"
+    }
+  ],
+  "result": {
+    "item": "spellbladenext:runegleam_nugget",
+    "count": 9
+  }
+}

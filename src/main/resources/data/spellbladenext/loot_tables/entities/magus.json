@@ -44,10 +44,30 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "spellbladenext:ashes"
+          "name": "spellbladenext:ashes",
+          "conditions": [
+            {
+              "condition": "minecraft:random_chance",
+              "chance": 0.50
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "spellbladenext:omni",
+          "conditions": [
+            {
+              "condition": "minecraft:random_chance",
+              "chance": 0.50
+            }
+          ]
         }
       ]
     }
-
   ]
 }

@@ -5,8 +5,7 @@
     "tier": 2
   },
   "cast": {
-    "duration": 20,
-    "channel_ticks": 1,
+    "duration": 0,
     "sound": {
       "id": "spell_engine:generic_fire_casting",
       "randomness": 0
@@ -44,6 +43,7 @@
       "id": "minecraft:entity.player.attack.knockback"
     },
     "animation": "spellbladenext:two_handed_slam_spellblade_2"
+
   },
   "impact": [
     {
