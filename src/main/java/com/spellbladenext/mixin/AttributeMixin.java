@@ -16,6 +16,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import java.util.Iterator;
 import java.util.Map;
 
+import static com.extraspellattributes.ReabsorptionInit.*;
 import static com.spellbladenext.Spellblades.*;
 @Mixin(value = AttributeContainer.class)
 public class AttributeMixin {
@@ -86,7 +87,7 @@ public class AttributeMixin {
 
         return attribute.clamp(e);
     }
-    @Inject(at = @At("HEAD"), method = "getValue", cancellable = true)
+    /*@Inject(at = @At("HEAD"), method = "getValue", cancellable = true)
     private void getAttributeValueSpellbladesAshes(EntityAttribute attribute, CallbackInfoReturnable<Double> info) {
         if(attribute == EntityAttributes.GENERIC_ATTACK_DAMAGE) {
             AttributeContainer container = (AttributeContainer) (Object) this;
@@ -276,5 +277,5 @@ public class AttributeMixin {
                 }
             }
         }
-    }
+    }*/
 }

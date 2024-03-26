@@ -25,6 +25,8 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 import java.util.UUID;
 
+import static com.extraspellattributes.ReabsorptionInit.*;
+
 public class Voidforge extends Starforge implements ConfigurableAttributes {
     private Multimap<EntityAttribute, EntityAttributeModifier> attributes;
 
@@ -37,9 +39,9 @@ public class Voidforge extends Starforge implements ConfigurableAttributes {
         ImmutableMultimap.Builder<EntityAttribute, EntityAttributeModifier> builder = ImmutableMultimap.builder();
         // builder.putAll(super.getAttributeModifiers(this.slot));
         builder.putAll(attributes);
-        builder.put(Spellblades.CONVERTTOFIRE,new EntityAttributeModifier(UUID.fromString("a1d444d8-5ca1-47bb-bfb2-709cf1e44476"),"tofire",Spellblades.config.voidforge, EntityAttributeModifier.Operation.MULTIPLY_BASE));
-        builder.put(Spellblades.CONVERTTOFROST,new EntityAttributeModifier(UUID.fromString("a1d444d8-5ca1-47bb-bfb2-709cf1e44476"),"tofrost",Spellblades.config.voidforge, EntityAttributeModifier.Operation.MULTIPLY_BASE));
-        builder.put(Spellblades.CONVERTTOARCANE,new EntityAttributeModifier(UUID.fromString("a1d444d8-5ca1-47bb-bfb2-709cf1e44476"),"toarcane",Spellblades.config.voidforge, EntityAttributeModifier.Operation.MULTIPLY_BASE));
+        builder.put(CONVERTTOFIRE,new EntityAttributeModifier(UUID.fromString("a1d444d8-5ca1-47bb-bfb2-709cf1e44476"),"tofire",Spellblades.config.voidforge, EntityAttributeModifier.Operation.MULTIPLY_BASE));
+        builder.put(CONVERTTOFROST,new EntityAttributeModifier(UUID.fromString("a1d444d8-5ca1-47bb-bfb2-709cf1e44476"),"tofrost",Spellblades.config.voidforge, EntityAttributeModifier.Operation.MULTIPLY_BASE));
+        builder.put(CONVERTTOARCANE,new EntityAttributeModifier(UUID.fromString("a1d444d8-5ca1-47bb-bfb2-709cf1e44476"),"toarcane",Spellblades.config.voidforge, EntityAttributeModifier.Operation.MULTIPLY_BASE));
 
         this.attributes = builder.build();
     }

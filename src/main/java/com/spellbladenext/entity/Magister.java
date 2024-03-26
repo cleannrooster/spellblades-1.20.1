@@ -78,7 +78,7 @@ public class Magister extends PathAwareEntity implements InventoryOwner, GeoEnti
     public boolean isCaster = false;
     private PlayerEntity tradingplayer;
     float damagetakensincelastthink = 0;
-    public int experiencePoints = 20;
+    public int experiencePoints = 25;
 
     public Magister(EntityType<? extends Magister> p_34652_, World p_34653_) {
         super(p_34652_, p_34653_);

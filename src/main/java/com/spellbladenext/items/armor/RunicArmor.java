@@ -25,6 +25,8 @@ import net.spell_engine.mixin.ItemStackMixin;
 import java.util.EnumMap;
 import java.util.UUID;
 
+import static com.extraspellattributes.ReabsorptionInit.WARDING;
+
 public class RunicArmor extends CustomArmor {
     public RunicArmor(Armor.CustomMaterial material, Type type, Settings settings) {
         super(material, type, settings);
@@ -51,7 +53,7 @@ public class RunicArmor extends CustomArmor {
         // builder.putAll(super.getAttributeModifiers(this.slot));
         builder.putAll(attributes);
         UUID uuid = (UUID)MODIFIERS.get(this.type);
-        builder.put(Spellblades.WARDING,new EntityAttributeModifier(uuid,"warding",4, EntityAttributeModifier.Operation.ADDITION));
+        builder.put(WARDING,new EntityAttributeModifier(uuid,"warding",4, EntityAttributeModifier.Operation.ADDITION));
 
         this.attributes = builder.build();
 

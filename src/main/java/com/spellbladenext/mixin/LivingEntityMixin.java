@@ -51,6 +51,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
 
+import static com.extraspellattributes.ReabsorptionInit.WARDING;
 import static com.spellbladenext.Spellblades.*;
 import static net.spell_engine.internals.SpellHelper.ammoForSpell;
 import static net.spell_engine.internals.SpellHelper.impactTargetingMode;
@@ -175,7 +176,7 @@ public class LivingEntityMixin {
             }
 
         }
-            if(!FabricLoader.getInstance().isModLoaded("reabsorption")) {
+            /*if(!FabricLoader.getInstance().isModLoaded("reabsorption")) {
 
             if (living instanceof PlayerDamageInterface damageInterface && living.getAttributeInstance(WARDING) != null && living.getAttributeValue(WARDING) >= 1) {
                 float additional = (float) (0.05 * living.getAttributeValue(WARDING) * (0.173287 * Math.pow(Math.E, -0.173287 * 0.05 * (living.age - damageInterface.getLasthurt()))));
@@ -191,21 +192,9 @@ public class LivingEntityMixin {
                         living.setAbsorptionAmount(damageInterface.getDamageAbsorbed());
                     }
                 }
-            }
-        }
+            }*/
     }
-    @Inject(method = "createLivingAttributes", at = @At("RETURN"))
-    private static void addAttributesSpellblade_RETURN(final CallbackInfoReturnable<DefaultAttributeContainer.Builder> info) {
-            info.getReturnValue().add(WARDING);
-        info.getReturnValue().add(CONVERTFROMFIRE);
-        info.getReturnValue().add(CONVERTFROMFROST);
-        info.getReturnValue().add(CONVERTFROMARCANE);
-        info.getReturnValue().add(CONVERTTOFIRE);
-        info.getReturnValue().add(CONVERTTOFROST);
-        info.getReturnValue().add(CONVERTTOARCANE);
-        info.getReturnValue().add(CONVERTTOHEAL);
 
-    }
         @ModifyVariable(at = @At("HEAD"), method = "applyMovementInput", index = 1)
     public Vec3d applyInputMIX(Vec3d vec3d) {
         LivingEntity living = ((LivingEntity) (Object) this);
@@ -221,7 +210,7 @@ public class LivingEntityMixin {
     public void onEquipStackSpellblades(EquipmentSlot slot, ItemStack oldStack, ItemStack newStack, CallbackInfo info) {
         LivingEntity entity = (LivingEntity) (Object) this;
 
-        if(newStack.getAttributeModifiers(slot).containsKey(Spellblades.WARDING)) {
+        if(newStack.getAttributeModifiers(slot).containsKey(WARDING)) {
             if(entity instanceof PlayerDamageInterface playerDamageInterface) {
                 playerDamageInterface.resetDamageAbsorbed();
             }

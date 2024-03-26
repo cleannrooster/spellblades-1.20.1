@@ -37,6 +37,8 @@ import java.util.UUID;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
+import static com.extraspellattributes.ReabsorptionInit.WARDING;
+
 public class MagusArmor extends CustomArmor implements GeoItem {
 
     public MagusArmor(Armor.CustomMaterial material, Type type, Settings settings, MagicSchool magicSchool) {
@@ -57,7 +59,7 @@ public class MagusArmor extends CustomArmor implements GeoItem {
         // builder.putAll(super.getAttributeModifiers(this.slot));
         builder.putAll(attributes);
         UUID uuid = (UUID)MODIFIERS.get(this.type);
-        builder.put(Spellblades.WARDING,new EntityAttributeModifier(uuid,"warding",5, EntityAttributeModifier.Operation.ADDITION));
+        builder.put(WARDING,new EntityAttributeModifier(uuid,"warding",5, EntityAttributeModifier.Operation.ADDITION));
 
         this.attributes = builder.build();
 

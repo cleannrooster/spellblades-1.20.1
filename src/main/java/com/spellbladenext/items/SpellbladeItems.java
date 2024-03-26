@@ -3,6 +3,7 @@ package com.spellbladenext.items;
 import com.spellbladenext.Spellblades;
 import net.minecraft.item.Item;
 import net.minecraft.registry.Registries;
+import net.minecraft.registry.tag.ItemTags;
 
 import java.util.HashMap;
 

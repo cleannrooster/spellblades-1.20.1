@@ -51,17 +51,17 @@ public class HexbladePortal extends LivingEntity implements GeoEntity {
 
     @Override
     public boolean isInvulnerable() {
-        return false;
+        return true;
     }
 
     @Override
     public boolean canTakeDamage() {
-        return true;
+        return false;
     }
 
     @Override
     public boolean isAttackable() {
-        return true;
+        return false;
     }
 
 

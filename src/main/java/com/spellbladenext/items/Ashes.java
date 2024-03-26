@@ -18,6 +18,8 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 import java.util.UUID;
 
+import static com.extraspellattributes.ReabsorptionInit.*;
+
 public class Ashes  extends TrinketItem {
     public Ashes(Settings settings) {
         super(settings);
@@ -72,31 +74,31 @@ public class Ashes  extends TrinketItem {
         var modifiers = super.getModifiers(stack, slot, entity, uuid);
         // +10% movement speed
         if(stack.getOrCreateNbt().getString("1") != null && stack.getOrCreateNbt().getString("1").equals( "fire")) {
-            modifiers.put(Spellblades.CONVERTFROMFIRE, new EntityAttributeModifier(UUID.fromString("1e10b1f5-66ed-4e64-b222-c1106273d080"), "spellblades:convertfromfire1", Math.max(Spellblades.config.ashes_lower_bound,Math.min(Spellblades.config.ashes_upper_bound,stack.getOrCreateNbt().getInt("1modifier")))*0.01, EntityAttributeModifier.Operation.MULTIPLY_BASE));
+            modifiers.put(CONVERTFROMFIRE, new EntityAttributeModifier(UUID.fromString("1e10b1f5-66ed-4e64-b222-c1106273d080"), "spellblades:convertfromfire1", Math.max(Spellblades.config.ashes_lower_bound,Math.min(Spellblades.config.ashes_upper_bound,stack.getOrCreateNbt().getInt("1modifier")))*0.01, EntityAttributeModifier.Operation.MULTIPLY_BASE));
         }
         if(stack.getOrCreateNbt().getString("1") != null && stack.getOrCreateNbt().getString("1").equals( "frost")) {
-            modifiers.put(Spellblades.CONVERTFROMFROST, new EntityAttributeModifier(UUID.fromString("1e10b1f5-66ed-4e64-b222-c1106273d080"), "spellblades:convertfromfrost1", Math.max(Spellblades.config.ashes_lower_bound,Math.min(Spellblades.config.ashes_upper_bound,stack.getOrCreateNbt().getInt("1modifier")))*0.01, EntityAttributeModifier.Operation.MULTIPLY_BASE));
+            modifiers.put(CONVERTFROMFROST, new EntityAttributeModifier(UUID.fromString("1e10b1f5-66ed-4e64-b222-c1106273d080"), "spellblades:convertfromfrost1", Math.max(Spellblades.config.ashes_lower_bound,Math.min(Spellblades.config.ashes_upper_bound,stack.getOrCreateNbt().getInt("1modifier")))*0.01, EntityAttributeModifier.Operation.MULTIPLY_BASE));
         }
         if(stack.getOrCreateNbt().getString("1") != null && stack.getOrCreateNbt().getString("1").equals( "arcane")) {
-            modifiers.put(Spellblades.CONVERTFROMARCANE, new EntityAttributeModifier(UUID.fromString("1e10b1f5-66ed-4e64-b222-c1106273d080"), "spellblades:convertfromarcane1", Math.max(Spellblades.config.ashes_lower_bound,Math.min(Spellblades.config.ashes_upper_bound,stack.getOrCreateNbt().getInt("1modifier")))*0.01, EntityAttributeModifier.Operation.MULTIPLY_BASE));
+            modifiers.put(CONVERTFROMARCANE, new EntityAttributeModifier(UUID.fromString("1e10b1f5-66ed-4e64-b222-c1106273d080"), "spellblades:convertfromarcane1", Math.max(Spellblades.config.ashes_lower_bound,Math.min(Spellblades.config.ashes_upper_bound,stack.getOrCreateNbt().getInt("1modifier")))*0.01, EntityAttributeModifier.Operation.MULTIPLY_BASE));
         }
         if(stack.getOrCreateNbt().getString("2") != null && stack.getOrCreateNbt().getString("2").equals( "fire")) {
-            modifiers.put(Spellblades.CONVERTFROMFIRE, new EntityAttributeModifier(UUID.fromString("c73054bc-46f0-45de-b042-7ddf9ecef1bc"), "spellblades:convertfromfire2", Math.max(Spellblades.config.ashes_lower_bound,Math.min(Spellblades.config.ashes_upper_bound,stack.getOrCreateNbt().getInt("2modifier")))*0.01, EntityAttributeModifier.Operation.MULTIPLY_BASE));
+            modifiers.put(CONVERTFROMFIRE, new EntityAttributeModifier(UUID.fromString("c73054bc-46f0-45de-b042-7ddf9ecef1bc"), "spellblades:convertfromfire2", Math.max(Spellblades.config.ashes_lower_bound,Math.min(Spellblades.config.ashes_upper_bound,stack.getOrCreateNbt().getInt("2modifier")))*0.01, EntityAttributeModifier.Operation.MULTIPLY_BASE));
         }
         if(stack.getOrCreateNbt().getString("2") != null && stack.getOrCreateNbt().getString("2").equals( "frost")) {
-            modifiers.put(Spellblades.CONVERTFROMFROST, new EntityAttributeModifier(UUID.fromString("c73054bc-46f0-45de-b042-7ddf9ecef1bc"), "spellblades:convertfromfrost2", Math.max(Spellblades.config.ashes_lower_bound,Math.min(Spellblades.config.ashes_upper_bound,stack.getOrCreateNbt().getInt("2modifier")))*0.01, EntityAttributeModifier.Operation.MULTIPLY_BASE));
+            modifiers.put(CONVERTFROMFROST, new EntityAttributeModifier(UUID.fromString("c73054bc-46f0-45de-b042-7ddf9ecef1bc"), "spellblades:convertfromfrost2", Math.max(Spellblades.config.ashes_lower_bound,Math.min(Spellblades.config.ashes_upper_bound,stack.getOrCreateNbt().getInt("2modifier")))*0.01, EntityAttributeModifier.Operation.MULTIPLY_BASE));
         }
         if(stack.getOrCreateNbt().getString("2") != null && stack.getOrCreateNbt().getString("2").equals( "arcane")) {
-            modifiers.put(Spellblades.CONVERTFROMARCANE, new EntityAttributeModifier(UUID.fromString("c73054bc-46f0-45de-b042-7ddf9ecef1bc"), "spellblades:convertfromarcane2", Math.max(Spellblades.config.ashes_lower_bound,Math.min(Spellblades.config.ashes_upper_bound,stack.getOrCreateNbt().getInt("2modifier")))*0.01, EntityAttributeModifier.Operation.MULTIPLY_BASE));
+            modifiers.put(CONVERTFROMARCANE, new EntityAttributeModifier(UUID.fromString("c73054bc-46f0-45de-b042-7ddf9ecef1bc"), "spellblades:convertfromarcane2", Math.max(Spellblades.config.ashes_lower_bound,Math.min(Spellblades.config.ashes_upper_bound,stack.getOrCreateNbt().getInt("2modifier")))*0.01, EntityAttributeModifier.Operation.MULTIPLY_BASE));
         }
         if(stack.getOrCreateNbt().getString("3") != null && stack.getOrCreateNbt().getString("3").equals( "fire")) {
-            modifiers.put(Spellblades.CONVERTFROMFIRE, new EntityAttributeModifier(UUID.fromString("c05273f4-9302-4545-8880-307d331ffaf0"), "spellblades:convertfromfire3", Math.max(Spellblades.config.ashes_lower_bound,Math.min(Spellblades.config.ashes_upper_bound,stack.getOrCreateNbt().getInt("3modifier")))*0.01, EntityAttributeModifier.Operation.MULTIPLY_BASE));
+            modifiers.put(CONVERTFROMFIRE, new EntityAttributeModifier(UUID.fromString("c05273f4-9302-4545-8880-307d331ffaf0"), "spellblades:convertfromfire3", Math.max(Spellblades.config.ashes_lower_bound,Math.min(Spellblades.config.ashes_upper_bound,stack.getOrCreateNbt().getInt("3modifier")))*0.01, EntityAttributeModifier.Operation.MULTIPLY_BASE));
         }
         if(stack.getOrCreateNbt().getString("3") != null && stack.getOrCreateNbt().getString("3").equals( "frost")) {
-            modifiers.put(Spellblades.CONVERTFROMFROST, new EntityAttributeModifier(UUID.fromString("c05273f4-9302-4545-8880-307d331ffaf0"), "spellblades:convertfromfrost3", Math.max(Spellblades.config.ashes_lower_bound,Math.min(Spellblades.config.ashes_upper_bound,stack.getOrCreateNbt().getInt("3modifier")))*0.01, EntityAttributeModifier.Operation.MULTIPLY_BASE));
+            modifiers.put(CONVERTFROMFROST, new EntityAttributeModifier(UUID.fromString("c05273f4-9302-4545-8880-307d331ffaf0"), "spellblades:convertfromfrost3", Math.max(Spellblades.config.ashes_lower_bound,Math.min(Spellblades.config.ashes_upper_bound,stack.getOrCreateNbt().getInt("3modifier")))*0.01, EntityAttributeModifier.Operation.MULTIPLY_BASE));
         }
         if(stack.getOrCreateNbt().getString("3") != null && stack.getOrCreateNbt().getString("3").equals( "arcane")) {
-            modifiers.put(Spellblades.CONVERTFROMARCANE, new EntityAttributeModifier(UUID.fromString("c05273f4-9302-4545-8880-307d331ffaf0"), "spellblades:convertfromarcane3", Math.max(Spellblades.config.ashes_lower_bound,Math.min(Spellblades.config.ashes_upper_bound,stack.getOrCreateNbt().getInt("3modifier")))*0.01, EntityAttributeModifier.Operation.MULTIPLY_BASE));
+            modifiers.put(CONVERTFROMARCANE, new EntityAttributeModifier(UUID.fromString("c05273f4-9302-4545-8880-307d331ffaf0"), "spellblades:convertfromarcane3", Math.max(Spellblades.config.ashes_lower_bound,Math.min(Spellblades.config.ashes_upper_bound,stack.getOrCreateNbt().getInt("3modifier")))*0.01, EntityAttributeModifier.Operation.MULTIPLY_BASE));
         }
         // If the player has access to ring slots, this will give them an extra one
         return modifiers;

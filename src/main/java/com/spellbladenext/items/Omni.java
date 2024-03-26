@@ -18,6 +18,8 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 import java.util.UUID;
 
+import static com.extraspellattributes.ReabsorptionInit.*;
+
 public class Omni extends TrinketItem {
     public Omni(Settings settings) {
         super(settings);
@@ -73,31 +75,31 @@ public class Omni extends TrinketItem {
         var modifiers = super.getModifiers(stack, slot, entity, uuid);
         // +10% movement speed
         if(stack.getOrCreateNbt().getString("1") != null && stack.getOrCreateNbt().getString("1").equals( "fire")) {
-            modifiers.put(Spellblades.CONVERTTOFIRE, new EntityAttributeModifier(UUID.fromString("1e10b1f5-66ed-4e64-b222-c1106273d080"), "spellblades:converttofire1", Math.max(Spellblades.config.omni_lower,Math.min(Spellblades.config.omni_upper,stack.getOrCreateNbt().getInt("1modifier")))*0.01, EntityAttributeModifier.Operation.MULTIPLY_BASE));
+            modifiers.put(CONVERTTOFIRE, new EntityAttributeModifier(UUID.fromString("1e10b1f5-66ed-4e64-b222-c1106273d080"), "spellblades:converttofire1", Math.max(Spellblades.config.omni_lower,Math.min(Spellblades.config.omni_upper,stack.getOrCreateNbt().getInt("1modifier")))*0.01, EntityAttributeModifier.Operation.MULTIPLY_BASE));
         }
         if(stack.getOrCreateNbt().getString("1") != null && stack.getOrCreateNbt().getString("1").equals( "frost")) {
-            modifiers.put(Spellblades.CONVERTTOFROST, new EntityAttributeModifier(UUID.fromString("1e10b1f5-66ed-4e64-b222-c1106273d080"), "spellblades:converttofrost1", Math.max(Spellblades.config.omni_lower,Math.min(Spellblades.config.omni_upper,stack.getOrCreateNbt().getInt("1modifier")))*0.01, EntityAttributeModifier.Operation.MULTIPLY_BASE));
+            modifiers.put(CONVERTTOFROST, new EntityAttributeModifier(UUID.fromString("1e10b1f5-66ed-4e64-b222-c1106273d080"), "spellblades:converttofrost1", Math.max(Spellblades.config.omni_lower,Math.min(Spellblades.config.omni_upper,stack.getOrCreateNbt().getInt("1modifier")))*0.01, EntityAttributeModifier.Operation.MULTIPLY_BASE));
         }
         if(stack.getOrCreateNbt().getString("1") != null && stack.getOrCreateNbt().getString("1").equals( "arcane")) {
-            modifiers.put(Spellblades.CONVERTTOARCANE, new EntityAttributeModifier(UUID.fromString("1e10b1f5-66ed-4e64-b222-c1106273d080"), "spellblades:converttoarcane1", Math.max(Spellblades.config.omni_lower,Math.min(Spellblades.config.omni_upper,stack.getOrCreateNbt().getInt("1modifier")))*0.01, EntityAttributeModifier.Operation.MULTIPLY_BASE));
+            modifiers.put(CONVERTTOARCANE, new EntityAttributeModifier(UUID.fromString("1e10b1f5-66ed-4e64-b222-c1106273d080"), "spellblades:converttoarcane1", Math.max(Spellblades.config.omni_lower,Math.min(Spellblades.config.omni_upper,stack.getOrCreateNbt().getInt("1modifier")))*0.01, EntityAttributeModifier.Operation.MULTIPLY_BASE));
         }
         if(stack.getOrCreateNbt().getString("2") != null && stack.getOrCreateNbt().getString("2").equals( "fire")) {
-            modifiers.put(Spellblades.CONVERTTOFIRE, new EntityAttributeModifier(UUID.fromString("c73054bc-46f0-45de-b042-7ddf9ecef1bc"), "spellblades:converttofire2", Math.max(Spellblades.config.omni_lower,Math.min(Spellblades.config.omni_upper,stack.getOrCreateNbt().getInt("2modifier")))*0.01, EntityAttributeModifier.Operation.MULTIPLY_BASE));
+            modifiers.put(CONVERTTOFIRE, new EntityAttributeModifier(UUID.fromString("c73054bc-46f0-45de-b042-7ddf9ecef1bc"), "spellblades:converttofire2", Math.max(Spellblades.config.omni_lower,Math.min(Spellblades.config.omni_upper,stack.getOrCreateNbt().getInt("2modifier")))*0.01, EntityAttributeModifier.Operation.MULTIPLY_BASE));
         }
         if(stack.getOrCreateNbt().getString("2") != null && stack.getOrCreateNbt().getString("2").equals( "frost")) {
-            modifiers.put(Spellblades.CONVERTTOFROST, new EntityAttributeModifier(UUID.fromString("c73054bc-46f0-45de-b042-7ddf9ecef1bc"), "spellblades:converttofrost2", Math.max(Spellblades.config.omni_lower,Math.min(Spellblades.config.omni_upper,stack.getOrCreateNbt().getInt("2modifier")))*0.01, EntityAttributeModifier.Operation.MULTIPLY_BASE));
+            modifiers.put(CONVERTTOFROST, new EntityAttributeModifier(UUID.fromString("c73054bc-46f0-45de-b042-7ddf9ecef1bc"), "spellblades:converttofrost2", Math.max(Spellblades.config.omni_lower,Math.min(Spellblades.config.omni_upper,stack.getOrCreateNbt().getInt("2modifier")))*0.01, EntityAttributeModifier.Operation.MULTIPLY_BASE));
         }
         if(stack.getOrCreateNbt().getString("2") != null && stack.getOrCreateNbt().getString("2").equals( "arcane")) {
-            modifiers.put(Spellblades.CONVERTTOARCANE, new EntityAttributeModifier(UUID.fromString("c73054bc-46f0-45de-b042-7ddf9ecef1bc"), "spellblades:converttoarcane2", Math.max(Spellblades.config.omni_lower,Math.min(Spellblades.config.omni_upper,stack.getOrCreateNbt().getInt("2modifier")))*0.01, EntityAttributeModifier.Operation.MULTIPLY_BASE));
+            modifiers.put(CONVERTTOARCANE, new EntityAttributeModifier(UUID.fromString("c73054bc-46f0-45de-b042-7ddf9ecef1bc"), "spellblades:converttoarcane2", Math.max(Spellblades.config.omni_lower,Math.min(Spellblades.config.omni_upper,stack.getOrCreateNbt().getInt("2modifier")))*0.01, EntityAttributeModifier.Operation.MULTIPLY_BASE));
         }
         if(stack.getOrCreateNbt().getString("3") != null && stack.getOrCreateNbt().getString("3").equals( "fire")) {
-            modifiers.put(Spellblades.CONVERTTOFIRE, new EntityAttributeModifier(UUID.fromString("c05273f4-9302-4545-8880-307d331ffaf0"), "spellblades:converttofire3", Math.max(Spellblades.config.omni_lower,Math.min(Spellblades.config.omni_upper,stack.getOrCreateNbt().getInt("3modifier")))*0.01, EntityAttributeModifier.Operation.MULTIPLY_BASE));
+            modifiers.put(CONVERTTOFIRE, new EntityAttributeModifier(UUID.fromString("c05273f4-9302-4545-8880-307d331ffaf0"), "spellblades:converttofire3", Math.max(Spellblades.config.omni_lower,Math.min(Spellblades.config.omni_upper,stack.getOrCreateNbt().getInt("3modifier")))*0.01, EntityAttributeModifier.Operation.MULTIPLY_BASE));
         }
         if(stack.getOrCreateNbt().getString("3") != null && stack.getOrCreateNbt().getString("3").equals( "frost")) {
-            modifiers.put(Spellblades.CONVERTTOFROST, new EntityAttributeModifier(UUID.fromString("c05273f4-9302-4545-8880-307d331ffaf0"), "spellblades:converttofrost3", Math.max(Spellblades.config.omni_lower,Math.min(Spellblades.config.omni_upper,stack.getOrCreateNbt().getInt("3modifier")))*0.01, EntityAttributeModifier.Operation.MULTIPLY_BASE));
+            modifiers.put(CONVERTTOFROST, new EntityAttributeModifier(UUID.fromString("c05273f4-9302-4545-8880-307d331ffaf0"), "spellblades:converttofrost3", Math.max(Spellblades.config.omni_lower,Math.min(Spellblades.config.omni_upper,stack.getOrCreateNbt().getInt("3modifier")))*0.01, EntityAttributeModifier.Operation.MULTIPLY_BASE));
         }
         if(stack.getOrCreateNbt().getString("3") != null && stack.getOrCreateNbt().getString("3").equals( "arcane")) {
-            modifiers.put(Spellblades.CONVERTTOARCANE, new EntityAttributeModifier(UUID.fromString("c05273f4-9302-4545-8880-307d331ffaf0"), "spellblades:converttoarcane3", Math.max(Spellblades.config.omni_lower,Math.min(Spellblades.config.omni_upper,stack.getOrCreateNbt().getInt("3modifier")))*0.01, EntityAttributeModifier.Operation.MULTIPLY_BASE));
+            modifiers.put(CONVERTTOARCANE, new EntityAttributeModifier(UUID.fromString("c05273f4-9302-4545-8880-307d331ffaf0"), "spellblades:converttoarcane3", Math.max(Spellblades.config.omni_lower,Math.min(Spellblades.config.omni_upper,stack.getOrCreateNbt().getInt("3modifier")))*0.01, EntityAttributeModifier.Operation.MULTIPLY_BASE));
         }
         // If the player has access to ring slots, this will give them an extra one
         return modifiers;

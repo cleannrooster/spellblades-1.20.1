@@ -127,14 +127,6 @@ public class Spellblades implements ModInitializer {
 	public static EntityType<CycloneEntity> CYCLONEENTITY;
 	public static EntityType<RedLaserEntity> REDLASERENTITY;
 	public static ServerConfig config;
-	public static final CustomEntityAttribute WARDING = new CustomEntityAttribute("attribute.name.spellbladenext.warding", 0,0,9999,new Identifier(MOD_ID,"warding"));
-	public static final CustomEntityAttribute CONVERTFROMFIRE = new CustomEntityAttribute("attribute.name.spellbladenext.convertfromfire", 100,100,9999,new Identifier(MOD_ID,"convertfromfire"));
-	public static final CustomEntityAttribute CONVERTFROMFROST = new CustomEntityAttribute("attribute.name.spellbladenext.convertfromfrost", 100,100,9999,new Identifier(MOD_ID,"convertfromfrost"));
-	public static final CustomEntityAttribute CONVERTFROMARCANE = new CustomEntityAttribute("attribute.name.spellbladenext.convertfromarcane", 100,100,9999,new Identifier(MOD_ID,"convertfromarcane"));
-	public static final CustomEntityAttribute CONVERTTOFIRE = new CustomEntityAttribute("attribute.name.spellbladenext.converttofire", 100,100,9999,new Identifier(MOD_ID,"converttofire"));
-	public static final CustomEntityAttribute CONVERTTOFROST = new CustomEntityAttribute("attribute.name.spellbladenext.converttofrost", 100,100,9999,new Identifier(MOD_ID,"converttofrost"));
-	public static final CustomEntityAttribute CONVERTTOARCANE = new CustomEntityAttribute("attribute.name.spellbladenext.converttoarcane", 100,100,9999,new Identifier(MOD_ID,"converttoarcane"));
-	public static final CustomEntityAttribute CONVERTTOHEAL = new CustomEntityAttribute("attribute.name.spellbladenext.converttoheal", 100,100,9999,new Identifier(MOD_ID,"converttoheal"));
 
 	public static final Identifier SINCELASTHEX = new Identifier(MOD_ID, "threat");
 	public static final Identifier HEXRAID = new Identifier(MOD_ID, "hex");
@@ -279,14 +271,6 @@ public class Spellblades implements ModInitializer {
 		Registry.register(Registries.STATUS_EFFECT,new Identifier(MOD_ID,"runicabsorption"),RunicAbsorption);
 		Registry.register(Registries.CUSTOM_STAT, "threat", SINCELASTHEX);
 		Registry.register(Registries.CUSTOM_STAT, "hex", HEXRAID);
-		Registry.register(Registries.ATTRIBUTE,new Identifier(MOD_ID,"warding"),WARDING);
-		Registry.register(Registries.ATTRIBUTE,new Identifier(MOD_ID,"convertfromfire"),CONVERTFROMFIRE);
-		Registry.register(Registries.ATTRIBUTE,new Identifier(MOD_ID,"convertfromfrost"),CONVERTFROMFROST);
-		Registry.register(Registries.ATTRIBUTE,new Identifier(MOD_ID,"convertfromarcane"),CONVERTFROMARCANE);
-		Registry.register(Registries.ATTRIBUTE,new Identifier(MOD_ID,"converttofire"),CONVERTTOFIRE);
-		Registry.register(Registries.ATTRIBUTE,new Identifier(MOD_ID,"converttofrost"),CONVERTTOFROST);
-		Registry.register(Registries.ATTRIBUTE,new Identifier(MOD_ID,"converttoarcane"),CONVERTTOARCANE);
-		Registry.register(Registries.ATTRIBUTE,new Identifier(MOD_ID,"converttoheal"),CONVERTTOHEAL);
 
 		lootConfig.refresh();
 		itemConfig.refresh();
@@ -661,7 +645,13 @@ public class Spellblades implements ModInitializer {
 			if(!data1.targets().isEmpty()) {
 				if(data1.targets().get(data1.targets().size()-1) instanceof LivingEntity living){
 					Vec3d vec3 = data1.targets().get(data1.targets().size()-1).getPos().add(data1.caster().getRotationVec(1F).subtract(0,data1.caster().getRotationVec(1F).getY(),0).normalize().multiply(1+0.5+(data1.targets().get(data1.targets().size()-1).getBoundingBox().getXLength() / 2)));
-					data1.caster().requestTeleport(vec3.getX(),vec3.getY(),vec3.getZ());
+					if(living.getWorld().getBlockState(new BlockPos((int) vec3.x,(int)vec3.y,(int) vec3.z)).shouldSuffocate(living.getWorld(),new BlockPos((int) vec3.x,(int)vec3.y,(int) vec3.z))) {
+						data1.caster().requestTeleport(living.getPos().getX(),living.getPos().getY(),living.getPos().getZ());
+					}
+					else{
+						data1.caster().requestTeleport(vec3.getX(), vec3.getY(), vec3.getZ());
+
+					}
 				}
 				for (Entity entity : data1.targets()) {
 
@@ -781,9 +771,14 @@ public class Spellblades implements ModInitializer {
 					ParticleHelper.sendBatches(entity,SpellRegistry.getSpell(new Identifier(MOD_ID,"frostblink")).impact[0].particles);
 					ParticleHelper.sendBatches(entity,SpellRegistry.getSpell(new Identifier(MOD_ID,"frostblink")).impact[1].particles);
 
-					if(entity instanceof LivingEntity living){
-						Vec3d vec3 = entity.getPos().add(data1.caster().getRotationVec(1F).subtract(0,data1.caster().getRotationVec(1F).getY(),0).normalize().multiply(1+0.5+(entity.getBoundingBox().getXLength() / 2)));
-						data1.caster().requestTeleport(vec3.getX(),vec3.getY(),vec3.getZ());
+					if(entity instanceof LivingEntity living) {
+						Vec3d vec3 = entity.getPos().add(data1.caster().getRotationVec(1F).subtract(0, data1.caster().getRotationVec(1F).getY(), 0).normalize().multiply(1 + 0.5 + (entity.getBoundingBox().getXLength() / 2)));
+						if (living.getWorld().getBlockState(new BlockPos((int) vec3.x, (int) vec3.y, (int) vec3.z)).shouldSuffocate(living.getWorld(), new BlockPos((int) vec3.x, (int) vec3.y, (int) vec3.z))) {
+							data1.caster().requestTeleport(living.getPos().getX(), living.getPos().getY(), living.getPos().getZ());
+						} else {
+							data1.caster().requestTeleport(vec3.getX(), vec3.getY(), vec3.getZ());
+
+						}
 					}
 				}
 			}
