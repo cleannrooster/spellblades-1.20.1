@@ -5,7 +5,8 @@
     "tier": 3
   },
   "cast": {
-    "duration": 999,
+    "duration": 5,
+    "haste_affected": false,
     "channel_ticks": 4,
     "sound": {
       "id": "minecraft:entity.player.attack.sweep",
@@ -39,7 +40,7 @@
         "type": "DAMAGE",
         "damage": {
           "knockback": 0.5,
-          "spell_power_coefficient": 1.6
+          "spell_power_coefficient": 0.5
         }
       },
       "sound": {
@@ -52,7 +53,7 @@
         "type": "DAMAGE",
         "damage": {
           "knockback": 0.5,
-          "spell_power_coefficient": 1.6
+          "spell_power_coefficient": 1.2
         }
       },
       "particles": [
@@ -71,6 +72,8 @@
     }
   ],
   "cost": {
-    "cooldown_duration": 8
+    "cooldown_duration": 12,
+    "item_id": "runes:frost_stone"
+
   }
 }

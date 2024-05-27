@@ -18,7 +18,7 @@ import net.minecraft.util.crash.CrashReportSection;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RotationAxis;
 import net.minecraft.util.math.Vec3d;
-import net.spell_power.api.MagicSchool;
+import net.spell_power.api.SpellSchools;
 import org.joml.Quaterniond;
 import org.joml.Quaternionf;
 import org.spongepowered.asm.mixin.Mixin;
@@ -60,10 +60,10 @@ public class EntityRenderDispatcherMixin<E extends Entity>{
 
                 poseStack.pop();
 
-                if(entity instanceof Archmagus archmagus && archmagus.getMagicSchool() == MagicSchool.FROST){
+                if(entity instanceof Archmagus archmagus && archmagus.getMagicSchool() == SpellSchools.FROST){
                     info.cancel();
                 }
-                if(entity instanceof Archmagus archmagus && archmagus.getMagicSchool() == MagicSchool.ARCANE && MinecraftClient.getInstance().player != null && !archmagus.biding){
+                if(entity instanceof Archmagus archmagus && archmagus.getMagicSchool() == SpellSchools.ARCANE && MinecraftClient.getInstance().player != null && !archmagus.biding){
 
                     Vec3d distance = archmagus.getLerpedPos(h).subtract(MinecraftClient.getInstance().player.getLerpedPos(h));
                     Vec3d distanceleft = distance.rotateY((float) Math.toRadians(90));

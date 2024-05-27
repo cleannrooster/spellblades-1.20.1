@@ -71,9 +71,9 @@ import net.spell_engine.particle.ParticleHelper;
 import net.spell_engine.utils.SoundHelper;
 import net.spell_engine.utils.TargetHelper;
 import net.spell_power.SpellPowerMod;
-import net.spell_power.api.MagicSchool;
 import net.spell_power.api.SpellDamageSource;
-import net.spell_power.api.attributes.SpellAttributes;
+import net.spell_power.api.SpellSchool;
+import net.spell_power.api.SpellSchools;
 import net.spell_power.mixin.DamageSourcesAccessor;
 
 import java.util.List;
@@ -84,6 +84,7 @@ import java.util.stream.StreamSupport;
 
 import static com.spellbladenext.Spellblades.DIMENSIONKEY;
 import static java.lang.Math.*;
+import static net.spell_power.api.SpellSchools.*;
 
 public class Archmagus extends HostileEntity implements InventoryOwner, GeoEntity {
     public PlayerEntity nemesis;
@@ -305,7 +306,7 @@ public class Archmagus extends HostileEntity implements InventoryOwner, GeoEntit
 
     @Override
     public void heal(float f) {
-        this.damage(SpellDamageSource.mob(MagicSchool.HEALING,this),f);
+        this.damage(SpellDamageSource.mob(SpellSchools.HEALING,this),f);
     }
 
     @Override
@@ -332,13 +333,15 @@ public class Archmagus extends HostileEntity implements InventoryOwner, GeoEntit
         }
 
         if(damageSource.getAttacker() instanceof PlayerEntity player) {
-            switch (this.getMagicSchool()) {
-                case FROST -> this.dataTracker.set(modifier, this.dataTracker.get(modifier) + min((int) ceil(100 *  ( player.getAttributeValue(SpellAttributes.POWER.get(MagicSchool.FROST).attribute)) / this.getMaxHealth()),(int)f));
-                case FIRE -> this.dataTracker.set(modifier, this.dataTracker.get(modifier) + min((int) ceil(100 *  ( player.getAttributeValue(SpellAttributes.POWER.get(MagicSchool.FIRE).attribute)) / this.getMaxHealth()),(int)f));
-                case ARCANE -> this.dataTracker.set(modifier, this.dataTracker.get(modifier) + min((int) ceil(100 *  ( player.getAttributeValue(SpellAttributes.POWER.get(MagicSchool.ARCANE).attribute)) / this.getMaxHealth()),(int)f));
-
+            SpellSchool magicSchool = this.getMagicSchool();
+            if (magicSchool.equals(FROST)) {
+                this.dataTracker.set(modifier, this.dataTracker.get(modifier) + min((int) ceil(100 * (player.getAttributeValue((FROST).attribute)) / this.getMaxHealth()), (int) f));
+            } else if (magicSchool.equals(FIRE)) {
+                this.dataTracker.set(modifier, this.dataTracker.get(modifier) + min((int) ceil(100 * (player.getAttributeValue((FIRE).attribute)) / this.getMaxHealth()), (int) f));
+            } else if (magicSchool.equals(ARCANE)) {
+                this.dataTracker.set(modifier, this.dataTracker.get(modifier) + min((int) ceil(100 * (player.getAttributeValue((ARCANE).attribute)) / this.getMaxHealth()), (int) f));
             }
-            this.dataTracker.set(modifier, this.dataTracker.get(modifier) + min((int) ceil(100 *  ( player.getAttributeValue(SpellAttributes.POWER.get(MagicSchool.HEALING).attribute)) / this.getMaxHealth()),(int)f));
+            this.dataTracker.set(modifier, this.dataTracker.get(modifier) + min((int) ceil(100 *  ( player.getAttributeValue((SpellSchools.HEALING).attribute)) / this.getMaxHealth()),(int)f));
 
         }
         if(damageSource.getAttacker() instanceof LivingEntity living && EnchantmentHelper.getEquipmentLevel(Enchantments.SMITE, living) > 0) {
@@ -353,19 +356,19 @@ public class Archmagus extends HostileEntity implements InventoryOwner, GeoEntit
 
 
 
-    public MagicSchool getMagicSchool(){
+    public SpellSchool getMagicSchool(){
         switch(this.getDataTracker().get(TIER) % 3){
             case 0 -> {
-                return MagicSchool.ARCANE;
+                return SpellSchools.ARCANE;
             }
             case 1 -> {
-                return MagicSchool.FIRE;
+                return SpellSchools.FIRE;
             }
             case 2 -> {
-                return MagicSchool.FROST;
+                return SpellSchools.FROST;
             }
         }
-        return MagicSchool.ARCANE;
+        return SpellSchools.ARCANE;
     }
 
     @Override
@@ -438,17 +441,17 @@ public class Archmagus extends HostileEntity implements InventoryOwner, GeoEntit
                 player.addStatusEffect(new StatusEffectInstance(Spellblades.PORTALSICKNESS,160,0,false,false));
                 String string = "null";
                 Formatting chatFormatting = Formatting.GRAY;
-                if(getMagicSchool() == MagicSchool.ARCANE){
+                if(getMagicSchool() == SpellSchools.ARCANE){
                     string = "ARCANE";
                     chatFormatting = Formatting.DARK_PURPLE;
 
                 }
-                if(getMagicSchool() == MagicSchool.FROST){
+                if(getMagicSchool() == SpellSchools.FROST){
                     string = "FROST";
                     chatFormatting = Formatting.AQUA;
 
                 }
-                if(getMagicSchool() == MagicSchool.FIRE){
+                if(getMagicSchool() == SpellSchools.FIRE){
                     string = "FIRE";
                     chatFormatting = Formatting.RED;
 
@@ -494,11 +497,11 @@ public class Archmagus extends HostileEntity implements InventoryOwner, GeoEntit
             }
         }
 
-        if (this.casting && getMagicSchool() == MagicSchool.ARCANE && this.isOnGround()) {
+        if (this.casting && getMagicSchool() == SpellSchools.ARCANE && this.isOnGround()) {
             this.setInvisible(true);
             this.casting = false;
         }
-        if (this.casting && getMagicSchool() == MagicSchool.FIRE && this.isOnGround() && !this.rising) {
+        if (this.casting && getMagicSchool() == SpellSchools.FIRE && this.isOnGround() && !this.rising) {
             this.rising = true;
             this.setNoGravity(true);
             this.risingtime = 0;
@@ -535,7 +538,7 @@ public class Archmagus extends HostileEntity implements InventoryOwner, GeoEntit
 
                 List<Entity> entities = this.getWorld().getEntitiesByClass(Entity.class,this.getBoundingBox().expand(4,2,4),entity -> entity != this);
                 for(Entity entity : entities){
-                    entity.damage(SpellDamageSource.mob(MagicSchool.FIRE,this),(float)this.getAttributeValue(EntityAttributes.GENERIC_ATTACK_DAMAGE));
+                    entity.damage(SpellDamageSource.mob(SpellSchools.FIRE,this),(float)this.getAttributeValue(EntityAttributes.GENERIC_ATTACK_DAMAGE));
                 }
                 this.casting = false;
                 this.setNoGravity(false);
@@ -549,7 +552,7 @@ public class Archmagus extends HostileEntity implements InventoryOwner, GeoEntit
         } else {
             this.setNoGravity(false);
         }
-        if (this.casting && this.isOnGround() && this.getMagicSchool() == MagicSchool.FROST) {
+        if (this.casting && this.isOnGround() && this.getMagicSchool() == SpellSchools.FROST) {
             this.noClip = true;
             this.dashing = true;
         }
@@ -601,10 +604,13 @@ public class Archmagus extends HostileEntity implements InventoryOwner, GeoEntit
             this.thinktime = 0;
         }
         this.bossBar.setPercent(this.getHealth() / this.getMaxHealth());
-        switch(this.getMagicSchool()){
-            case ARCANE ->  this.bossBar.setColor(BossBar.Color.PURPLE);
-            case FROST ->  this.bossBar.setColor(BossBar.Color.WHITE);
-            case FIRE ->  this.bossBar.setColor(BossBar.Color.RED);
+        SpellSchool magicSchool = this.getMagicSchool();
+        if (magicSchool.equals(ARCANE)) {
+            this.bossBar.setColor(BossBar.Color.PURPLE);
+        } else if (magicSchool.equals(FROST)) {
+            this.bossBar.setColor(BossBar.Color.WHITE);
+        } else if (magicSchool.equals(FIRE)) {
+            this.bossBar.setColor(BossBar.Color.RED);
         }
 
     }

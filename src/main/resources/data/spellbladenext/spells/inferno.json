@@ -29,7 +29,7 @@
         "type": "DAMAGE",
         "damage": {
           "knockback": 0.5,
-          "spell_power_coefficient": 1.5
+          "spell_power_coefficient": 0.8
         }
       },
       "particles": [
@@ -50,7 +50,7 @@
         "type": "DAMAGE",
         "damage": {
           "knockback": 0.5,
-          "spell_power_coefficient": 1.0
+          "spell_power_coefficient": 0.8
         }
       },
       "particles": [
@@ -67,7 +67,8 @@
     }
   ],
   "cost": {
-    "cooldown_duration": 4,
-    "cooldown_proportional": true
+    "cooldown_duration": 8,
+    "item_id": "runes:fire_stone"
+
   }
 }

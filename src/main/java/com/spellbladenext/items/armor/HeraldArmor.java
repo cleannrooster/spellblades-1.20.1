@@ -29,7 +29,8 @@ import net.minecraft.util.TypedActionResult;
 import net.minecraft.util.Util;
 import net.minecraft.world.World;
 import net.spell_engine.api.item.armor.Armor;
-import net.spell_power.api.MagicSchool;
+import net.spell_power.api.SpellSchool;
+import net.spell_power.api.SpellSchools;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -43,7 +44,7 @@ import static com.extraspellattributes.ReabsorptionInit.*;
 
 public class HeraldArmor extends CustomArmor implements GeoItem {
 
-    public HeraldArmor(Armor.CustomMaterial material, Type type, Settings settings, List<MagicSchool> magicSchool) {
+    public HeraldArmor(Armor.CustomMaterial material, Type type, Settings settings, List<SpellSchool> magicSchool) {
         super(material, type, settings);
         this.magicschool.addAll(magicSchool);
 
@@ -66,7 +67,7 @@ public class HeraldArmor extends CustomArmor implements GeoItem {
         uuidMap.put(Type.HELMET, UUID.fromString("2AD3F246-FEE1-4E67-B886-69FD380BB150"));
     });
 
-    private final List<MagicSchool> magicschool = new ArrayList<>();
+    private final List<SpellSchool> magicschool = new ArrayList<>();
 
     @Override
     public void setAttributes(Multimap<EntityAttribute, EntityAttributeModifier> attributes) {
@@ -75,14 +76,14 @@ public class HeraldArmor extends CustomArmor implements GeoItem {
         builder.putAll(attributes);
         UUID uuid = (UUID)MODIFIERS.get(this.type);
         builder.put(WARDING,new EntityAttributeModifier(uuid,"warding",2, EntityAttributeModifier.Operation.ADDITION));
-        if(this.magicschool.contains(MagicSchool.ARCANE)) {
+        if(this.magicschool.contains(SpellSchools.ARCANE)) {
             builder.put(CONVERTTOARCANE, new EntityAttributeModifier(uuid, "gained1", 0.125, EntityAttributeModifier.Operation.MULTIPLY_BASE));
         }
-        if(this.magicschool.contains(MagicSchool.FIRE)) {
+        if(this.magicschool.contains(SpellSchools.FIRE)) {
             builder.put(CONVERTTOFIRE, new EntityAttributeModifier(uuid, "gained2", 0.125, EntityAttributeModifier.Operation.MULTIPLY_BASE));
 
         }
-        if(this.magicschool.contains(MagicSchool.FROST)) {
+        if(this.magicschool.contains(SpellSchools.FROST)) {
             builder.put(CONVERTTOFROST, new EntityAttributeModifier(uuid, "gained3", 0.125, EntityAttributeModifier.Operation.MULTIPLY_BASE));
 
         }
@@ -92,7 +93,7 @@ public class HeraldArmor extends CustomArmor implements GeoItem {
     }
 
     // MARK: GeoItem
-    public List<MagicSchool> getMagicschool() {
+    public List<SpellSchool> getMagicschool() {
         return magicschool;
     }
 

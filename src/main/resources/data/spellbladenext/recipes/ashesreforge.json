@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:smithing_transform",
+  "addition": {
+    "item": "spellbladenext:ashes"
+  },
+  "base": {
+    "item": "spellbladenext:thread"
+  },
+  "result": {
+    "item": "spellbladenext:ashes"
+  },
+  "template": {
+    "item": "spellbladenext:ashes"
+  }
+}

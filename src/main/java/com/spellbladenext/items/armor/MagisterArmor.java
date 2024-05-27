@@ -28,7 +28,8 @@ import net.minecraft.util.Util;
 import net.minecraft.world.World;
 import net.spell_engine.api.item.ConfigurableAttributes;
 import net.spell_engine.api.item.armor.Armor;
-import net.spell_power.api.MagicSchool;
+import net.spell_power.api.SpellSchool;
+import net.spell_power.api.SpellSchools;
 
 import java.util.ArrayList;
 import java.util.EnumMap;
@@ -41,7 +42,7 @@ import static com.extraspellattributes.ReabsorptionInit.WARDING;
 
 public class MagisterArmor extends CustomArmor implements GeoItem {
 
-    public MagisterArmor(Armor.CustomMaterial material, ArmorItem.Type type, Item.Settings settings, List<MagicSchool> magicSchool) {
+    public MagisterArmor(Armor.CustomMaterial material, ArmorItem.Type type, Item.Settings settings, List<SpellSchool> magicSchool) {
         super(material, type, settings);
         this.magicschool.addAll(magicSchool);
 
@@ -63,7 +64,7 @@ public class MagisterArmor extends CustomArmor implements GeoItem {
         uuidMap.put(ArmorItem.Type.CHESTPLATE, UUID.fromString("9F3D476D-C118-4544-8365-64846904B48E"));
         uuidMap.put(ArmorItem.Type.HELMET, UUID.fromString("2AD3F246-FEE1-4E67-B886-69FD380BB150"));
     });
-    private final List<MagicSchool> magicschool = new ArrayList<>();
+    private final List<SpellSchool> magicschool = new ArrayList<>();
 
     @Override
     public void setAttributes(Multimap<EntityAttribute, EntityAttributeModifier> attributes) {
@@ -76,7 +77,7 @@ public class MagisterArmor extends CustomArmor implements GeoItem {
     }
 
     // MARK: GeoItem
-    public List<MagicSchool> getMagicschool() {
+    public List<SpellSchool> getMagicschool() {
         return magicschool;
     }
     private final AnimatableInstanceCache cache = AzureLibUtil.createInstanceCache(this);

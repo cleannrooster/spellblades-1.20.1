@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:smithing_transform",
+  "addition": {
+    "item": "spellbladenext:omni"
+  },
+  "base": {
+    "item": "spellbladenext:ashes"
+  },
+  "result": {
+    "item": "spellbladenext:theavatar"
+  },
+  "template": {
+    "item": "spellbladenext:thread"
+  }
+}

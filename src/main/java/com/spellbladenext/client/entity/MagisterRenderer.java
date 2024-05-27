@@ -10,8 +10,7 @@ import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.ai.TargetPredicate;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.Identifier;
-import net.spell_power.api.MagicSchool;
-import net.spell_power.api.attributes.SpellAttributes;
+import net.spell_power.api.SpellSchools;
 
 import java.util.List;
 
@@ -34,10 +33,10 @@ public class MagisterRenderer<T extends Magister, M extends BipedEntityModel<T>>
     protected void applyRotations(Magister animatable, MatrixStack poseStack, float ageInTicks, float rotationYaw, float partialTick) {
         List<PlayerEntity> list =  animatable.getWorld().getTargets(PlayerEntity.class, TargetPredicate.DEFAULT,animatable,animatable.getBoundingBox().expand(12));
         if(list.stream().anyMatch(livingEntity ->
-                    livingEntity.getAttributeValue(SpellAttributes.POWER.get(MagicSchool.ARCANE).attribute) > animatable.getMaxHealth()/2 ||
-                    livingEntity.getAttributeValue(SpellAttributes.POWER.get(MagicSchool.FROST).attribute) > animatable.getMaxHealth()/2 ||
-                    livingEntity.getAttributeValue(SpellAttributes.POWER.get(MagicSchool.FIRE).attribute) > animatable.getMaxHealth()/2 ||
-                    livingEntity.getAttributeValue(SpellAttributes.POWER.get(MagicSchool.HEALING).attribute) > animatable.getMaxHealth()/2)
+                    livingEntity.getAttributeValue((SpellSchools.ARCANE).attribute) > animatable.getMaxHealth()/2 ||
+                    livingEntity.getAttributeValue((SpellSchools.FROST).attribute) > animatable.getMaxHealth()/2 ||
+                    livingEntity.getAttributeValue((SpellSchools.FIRE).attribute) > animatable.getMaxHealth()/2 ||
+                    livingEntity.getAttributeValue((SpellSchools.HEALING).attribute) > animatable.getMaxHealth()/2)
 
         ){
             rotationYaw += (float) (Math.cos((double) animatable.age * 3.25D) * Math.PI * (double) 0.4F);
@@ -52,13 +51,13 @@ public class MagisterRenderer<T extends Magister, M extends BipedEntityModel<T>>
 
     public Identifier getTextureLocation(Magister p_114891_) {
         if(p_114891_.getMainHandStack().getItem() instanceof Spellblade spellblade){
-            if(spellblade.getSchool().equals(MagicSchool.FIRE)){
+            if(spellblade.getSchool().equals(SpellSchools.FIRE)){
                 return FIRE;
             }
-            if(spellblade.getSchool().equals(MagicSchool.FROST)){
+            if(spellblade.getSchool().equals(SpellSchools.FROST)){
                 return FROST;
             }
-            if(spellblade.getSchool().equals(MagicSchool.ARCANE)){
+            if(spellblade.getSchool().equals(SpellSchools.ARCANE)){
                 return ARCANE;
             }
         }

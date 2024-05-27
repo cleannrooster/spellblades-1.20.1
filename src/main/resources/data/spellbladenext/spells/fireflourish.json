@@ -47,7 +47,7 @@
         "type": "DAMAGE",
         "damage": {
           "knockback": 1,
-          "spell_power_coefficient": 1.5
+          "spell_power_coefficient": 0.5
         }
       },
       "sound": {
@@ -77,6 +77,8 @@
 
   ],
   "cost": {
-    "cooldown_duration": 1
+    "cooldown_duration": 6,
+    "item_id": "runes:fire_stone"
+
   }
 }

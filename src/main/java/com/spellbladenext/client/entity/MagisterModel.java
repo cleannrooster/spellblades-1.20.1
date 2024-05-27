@@ -9,7 +9,7 @@ import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.Arm;
 import net.minecraft.util.Identifier;
 import net.spell_power.SpellPowerMod;
-import net.spell_power.api.MagicSchool;
+import net.spell_power.api.SpellSchools;
 
 public class MagisterModel<T extends Magister> extends GeoModel<Magister> implements ModelWithArms {
     private static final Identifier DEFAULT_LOCATION = new Identifier(Spellblades.MOD_ID,"textures/mob/arcanehexblade.png");
@@ -20,13 +20,13 @@ public class MagisterModel<T extends Magister> extends GeoModel<Magister> implem
     @Override
     public Identifier getModelResource(Magister reaver) {
         if(reaver.getMainHandStack().getItem() instanceof Spellblade spellblade){
-            if(spellblade.getSchool().equals(MagicSchool.FIRE)){
+            if(spellblade.getSchool().equals(SpellSchools.FIRE)){
                 return new Identifier(Spellblades.MOD_ID,"geo/firehexblade.json");
             }
-            if(spellblade.getSchool().equals(MagicSchool.FROST)){
+            if(spellblade.getSchool().equals(SpellSchools.FROST)){
                 return new Identifier(Spellblades.MOD_ID,"geo/frosthexblade.geo.json");
             }
-            if(spellblade.getSchool().equals(MagicSchool.ARCANE)){
+            if(spellblade.getSchool().equals(SpellSchools.ARCANE)){
                 return new Identifier(Spellblades.MOD_ID,"geo/arcanehexblade.geo.json");
             }
         }
@@ -35,13 +35,13 @@ public class MagisterModel<T extends Magister> extends GeoModel<Magister> implem
     @Override
     public Identifier getTextureResource(Magister reaver) {
         if(reaver.getMainHandStack().getItem() instanceof Spellblade spellblade){
-            if(spellblade.getSchool().equals(MagicSchool.FIRE)){
+            if(spellblade.getSchool().equals(SpellSchools.FIRE)){
                 return FIRE;
             }
-            if(spellblade.getSchool().equals(MagicSchool.FROST)){
+            if(spellblade.getSchool().equals(SpellSchools.FROST)){
                 return FROST;
             }
-            if(spellblade.getSchool().equals(MagicSchool.ARCANE)){
+            if(spellblade.getSchool().equals(SpellSchools.ARCANE)){
                 return ARCANE;
             }
         }

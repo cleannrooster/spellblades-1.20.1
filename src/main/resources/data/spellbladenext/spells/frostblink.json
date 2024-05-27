@@ -54,7 +54,7 @@
         "type": "DAMAGE",
         "damage": {
           "knockback": 0.5,
-          "spell_power_coefficient": 1.5
+          "spell_power_coefficient": 1.2
         }
       },
       "particles": [
@@ -79,6 +79,8 @@
 
   ],
   "cost": {
-    "cooldown_duration": 2
+    "cooldown_duration": 2,
+    "item_id": "runes:arcane_stone"
+
   }
 }

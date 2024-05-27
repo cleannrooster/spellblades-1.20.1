@@ -6,7 +6,8 @@ import mod.azure.azurelib.model.GeoModel;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.util.Identifier;
-import net.spell_power.api.MagicSchool;
+import net.spell_power.api.SpellSchools;
+
 public class OrbModel extends GeoModel<Orb> {
 
 
@@ -17,10 +18,10 @@ public class OrbModel extends GeoModel<Orb> {
 
     @Override
     public Identifier getTextureResource(Orb orb) {
-        if(orb.getSchool() == MagicSchool.FIRE) {
+        if(orb.getSchool() == SpellSchools.FIRE) {
             return new Identifier(Spellblades.MOD_ID, "textures/item/orb_fire.png");
         }
-        if(orb.getSchool() == MagicSchool.FROST) {
+        if(orb.getSchool() == SpellSchools.FROST) {
             return new Identifier(Spellblades.MOD_ID, "textures/item/orb_frost.png");
         }
 

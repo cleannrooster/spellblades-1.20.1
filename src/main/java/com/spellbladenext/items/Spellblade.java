@@ -3,21 +3,29 @@ package com.spellbladenext.items;
 import com.google.common.collect.Multimap;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
+import net.minecraft.client.item.TooltipContext;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.attribute.EntityAttribute;
 import net.minecraft.entity.attribute.EntityAttributeModifier;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ToolMaterial;
 import net.minecraft.registry.tag.BlockTags;
+import net.minecraft.text.Text;
+import net.minecraft.util.Formatting;
+import net.minecraft.world.World;
 import net.spell_engine.api.item.ConfigurableAttributes;
 import net.spell_engine.api.item.weapon.SpellWeaponItem;
 import net.spell_engine.api.item.weapon.StaffItem;
 import net.spell_engine.client.gui.SpellTooltip;
-import net.spell_power.api.MagicSchool;
+import net.spell_power.api.SpellSchool;
+import net.spell_power.api.SpellSchools;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
 
 public class Spellblade extends SpellWeaponItem implements ConfigurableAttributes {
-    MagicSchool school = MagicSchool.PHYSICAL_MELEE;
-    public Spellblade(ToolMaterial material, Settings settings, int damage, float speed, MagicSchool school) {
+    SpellSchool school = SpellSchools.ARCANE;
+    public Spellblade(ToolMaterial material, Settings settings, int damage, float speed, SpellSchool school) {
         super(material, damage,speed, settings);
         this.school = school;
     }
@@ -34,7 +42,7 @@ public class Spellblade extends SpellWeaponItem implements ConfigurableAttribute
             return slot == EquipmentSlot.MAINHAND ? this.attributes : super.getAttributeModifiers(slot);
         }
     }
-    public MagicSchool getSchool() {
+    public SpellSchool getSchool() {
         return school;
     }
 
@@ -50,4 +58,10 @@ public class Spellblade extends SpellWeaponItem implements ConfigurableAttribute
         return state.isOf(Blocks.COBWEB);
     }
 
+    @Override
+    public void appendTooltip(ItemStack stack, @Nullable World world, List<Text> tooltip, TooltipContext context) {
+        tooltip.add(Text.translatable("spellbladenext.spellbladetext").formatted(Formatting.LIGHT_PURPLE));
+
+        super.appendTooltip(stack, world, tooltip, context);
+    }
 }

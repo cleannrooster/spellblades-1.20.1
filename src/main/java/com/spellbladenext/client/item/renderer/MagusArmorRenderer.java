@@ -8,8 +8,7 @@ import com.spellbladenext.items.armor.MagusArmor;
 import mod.azure.azurelib.renderer.GeoArmorRenderer;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.Identifier;
-import net.spell_power.api.MagicSchool;
-import net.spell_power.api.attributes.SpellAttributes;
+import net.spell_power.api.SpellSchools;
 
 public class MagusArmorRenderer extends GeoArmorRenderer<MagusArmor> {
 
@@ -21,9 +20,9 @@ public class MagusArmorRenderer extends GeoArmorRenderer<MagusArmor> {
     @Override
     public Identifier getTextureLocation(MagusArmor animatable) {
         if(this.getCurrentEntity() instanceof PlayerEntity player) {
-            double arcane = player.getAttributeValue(SpellAttributes.POWER.get(MagicSchool.ARCANE).attribute);
-            double fire = player.getAttributeValue(SpellAttributes.POWER.get(MagicSchool.FIRE).attribute);
-            double frost = player.getAttributeValue(SpellAttributes.POWER.get(MagicSchool.FROST).attribute);
+            double arcane = player.getAttributeValue((SpellSchools.ARCANE).attribute);
+            double fire = player.getAttributeValue(  (SpellSchools.FIRE).attribute);
+            double frost = player.getAttributeValue( (SpellSchools.FROST).attribute);
             if(arcane > fire && arcane > frost){
                 return new Identifier(Spellblades.MOD_ID, "textures/armor/robestexture_arcane.png");
             }

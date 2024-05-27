@@ -7,7 +7,6 @@ import com.spellbladenext.items.armor.MagusArmor;
 import mod.azure.azurelib.model.GeoModel;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.util.Identifier;
-import net.spell_power.api.MagicSchool;
 
 public class MagusArmorItemModel extends GeoModel<MagusArmor> {
     @Override

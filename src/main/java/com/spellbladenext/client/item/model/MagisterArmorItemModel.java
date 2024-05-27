@@ -5,19 +5,19 @@ import com.spellbladenext.items.armor.MagisterArmor;
 import mod.azure.azurelib.model.GeoModel;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.util.Identifier;
-import net.spell_power.api.MagicSchool;
+import net.spell_power.api.SpellSchools;
 
 public class MagisterArmorItemModel extends GeoModel<MagisterArmor> {
     @Override
     public Identifier getModelResource(MagisterArmor orb) {
         if(orb.getSlotType() == EquipmentSlot.HEAD){
-            if(orb.getMagicschool().contains(MagicSchool.ARCANE)){
+            if(orb.getMagicschool().contains(SpellSchools.ARCANE)){
 
                     return new Identifier(Spellblades.MOD_ID,"geo/magebane.geo.json");
 
 
             }
-            if(orb.getMagicschool().contains(MagicSchool.FROST)){
+            if(orb.getMagicschool().contains(SpellSchools.FROST)){
                 return new Identifier(Spellblades.MOD_ID,"geo/mageseeker.geo.json");
 
             }
@@ -40,23 +40,23 @@ public class MagisterArmorItemModel extends GeoModel<MagisterArmor> {
     @Override
     public Identifier getTextureResource(MagisterArmor orb) {
         if(orb.getSlotType() == EquipmentSlot.HEAD){
-            if(orb.getMagicschool().contains(MagicSchool.ARCANE)){
+            if(orb.getMagicschool().contains(SpellSchools.ARCANE)){
                 return new Identifier(Spellblades.MOD_ID,"textures/armor/magebane_crown.png");
 
 
             }
-            if(orb.getMagicschool().contains(MagicSchool.FROST)){
+            if(orb.getMagicschool().contains(SpellSchools.FROST)){
                 return new Identifier(Spellblades.MOD_ID,"textures/armor/mageseeker_hat.png");
 
             }
             return new Identifier(Spellblades.MOD_ID,"textures/armor/magebreaker_helmet.png");
 
         }
-        if(orb.getMagicschool().contains(MagicSchool.ARCANE)){
+        if(orb.getMagicschool().contains(SpellSchools.ARCANE)){
 
             return new Identifier(Spellblades.MOD_ID,"textures/armor/aetherfire.png");
         }
-        if(orb.getMagicschool().contains(MagicSchool.FIRE)){
+        if(orb.getMagicschool().contains(SpellSchools.FIRE)){
             return new Identifier(Spellblades.MOD_ID,"textures/armor/rimeblaze.png");
 
         }

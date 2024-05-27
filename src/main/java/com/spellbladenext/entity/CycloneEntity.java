@@ -32,6 +32,7 @@ import net.minecraft.util.hit.EntityHitResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.spell_engine.api.spell.Spell;
+import net.spell_engine.api.spell.SpellInfo;
 import net.spell_engine.internals.SpellHelper;
 import net.spell_engine.internals.SpellRegistry;
 import net.spell_engine.internals.casting.SpellCasterEntity;
@@ -123,9 +124,10 @@ public class CycloneEntity extends Entity implements GeoEntity, Ownable {
 
                     List<LivingEntity> list = this.getWorld().getEntitiesByClass(LivingEntity.class, this.getBoundingBox(), Entity::isAlive);
                     for (LivingEntity entity : list) {
-                        Spell spell = SpellRegistry.getSpell(new Identifier(MOD_ID, "bladestorm"));
+                        SpellInfo spell = new SpellInfo(SpellRegistry.getSpell (new Identifier(MOD_ID, "bladestorm")),new Identifier(MOD_ID, "bladestorm"));
                         if (spell != null  && this.context != null) {
                             if(TargetHelper.actionAllowed(TargetHelper.TargetingMode.AREA, TargetHelper.Intent.HARMFUL,living,entity) || (this.target != null && this.target == entity)) {
+
                                 SpellHelper.performImpacts(entity.getWorld(), living, entity, this.getOwner(), spell,
                                         this.context, false);
                             }

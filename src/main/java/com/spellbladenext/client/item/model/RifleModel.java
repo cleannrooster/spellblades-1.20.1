@@ -7,7 +7,6 @@ import mod.azure.azurelib.model.GeoModel;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.util.Identifier;
-import net.spell_power.api.MagicSchool;
 
 public class RifleModel extends GeoModel<Rifle> {
 

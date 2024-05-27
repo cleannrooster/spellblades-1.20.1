@@ -9,7 +9,8 @@
 		"NaturalSpawnerMixin",
 		"ItemStackMixin",
 		"AttributeMixin",
-		"SpellCasterMixin"
+		"SpellCasterMixin",
+		"SpellCastMixin"
 
 	],
 	"client": [

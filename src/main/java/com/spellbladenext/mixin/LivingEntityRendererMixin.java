@@ -9,7 +9,6 @@ import net.minecraft.util.Identifier;
 import net.spell_engine.internals.SpellRegistry;
 import net.spell_engine.internals.casting.SpellCasterClient;
 import net.spell_engine.internals.casting.SpellCasterEntity;
-import net.spell_engine.mixin.PlayerEntityMixin;
 import net.spell_engine.mixin.client.ClientPlayerEntityMixin;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;

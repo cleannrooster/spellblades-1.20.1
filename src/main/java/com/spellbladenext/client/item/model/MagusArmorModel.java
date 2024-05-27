@@ -7,7 +7,6 @@ import mod.azure.azurelib.model.GeoModel;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.util.Identifier;
 import net.spell_engine.api.spell.Spell;
-import net.spell_power.api.MagicSchool;
 
 public class MagusArmorModel extends GeoModel<MagusArmor> {
 

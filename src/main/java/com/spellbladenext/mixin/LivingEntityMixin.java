@@ -26,16 +26,15 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.math.Vec3d;
 import net.spell_engine.api.spell.Spell;
+import net.spell_engine.api.spell.SpellInfo;
 import net.spell_engine.internals.SpellContainerHelper;
 import net.spell_engine.internals.SpellHelper;
 import net.spell_engine.internals.SpellRegistry;
 import net.spell_engine.internals.WorldScheduler;
 import net.spell_engine.particle.ParticleHelper;
 import net.spell_engine.utils.TargetHelper;
-import net.spell_power.api.MagicSchool;
 import net.spell_power.api.SpellDamageSource;
 import net.spell_power.api.SpellPower;
-import net.spell_power.api.attributes.SpellAttributes;
 import net.spell_power.mixin.DamageSourcesAccessor;
 import net.spell_engine.internals.casting.SpellCasterEntity;
 import org.spongepowered.asm.mixin.Mixin;
@@ -51,13 +50,19 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
 
-import static com.extraspellattributes.ReabsorptionInit.WARDING;
+import static com.extraspellattributes.ReabsorptionInit.*;
 import static com.spellbladenext.Spellblades.*;
+import static com.spellbladenext.Spellblades.MOD_ID;
 import static net.spell_engine.internals.SpellHelper.ammoForSpell;
 import static net.spell_engine.internals.SpellHelper.impactTargetingMode;
 
 @Mixin(value = LivingEntity.class)
 public class LivingEntityMixin {
+    @Inject(method = "createLivingAttributes", at = @At("RETURN"))
+    private static void addAttributesextraspellattributes_RETURN(final CallbackInfoReturnable<DefaultAttributeContainer.Builder> info) {
+        info.getReturnValue().add(PURPOSE);
+
+    }
     @Inject(at = @At("HEAD"), method = "canWalkOnFluid", cancellable = true)
     private void walkOnFluidReturn(FluidState fluidState, CallbackInfoReturnable<Boolean> info) {
         if(fluidState.getFluid()== Fluids.WATER){
@@ -85,7 +90,7 @@ public class LivingEntityMixin {
         LivingEntity living = (LivingEntity) (Object) this;
 
         if (!living.getWorld().isClient() && living instanceof PlayerEntity player && living instanceof SpellCasterEntity caster && living instanceof PlayerDamageInterface damageInterface &&
-            SpellContainerHelper.containerWithProxy(living.getMainHandStack(), player) != null && SpellContainerHelper.containerWithProxy(player.getMainHandStack(), player).spell_ids != null && SpellContainerHelper.containerWithProxy(player.getMainHandStack(), player).spell_ids.contains("spellbladenext:deathchill")) {
+            SpellContainerHelper.getEquipped(living.getMainHandStack(), player) != null && SpellContainerHelper.getEquipped(player.getMainHandStack(), player).spell_ids != null && SpellContainerHelper.getEquipped(player.getMainHandStack(), player).spell_ids.contains("spellbladenext:deathchill")) {
             if(!FabricLoader.getInstance().isModLoaded("frostiful")) {
 
                 target.setFrozenTicks(target.getFrozenTicks() + 28);
@@ -96,7 +101,7 @@ public class LivingEntityMixin {
             }
         }
         if (!living.getWorld().isClient() && living instanceof PlayerEntity player && living instanceof SpellCasterEntity caster && living instanceof PlayerDamageInterface damageInterface &&
-                SpellContainerHelper.containerWithProxy(living.getMainHandStack(), player) != null && SpellContainerHelper.containerWithProxy(player.getMainHandStack(), player).spell_ids != null && SpellContainerHelper.containerWithProxy(player.getMainHandStack(), player).spell_ids.contains("spellbladenext:combustion")) {
+                SpellContainerHelper.getEquipped(living.getMainHandStack(), player) != null && SpellContainerHelper.getEquipped(player.getMainHandStack(), player).spell_ids != null && SpellContainerHelper.getEquipped(player.getMainHandStack(), player).spell_ids.contains("spellbladenext:combustion")) {
             target.setOnFireFor(2);
         }
     }
@@ -156,7 +161,7 @@ public class LivingEntityMixin {
             LivingEntity living = (LivingEntity) (Object) this;
 
         if(!living.getWorld().isClient() && living instanceof PlayerEntity player && living instanceof SpellCasterEntity caster && living instanceof PlayerDamageInterface damageInterface  &&
-                SpellContainerHelper.containerWithProxy(living.getMainHandStack(), player) != null && SpellContainerHelper.containerWithProxy(player.getMainHandStack(), player).spell_ids != null && SpellContainerHelper.containerWithProxy(player.getMainHandStack(), player).spell_ids.contains("spellbladenext:echoes")){
+                SpellContainerHelper.getEquipped(living.getMainHandStack(), player) != null && SpellContainerHelper.getEquipped(player.getMainHandStack(), player).spell_ids != null && SpellContainerHelper.getEquipped(player.getMainHandStack(), player).spell_ids.contains("spellbladenext:echoes")){
             if(damageInterface.getDiebeamStacks() < 3 &&  living.age % 80 == 0) {
                 damageInterface.addDiebeamStack(1);
             }
@@ -166,7 +171,7 @@ public class LivingEntityMixin {
 
         }
         if(!living.getWorld().isClient() && living instanceof PlayerEntity player && living instanceof SpellCasterEntity caster && living instanceof PlayerDamageInterface damageInterface  &&
-                SpellContainerHelper.containerWithProxy(living.getMainHandStack(), player) != null && SpellContainerHelper.containerWithProxy(player.getMainHandStack(), player).spell_ids != null && SpellContainerHelper.containerWithProxy(player.getMainHandStack(), player).spell_ids.contains("spellbladenext:deathchill")) {
+                SpellContainerHelper.getEquipped(living.getMainHandStack(), player) != null && SpellContainerHelper.getEquipped(player.getMainHandStack(), player).spell_ids != null && SpellContainerHelper.getEquipped(player.getMainHandStack(), player).spell_ids.contains("spellbladenext:deathchill")) {
             if(!FabricLoader.getInstance().isModLoaded("frostiful")){
                 living.setFrozenTicks(living.getFrozenTicks()+1+living.getMinFreezeDamageTicks()/(20*20));
             }
@@ -240,7 +245,9 @@ public class LivingEntityMixin {
                     SpellHelper.ImpactContext context = new SpellHelper.ImpactContext(1.0F, 1.0F, (Vec3d) null, SpellPower.getSpellPower(spell.school, player1), impactTargetingMode(spell));
 
                     for (Entity target1 : targets) {
-                        SpellHelper.performImpacts(player1.getWorld(), player1, target1,player1, SpellRegistry.getSpell(new Identifier(MOD_ID, "arcaneoverdrive")), new SpellHelper.ImpactContext());
+                        SpellInfo spell1 = new SpellInfo(SpellRegistry.getSpell (new Identifier(MOD_ID, "arcaneoverdrive")),new Identifier(MOD_ID, "arcaneoverdrive"));
+
+                        SpellHelper.performImpacts(player1.getWorld(), player1, target1,player1, spell1, new SpellHelper.ImpactContext());
                     }
                     ParticleHelper.sendBatches(player1, spell.release.particles);
                     SpellHelper.AmmoResult ammoResult = ammoForSpell(player1, spell, stack);
@@ -276,7 +283,9 @@ public class LivingEntityMixin {
                         SpellHelper.ImpactContext context = new SpellHelper.ImpactContext(1.0F, 1.0F, (Vec3d) null, SpellPower.getSpellPower(spell.school, player1), impactTargetingMode(spell));
 
                         for (Entity target1 : targets) {
-                            SpellHelper.performImpacts(player1.getWorld(), player1, target1, player1, SpellRegistry.getSpell(new Identifier(MOD_ID, "fireoverdrive")), new SpellHelper.ImpactContext());
+                            SpellInfo spell1 = new SpellInfo(SpellRegistry.getSpell (new Identifier(MOD_ID, "fireoverdrive")),new Identifier(MOD_ID, "fireoverdrive"));
+
+                            SpellHelper.performImpacts(player1.getWorld(), player1, target1, player1, spell1, new SpellHelper.ImpactContext());
                         }
                         ParticleHelper.sendBatches(player1, spell.release.particles);
                         SpellHelper.AmmoResult ammoResult = ammoForSpell(player1, spell, stack);
@@ -314,7 +323,9 @@ public class LivingEntityMixin {
                         SpellHelper.ImpactContext context = new SpellHelper.ImpactContext(1.0F, 1.0F, (Vec3d) null, SpellPower.getSpellPower(spell.school, player1), impactTargetingMode(spell));
 
                         for (Entity target1 : targets) {
-                            SpellHelper.performImpacts(player1.getWorld(), player1, target1, player1, SpellRegistry.getSpell(new Identifier(MOD_ID, "frostoverdrive")), new SpellHelper.ImpactContext());
+                            SpellInfo spell1 = new SpellInfo(SpellRegistry.getSpell (new Identifier(MOD_ID, "frostoverdrive")),new Identifier(MOD_ID, "frostoverdrive"));
+
+                            SpellHelper.performImpacts(player1.getWorld(), player1, target1, player1, spell1, new SpellHelper.ImpactContext());
                         }
                         ParticleHelper.sendBatches(player1, spell.release.particles);
                         SpellHelper.AmmoResult ammoResult = ammoForSpell(player1, spell, stack);

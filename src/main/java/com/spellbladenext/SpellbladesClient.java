@@ -5,6 +5,7 @@ import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
 import net.minecraft.client.render.entity.ArrowEntityRenderer;
+import net.minecraft.client.render.entity.LightningEntityRenderer;
 import net.minecraft.client.render.entity.ProjectileEntityRenderer;
 import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.player.PlayerEntity;
@@ -18,12 +19,11 @@ import net.spell_engine.api.spell.Spell;
 import net.spell_engine.internals.SpellRegistry;
 import net.spell_engine.internals.casting.SpellCasterClient;
 import net.spell_engine.internals.casting.SpellCasterEntity;
-import net.spell_power.api.attributes.SpellAttributes;
+import net.spell_power.api.SpellPowerMechanics;
 
 import java.util.Objects;
 
-import static com.spellbladenext.Spellblades.HEXBLADEPORTAL;
-import static com.spellbladenext.Spellblades.MOD_ID;
+import static com.spellbladenext.Spellblades.*;
 
 public class SpellbladesClient implements ClientModInitializer {
     @Override
@@ -34,6 +34,7 @@ public class SpellbladesClient implements ClientModInitializer {
         EntityRendererRegistry.register(Spellblades.RIFLEPROJECTILE, ArrowEntityRenderer::new);
         EntityRendererRegistry.register(Spellblades.CYCLONEENTITY, CycloneRenderer::new);
         EntityRendererRegistry.register(Spellblades.REDLASERENTITY, RedbeamRenderer::new);
+        EntityRendererRegistry.register(Spellblades.SMITELIGHTNING, LightningEntityRenderer::new);
 
         ClientTickEvents.START_CLIENT_TICK.register(server -> {
                     PlayerEntity player = server.player;
@@ -42,7 +43,7 @@ public class SpellbladesClient implements ClientModInitializer {
                     if (player != null && level != null) {
 
                         if (SpellRegistry.getSpell(new Identifier(MOD_ID, "maelstrom")) != null) {
-                            double speed = player.getAttributeValue(EntityAttributes.GENERIC_MOVEMENT_SPEED) * player.getAttributeValue(SpellAttributes.HASTE.attribute) * 0.01 * 4;
+                            double speed = player.getAttributeValue(EntityAttributes.GENERIC_MOVEMENT_SPEED) * player.getAttributeValue(SpellPowerMechanics.HASTE.attribute) * 0.01 * 4;
                             BlockHitResult result = level.raycast(new RaycastContext(player.getPos(), player.getPos().add(0, -2, 0), RaycastContext.ShapeType.COLLIDER, RaycastContext.FluidHandling.ANY, player));
                             if (player.isSneaking()) {
                                 speed *= 0;
@@ -64,7 +65,7 @@ public class SpellbladesClient implements ClientModInitializer {
                             }
                         }
                         if (SpellRegistry.getSpell(new Identifier(MOD_ID, "inferno")) != null) {
-                            double speed = player.getAttributeValue(EntityAttributes.GENERIC_MOVEMENT_SPEED) * player.getAttributeValue(SpellAttributes.HASTE.attribute) * 0.01 * 4;
+                            double speed = player.getAttributeValue(EntityAttributes.GENERIC_MOVEMENT_SPEED) * player.getAttributeValue(SpellPowerMechanics.HASTE.attribute) * 0.01 * 4;
                             BlockHitResult result = level.raycast(new RaycastContext(player.getPos(), player.getPos().add(0, -2, 0), RaycastContext.ShapeType.COLLIDER, RaycastContext.FluidHandling.ANY, player));
                             if (player.isSneaking()) {
                                 speed *= 0;
@@ -86,7 +87,7 @@ public class SpellbladesClient implements ClientModInitializer {
                             }
                         }
                         if (SpellRegistry.getSpell(new Identifier(MOD_ID, "whirlwind")) != null) {
-                            double speed = player.getAttributeValue(EntityAttributes.GENERIC_MOVEMENT_SPEED) * player.getAttributeValue(SpellAttributes.HASTE.attribute) * 0.01 * 4;
+                            double speed = player.getAttributeValue(EntityAttributes.GENERIC_MOVEMENT_SPEED) * player.getAttributeValue(SpellPowerMechanics.HASTE.attribute) * 0.01 * 4;
                             BlockHitResult result = level.raycast(new RaycastContext(player.getPos(), player.getPos().add(0, -2, 0), RaycastContext.ShapeType.COLLIDER, RaycastContext.FluidHandling.ANY, player));
                             if (player.isSneaking()) {
                                 speed *= 0;
@@ -108,7 +109,7 @@ public class SpellbladesClient implements ClientModInitializer {
                             }
                         }
                         if (SpellRegistry.getSpell(new Identifier(MOD_ID, "reckoning")) != null) {
-                            double speed = player.getAttributeValue(EntityAttributes.GENERIC_MOVEMENT_SPEED) * player.getAttributeValue(SpellAttributes.HASTE.attribute) * 0.01 * 4;
+                            double speed = player.getAttributeValue(EntityAttributes.GENERIC_MOVEMENT_SPEED) * player.getAttributeValue(SpellPowerMechanics.HASTE.attribute) * 0.01 * 4;
                             BlockHitResult result = level.raycast(new RaycastContext(player.getPos(), player.getPos().add(0, -2, 0), RaycastContext.ShapeType.COLLIDER, RaycastContext.FluidHandling.ANY, player));
                             if (player.isSneaking()) {
                                 speed *= 0;
@@ -130,7 +131,7 @@ public class SpellbladesClient implements ClientModInitializer {
                             }
                         }
                         if (SpellRegistry.getSpell(new Identifier(MOD_ID, "tempest")) != null) {
-                            double speed = player.getAttributeValue(EntityAttributes.GENERIC_MOVEMENT_SPEED) * player.getAttributeValue(SpellAttributes.HASTE.attribute) * 0.01 * 4;
+                            double speed = player.getAttributeValue(EntityAttributes.GENERIC_MOVEMENT_SPEED) * player.getAttributeValue(SpellPowerMechanics.HASTE.attribute) * 0.01 * 4;
                             BlockHitResult result = level.raycast(new RaycastContext(player.getPos(), player.getPos().add(0, -2, 0), RaycastContext.ShapeType.COLLIDER, RaycastContext.FluidHandling.ANY, player));
                             if (player.isSneaking()) {
                                 speed *= 0;

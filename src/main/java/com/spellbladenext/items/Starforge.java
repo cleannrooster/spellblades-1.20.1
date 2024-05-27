@@ -24,9 +24,10 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.spell_engine.api.item.ConfigurableAttributes;
 import net.spell_engine.api.item.ItemConfig;
-import net.spell_power.api.MagicSchool;
 import net.spell_power.api.SpellDamageSource;
 import net.spell_power.api.SpellPower;
+import net.spell_power.api.SpellSchool;
+import net.spell_power.api.SpellSchools;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -35,7 +36,7 @@ import java.util.List;
 public class Starforge extends SwordItem implements ConfigurableAttributes {
     private Multimap<EntityAttribute, EntityAttributeModifier> attributes;
 
-    public Starforge(ToolMaterial material, Settings settings, int damage, float speed, MagicSchool school) {
+    public Starforge(ToolMaterial material, Settings settings, int damage, float speed, SpellSchool school) {
         super(material, damage,speed, settings);
         this.school = school;
     }
@@ -63,7 +64,7 @@ public class Starforge extends SwordItem implements ConfigurableAttributes {
             return super.postHit(stack,target,attacker);
     }
 
-    MagicSchool school = MagicSchool.PHYSICAL_MELEE;
+    SpellSchool school = SpellSchools.ARCANE;
 
     public boolean canMine(BlockState state, World world, BlockPos pos, PlayerEntity miner) {
         return !miner.isCreative();

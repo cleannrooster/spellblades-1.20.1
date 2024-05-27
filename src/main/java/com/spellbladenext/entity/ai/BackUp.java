@@ -14,8 +14,7 @@ import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.MathHelper;
-import net.spell_power.api.MagicSchool;
-import net.spell_power.api.attributes.SpellAttributes;
+import net.spell_power.api.SpellSchools;
 
 public class BackUp<E extends MobEntity> extends MultiTickTask<E> {
     private final int tooCloseDistance;
@@ -28,10 +27,10 @@ public class BackUp<E extends MobEntity> extends MultiTickTask<E> {
     }
     protected boolean shouldRun(ServerWorld serverLevel, E mob) {
         if(this.getTarget(mob) instanceof PlayerEntity player &&( player.getAttributeValue(EntityAttributes.GENERIC_ATTACK_DAMAGE) > 40 ||
-                player.getAttributeValue(SpellAttributes.POWER.get(MagicSchool.ARCANE).attribute) > mob.getMaxHealth()/2 ||
-                player.getAttributeValue(SpellAttributes.POWER.get(MagicSchool.FROST).attribute) > mob.getMaxHealth()/2 ||
-                player.getAttributeValue(SpellAttributes.POWER.get(MagicSchool.FIRE).attribute) > mob.getMaxHealth()/2 ||
-                player.getAttributeValue(SpellAttributes.POWER.get(MagicSchool.HEALING).attribute) > mob.getMaxHealth()/2)){
+                player.getAttributeValue(SpellSchools.ARCANE.attribute) > mob.getMaxHealth()/2 ||
+                player.getAttributeValue(SpellSchools.FROST.attribute) > mob.getMaxHealth()/2 ||
+                player.getAttributeValue(SpellSchools.FIRE.attribute) > mob.getMaxHealth()/2 ||
+                player.getAttributeValue(SpellSchools.HEALING.attribute) > mob.getMaxHealth()/2)){
             return true;
         }
         return (/*mob instanceof Magus ||*/ (mob instanceof Magister reaver && reaver.isCaster())) && this.isTargetVisible(mob) && this.isTargetTooClose(mob);

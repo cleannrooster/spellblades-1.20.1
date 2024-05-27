@@ -27,8 +27,8 @@ import net.minecraft.util.Util;
 import net.minecraft.world.World;
 import net.spell_engine.api.item.ConfigurableAttributes;
 import net.spell_engine.api.item.armor.Armor;
-import net.spell_power.api.MagicSchool;
-import net.spell_power.api.attributes.SpellAttributes;
+import net.spell_power.api.SpellSchool;
+import net.spell_power.api.SpellSchools;
 
 import java.util.ArrayList;
 import java.util.EnumMap;
@@ -41,7 +41,7 @@ import static com.extraspellattributes.ReabsorptionInit.WARDING;
 
 public class MagusArmor extends CustomArmor implements GeoItem {
 
-    public MagusArmor(Armor.CustomMaterial material, Type type, Settings settings, MagicSchool magicSchool) {
+    public MagusArmor(Armor.CustomMaterial material, Type type, Settings settings, SpellSchool magicSchool) {
         super(material, type, settings);
         this.magicschool = magicSchool;
 
@@ -53,7 +53,7 @@ public class MagusArmor extends CustomArmor implements GeoItem {
         uuidMap.put(ArmorItem.Type.CHESTPLATE, UUID.fromString("9F3D476D-C118-4544-8365-64846904B48E"));
         uuidMap.put(ArmorItem.Type.HELMET, UUID.fromString("2AD3F246-FEE1-4E67-B886-69FD380BB150"));
     });
-    private MagicSchool magicschool = MagicSchool.PHYSICAL_MELEE;
+    private SpellSchool magicschool = SpellSchools.ARCANE;
     public void setAttributes(Multimap<EntityAttribute, EntityAttributeModifier> attributes) {
         ImmutableMultimap.Builder<EntityAttribute, EntityAttributeModifier> builder = ImmutableMultimap.builder();
         // builder.putAll(super.getAttributeModifiers(this.slot));
@@ -65,7 +65,7 @@ public class MagusArmor extends CustomArmor implements GeoItem {
 
     }
     // MARK: GeoItem
-    public MagicSchool getMagicschool() {
+    public SpellSchool getMagicschool() {
         return magicschool;
     }
     private final AnimatableInstanceCache cache = AzureLibUtil.createInstanceCache(this);

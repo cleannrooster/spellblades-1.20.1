@@ -42,6 +42,7 @@ import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.enchantment.Enchantments;
 import net.minecraft.entity.*;
 import net.minecraft.entity.ai.TargetPredicate;
+import net.minecraft.entity.attribute.ClampedEntityAttribute;
 import net.minecraft.entity.attribute.EntityAttribute;
 import net.minecraft.entity.attribute.EntityAttributeModifier;
 import net.minecraft.entity.attribute.EntityAttributes;
@@ -77,14 +78,13 @@ import net.minecraft.world.GameRules;
 import net.minecraft.world.RaycastContext;
 import net.minecraft.world.World;
 import net.minecraft.world.dimension.DimensionType;
+import net.spell_engine.SpellEngineMod;
 import net.spell_engine.api.item.ItemConfig;
 import net.spell_engine.api.item.trinket.SpellBooks;
 import net.spell_engine.api.loot.LootConfig;
 import net.spell_engine.api.loot.LootHelper;
 import net.spell_engine.api.render.CustomModels;
-import net.spell_engine.api.spell.CustomSpellHandler;
-import net.spell_engine.api.spell.Sound;
-import net.spell_engine.api.spell.Spell;
+import net.spell_engine.api.spell.*;
 import net.spell_engine.internals.SpellHelper;
 import net.spell_engine.internals.SpellRegistry;
 import net.spell_engine.internals.WorldScheduler;
@@ -95,11 +95,7 @@ import net.spell_engine.particle.Particles;
 import net.spell_engine.utils.AnimationHelper;
 import net.spell_engine.utils.SoundHelper;
 import net.spell_engine.utils.TargetHelper;
-import net.spell_power.api.MagicSchool;
-import net.spell_power.api.SpellDamageSource;
-import net.spell_power.api.SpellPower;
-import net.spell_power.api.attributes.CustomEntityAttribute;
-import net.spell_power.api.attributes.SpellAttributes;
+import net.spell_power.api.*;
 import net.tinyconfig.ConfigManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -112,7 +108,6 @@ import static java.lang.Math.*;
 import static net.minecraft.registry.Registries.ENTITY_TYPE;
 import static net.spell_engine.internals.SpellHelper.imposeCooldown;
 import static net.spell_engine.internals.SpellHelper.launchPoint;
-import static net.spell_power.api.SpellPower.getCriticalChance;
 
 public class Spellblades implements ModInitializer {
 	// This logger is used to write text to the console and the log file.
@@ -125,8 +120,11 @@ public class Spellblades implements ModInitializer {
 	public static EntityType<HexbladePortal> HEXBLADEPORTAL;
 	public static EntityType<RifleProjectile> RIFLEPROJECTILE;
 	public static EntityType<CycloneEntity> CYCLONEENTITY;
+	public static EntityType<SmiteLightning> SMITELIGHTNING;
+
 	public static EntityType<RedLaserEntity> REDLASERENTITY;
 	public static ServerConfig config;
+	public static final ClampedEntityAttribute PURPOSE = new ClampedEntityAttribute("attribute.name.spellbladenext.purpose", 100,100,9999);
 
 	public static final Identifier SINCELASTHEX = new Identifier(MOD_ID, "threat");
 	public static final Identifier HEXRAID = new Identifier(MOD_ID, "hex");
@@ -134,6 +132,8 @@ public class Spellblades implements ModInitializer {
 	public static final Item HEXBLADEITEM = new HexbladeBlockItem(HEXBLADE,new FabricItemSettings().maxCount(1));
 	public static final Item ASHES = new Ashes(new FabricItemSettings().maxCount(1));
 	public static final Item VOID = new Omni(new FabricItemSettings().maxCount(1));
+	public static final Item SINGULARPURPOSE = new SingularPurpose(new FabricItemSettings().maxCount(1));
+	public static final Item THEAVATAR = new TheAvatar(new FabricItemSettings().maxCount(1));
 
 	public static ArrayList<attackevent> attackeventArrayList = new ArrayList<>();
 
@@ -218,7 +218,9 @@ public class Spellblades implements ModInitializer {
 			return !target.isSpectator() && target.canHit();
 		});
 		for (Entity entity : list) {
-			SpellHelper.performImpacts(data1.caster().getWorld(), data1.caster(), entity, data1.caster(), SpellRegistry.getSpell(new Identifier(MOD_ID, "eldritchblast")),
+			SpellInfo spell = new SpellInfo(SpellRegistry.getSpell (new Identifier(MOD_ID, "eldritchblast")),new Identifier(MOD_ID, "eldritchblast"));
+
+			SpellHelper.performImpacts(data1.caster().getWorld(), data1.caster(), entity, data1.caster(), spell,
 					data1.impactContext());
 
 		}
@@ -253,11 +255,14 @@ public class Spellblades implements ModInitializer {
 		Registry.register(Registries.ITEM, new Identifier(MOD_ID,"hexbladeitem"), HEXBLADEITEM);
 		Registry.register(Registries.ITEM, new Identifier(MOD_ID,"ashes"), ASHES);
 		Registry.register(Registries.ITEM, new Identifier(MOD_ID,"omni"), VOID);
+		Registry.register(Registries.ITEM, new Identifier(MOD_ID,"higherpurpose"), SINGULARPURPOSE);
+		Registry.register(Registries.ITEM, new Identifier(MOD_ID,"theavatar"), THEAVATAR);
 
 		Registry.register(Registries.ITEM, new Identifier(MOD_ID,"offering"), OFFERING);
 		Registry.register(Registries.ITEM, new Identifier(MOD_ID, "debug"), NETHERDEBUG);
 		Registry.register(Registries.ITEM, new Identifier(MOD_ID, "prismatic"), PRISMATIC);
 		Registry.register(Registries.ITEM, new Identifier(MOD_ID, "thread"), THREAD);
+		Registry.register(Registries.ATTRIBUTE,new Identifier(MOD_ID,"purpose"),PURPOSE);
 
 /*
 		Registry.register(Registries.ITEM, new Identifier(MOD_ID, "rifle"), RIFLE);
@@ -271,7 +276,17 @@ public class Spellblades implements ModInitializer {
 		Registry.register(Registries.STATUS_EFFECT,new Identifier(MOD_ID,"runicabsorption"),RunicAbsorption);
 		Registry.register(Registries.CUSTOM_STAT, "threat", SINCELASTHEX);
 		Registry.register(Registries.CUSTOM_STAT, "hex", HEXRAID);
+		PURPOSE.setTracked(true);
+		SpellSchools.HEALING.addSource(SpellSchool.Trait.POWER, SpellSchool.Apply.ADD,queryArgs -> {
+			double amount = 0;
+			for(SpellSchool school : SpellSchools.all()){
+				if(school != ExternalSpellSchools.PHYSICAL_MELEE && school != ExternalSpellSchools.PHYSICAL_RANGED && school != SpellSchools.HEALING) {
+					amount += SpellPower.getSpellPower(school, queryArgs.entity()).baseValue() * 0.01 * (queryArgs.entity().getAttributeValue(PURPOSE) - 100);
+				}
+			}
+			return amount;
 
+		});
 		lootConfig.refresh();
 		itemConfig.refresh();
 		Items.register(itemConfig.value.weapons);
@@ -311,6 +326,8 @@ public class Spellblades implements ModInitializer {
 			content.add(THREAD);
 			content.add(ASHES);
 			content.add(VOID);
+			content.add(SINGULARPURPOSE);
+			content.add(THEAVATAR);
 
 			/*content.add(RIFLE);*/
 		});
@@ -396,8 +413,8 @@ public class Spellblades implements ModInitializer {
 			int buff = 0;
 			Spell spell1 = SpellRegistry.getSpell(new Identifier(MOD_ID, "coldbuff"));
 
-			if(SpellAttributes.POWER.get(MagicSchool.FROST) != null && SpellAttributes.POWER.get(MagicSchool.FROST).statusEffect != null && data1.caster().hasStatusEffect(SpellAttributes.POWER.get(MagicSchool.FROST).statusEffect)
-					&& data1.caster().getStatusEffect(SpellAttributes.POWER.get(MagicSchool.FROST).statusEffect).getAmplifier() >= 3) {
+			if((SpellSchools.FROST) != null && (SpellSchools.FROST).boostEffect != null && data1.caster().hasStatusEffect((SpellSchools.FROST).boostEffect)
+					&& data1.caster().getStatusEffect((SpellSchools.FROST).boostEffect).getAmplifier() >= 3) {
 
 			}
 			else{
@@ -423,8 +440,8 @@ public class Spellblades implements ModInitializer {
 
 			int repeats = (int) ((double)data1.caster().getFreezingScale()*4d);
 			int power = 0;
-			if(SpellAttributes.POWER.get(MagicSchool.FROST) != null && SpellAttributes.POWER.get(MagicSchool.FROST).statusEffect != null && data1.caster().getStatusEffect(SpellAttributes.POWER.get(MagicSchool.FROST).statusEffect) != null ){
-				power = data1.caster().getStatusEffect(SpellAttributes.POWER.get(MagicSchool.FROST).statusEffect).getAmplifier();
+			if((SpellSchools.FROST) != null && (SpellSchools.FROST).boostEffect != null && data1.caster().getStatusEffect((SpellSchools.FROST).boostEffect) != null ){
+				power = data1.caster().getStatusEffect((SpellSchools.FROST).boostEffect).getAmplifier();
 
 			}
 				Spell spell1 = SpellRegistry.getSpell(new Identifier(MOD_ID, "frostbloom" + power));
@@ -432,7 +449,9 @@ public class Spellblades implements ModInitializer {
 			if(spell1 != null) {
 				if(spell1 != null) {
 					for(Entity target: list) {
-						SpellHelper.performImpacts(data1.caster().getWorld(), data1.caster(), target, data1.caster(), spell1, data1.impactContext(), false);
+						SpellInfo spell = new SpellInfo(SpellRegistry.getSpell (new Identifier(MOD_ID, "frostbloom" + power)),new Identifier(MOD_ID, "frostbloom" + power));
+
+						SpellHelper.performImpacts(data1.caster().getWorld(), data1.caster(), target, data1.caster(), spell, data1.impactContext(), false);
 						if(!FabricLoader.getInstance().isModLoaded("frostiful")) {
 
 							target.setFrozenTicks(target.getFrozenTicks() + 14);
@@ -449,12 +468,12 @@ public class Spellblades implements ModInitializer {
 
 				}
 			}
-			if(SpellAttributes.POWER.get(MagicSchool.FROST) != null && SpellAttributes.POWER.get(MagicSchool.FROST).statusEffect != null) {
+			if((SpellSchools.FROST) != null && (SpellSchools.FROST).boostEffect != null) {
 				if (power + 1 <= 3) {
-					data1.caster().addStatusEffect(new StatusEffectInstance(SpellAttributes.POWER.get(MagicSchool.FROST).statusEffect, 160, power+1));
+					data1.caster().addStatusEffect(new StatusEffectInstance((SpellSchools.FROST).boostEffect, 160, power+1));
 				}
 				else{
-					data1.caster().addStatusEffect(new StatusEffectInstance(SpellAttributes.POWER.get(MagicSchool.FROST).statusEffect, 160, power));
+					data1.caster().addStatusEffect(new StatusEffectInstance((SpellSchools.FROST).boostEffect, 160, power));
 
 				}
 			}
@@ -473,7 +492,9 @@ public class Spellblades implements ModInitializer {
 			for(Entity entity : data1.targets()){
 				if(entity instanceof LivingEntity living){
 					if(living.getLastAttacker() == data1.caster()){
-						SpellHelper.performImpacts(data1.caster().getWorld(),data1.caster(),entity,data1.caster(),SpellRegistry.getSpell(new Identifier(MOD_ID,"echoes")),
+						SpellInfo spell = new SpellInfo(SpellRegistry.getSpell (new Identifier(MOD_ID, "echoes")),new Identifier(MOD_ID, "echoes"));
+
+						SpellHelper.performImpacts(data1.caster().getWorld(),data1.caster(),entity,data1.caster(),spell,
 								data1.impactContext());
 						if(data1.caster() instanceof PlayerDamageInterface damageInterface ){
 							if(damageInterface.getDiebeamStacks() > 0) {
@@ -515,11 +536,11 @@ public class Spellblades implements ModInitializer {
 			CustomSpellHandler.Data data1 = (CustomSpellHandler.Data) data;
 			RifleProjectile projectile = new RifleProjectile(RIFLEPROJECTILE,data1.caster().getWorld());
 			projectile.setPos(data1.caster().getX(),data1.caster().getY(),data1.caster().getZ());
-			SpellPower.Result power = SpellPower.getSpellPower(MagicSchool.FIRE, (LivingEntity) data1.caster());
+			SpellPower.Result power = SpellPower.getSpellPower(SpellSchools.FIRE, (LivingEntity) data1.caster());
 			for(Entity target : data1.targets()) {
 				if(target instanceof LivingEntity living) {
 					SpellPower.Vulnerability vulnerability = SpellPower.Vulnerability.none;
-					vulnerability = SpellPower.getVulnerability(living, MagicSchool.FIRE);
+					vulnerability = SpellPower.getVulnerability(living, SpellSchools.FIRE);
 					double amount = power.randomValue(vulnerability);
 					amount *= SpellRegistry.getSpell(new Identifier(MOD_ID,"sniper")).impact[0].action.damage.spell_power_coefficient/3;
 					target.timeUntilRegen = 0;
@@ -532,7 +553,7 @@ public class Spellblades implements ModInitializer {
 			return true;
 		});
 		CustomSpellHandler.register(new Identifier(MOD_ID,"whirlingblades"),(data) -> {
-			MagicSchool actualSchool = MagicSchool.FIRE;
+			SpellSchool actualSchool = SpellSchools.FIRE;
 			CustomSpellHandler.Data data1 = (CustomSpellHandler.Data) data;
 			float modifier = SpellRegistry.getSpell(new Identifier(MOD_ID,"whirlingblades")).impact[0].action.damage.spell_power_coefficient;
 			data1.caster().velocityDirty = true;
@@ -572,10 +593,10 @@ public class Spellblades implements ModInitializer {
 
 					RifleProjectile projectile = new RifleProjectile(RIFLEPROJECTILE,data1.caster().getWorld());
 					projectile.setPos(data1.caster().getX(),data1.caster().getY(),data1.caster().getZ());
-					SpellPower.Result power = SpellPower.getSpellPower(MagicSchool.FIRE, (LivingEntity) data1.caster());
+					SpellPower.Result power = SpellPower.getSpellPower(SpellSchools.FIRE, (LivingEntity) data1.caster());
 
 					SpellPower.Vulnerability vulnerability = SpellPower.Vulnerability.none;
-					vulnerability = SpellPower.getVulnerability(living, MagicSchool.FIRE);
+					vulnerability = SpellPower.getVulnerability(living, SpellSchools.FIRE);
 					double amount = power.randomValue(vulnerability);
 					amount *= SpellRegistry.getSpell(new Identifier(MOD_ID,"riflebarrage")).impact[0].action.damage.spell_power_coefficient/3;
 					projectile.setOwner(data1.caster());
@@ -590,14 +611,16 @@ public class Spellblades implements ModInitializer {
 			return false;
 		});
 		CustomSpellHandler.register(new Identifier(MOD_ID,"frostvert"),(data) -> {
-			MagicSchool actualSchool = MagicSchool.FIRE;
+			SpellSchool actualSchool = SpellSchools.FIRE;
 			CustomSpellHandler.Data data1 = (CustomSpellHandler.Data) data;
 			if( data1.caster().isOnGround() && data1.caster() instanceof PlayerEntity && !data1.caster().getWorld().isClient()){
 				List<Entity> list = TargetHelper.targetsFromArea(data1.caster(),data1.caster().getEyePos(), SpellRegistry.getSpell(new Identifier(MOD_ID, "frostvert")).range,new Spell.Release.Target.Area(), target -> TargetHelper.allowedToHurt(data1.caster(),target) );
 				for(Entity entity : list) {
 					if (entity instanceof LivingEntity living) {
-						SpellHelper.ImpactContext context = new SpellHelper.ImpactContext(1.0F, 1.0F, null, SpellPower.getSpellPower(MagicSchool.FIRE,data1.caster()), TargetHelper.TargetingMode.AREA);
-						SpellHelper.performImpacts(data1.caster().getWorld(), data1.caster(), entity, data1.caster(), SpellRegistry.getSpell(new Identifier(MOD_ID, "frostvert")), context);
+						SpellHelper.ImpactContext context = new SpellHelper.ImpactContext(1.0F, 1.0F, null, SpellPower.getSpellPower(SpellSchools.FIRE,data1.caster()), TargetHelper.TargetingMode.AREA);
+						SpellInfo spell = new SpellInfo(SpellRegistry.getSpell (new Identifier(MOD_ID, "frostvert")),new Identifier(MOD_ID, "frostvert"));
+
+						SpellHelper.performImpacts(data1.caster().getWorld(), data1.caster(), entity, data1.caster(), spell, context);
 
 					}
 				}
@@ -632,14 +655,15 @@ public class Spellblades implements ModInitializer {
 			data1.caster().setOnGround(false);
 			data1.caster().setPosition(data1.caster().getPos().add(0,0.2,0));
 			imposeCooldown(data1.caster(), new Identifier(MOD_ID,"frostvert"), SpellRegistry.getSpell(new Identifier(MOD_ID,"frostvert")), data1.progress());
+			;
 			return false;
 		});
 		CustomSpellHandler.register(new Identifier(MOD_ID,"finalstrike"),(data) -> {
-			MagicSchool actualSchool = MagicSchool.ARCANE;
+			SpellSchool actualSchool = SpellSchools.ARCANE;
 			CustomSpellHandler.Data data1 = (CustomSpellHandler.Data) data;
 			float modifier = SpellRegistry.getSpell(new Identifier(MOD_ID,"finalstrike")).impact[0].action.damage.spell_power_coefficient;
 			float modifier2 = SpellRegistry.getSpell(new Identifier(MOD_ID,"finalstrike")).impact[1].action.damage.spell_power_coefficient;
-
+			
 			List<Entity> list = TargetHelper.targetsFromRaycast(data1.caster(),SpellRegistry.getSpell(new Identifier(MOD_ID,"finalstrike")).range, Objects::nonNull);
 
 			if(!data1.targets().isEmpty()) {
@@ -698,7 +722,7 @@ public class Spellblades implements ModInitializer {
 			return true;
 		});
 		CustomSpellHandler.register(new Identifier(MOD_ID,"phoenixdive"),(data) -> {
-			MagicSchool actualSchool = MagicSchool.ARCANE;
+			SpellSchool actualSchool = SpellSchools.ARCANE;
 			CustomSpellHandler.Data data1 = (CustomSpellHandler.Data) data;
 
 			BlockHitResult result = data1.caster().getWorld().raycast(new RaycastContext(data1.caster().getEyePos(),data1.caster().getEyePos().add(data1.caster().getRotationVector().multiply(SpellRegistry.getSpell(new Identifier(MOD_ID,"phoenixdive")).range)), RaycastContext.ShapeType.COLLIDER, RaycastContext.FluidHandling.NONE,data1.caster()));
@@ -710,18 +734,21 @@ public class Spellblades implements ModInitializer {
 			}
 			List<Entity> list = TargetHelper.targetsFromArea(data1.caster(),data1.caster().getEyePos(),8,new Spell.Release.Target.Area(), target -> TargetHelper.allowedToHurt(data1.caster(),target) );
 			for(Entity entity : list){
-			SpellHelper.performImpacts(data1.caster().getWorld(),data1.caster(),entity,data1.caster(),SpellRegistry.getSpell(new Identifier(MOD_ID,"phoenixdive")),data1.impactContext());
+				SpellInfo spell = new SpellInfo(SpellRegistry.getSpell (new Identifier(MOD_ID, "phoenixdive")),new Identifier(MOD_ID, "phoenixdive"));
+
+				SpellHelper.performImpacts(data1.caster().getWorld(),data1.caster(),entity,data1.caster(),spell,data1.impactContext());
 			}
 			return true;
 		});
 		CustomSpellHandler.register(new Identifier(MOD_ID,"snuffout"),(data) -> {
-			MagicSchool actualSchool = MagicSchool.ARCANE;
+			SpellSchool actualSchool = SpellSchools.ARCANE;
 			CustomSpellHandler.Data data1 = (CustomSpellHandler.Data) data;
 			for(Entity entity : data1.targets()){
 				if(entity.isOnFire()) {
 					List<Entity> list = TargetHelper.targetsFromArea(entity, entity.getEyePos(), 8, new Spell.Release.Target.Area(), target -> TargetHelper.allowedToHurt(data1.caster(), target));
 					for (Entity entity1 : list) {
-						SpellHelper.performImpacts(data1.caster().getWorld(), data1.caster(), entity1, data1.caster(), SpellRegistry.getSpell(new Identifier(MOD_ID, "snuffout")), data1.impactContext());
+						SpellInfo spell = new SpellInfo(SpellRegistry.getSpell (new Identifier(MOD_ID, "snuffout")),new Identifier(MOD_ID, "snuffout"));
+						SpellHelper.performImpacts(data1.caster().getWorld(), data1.caster(), entity1, data1.caster(), spell, data1.impactContext());
 					}
 					entity.setFireTicks(0);
 					entity.setOnFire(false);
@@ -731,14 +758,14 @@ public class Spellblades implements ModInitializer {
 			return true;
 		});
 		CustomSpellHandler.register(new Identifier(MOD_ID,"combustion"),(data) -> {
-			MagicSchool actualSchool = MagicSchool.ARCANE;
+			SpellSchool actualSchool = SpellSchools.ARCANE;
 			CustomSpellHandler.Data data1 = (CustomSpellHandler.Data) data;
 			for(Entity entity : data1.targets()){
 				double value = data1.impactContext().power().randomValue();
 				if(entity.isOnFire() && entity instanceof LivingEntity living && data1.caster().age % (int)(20/Math.min(value,20)) == 0){
 
 					if(value > 20){
-						living.damage(SpellDamageSource.player(MagicSchool.FIRE,data1.caster()), (float) (value/20-1));
+						living.damage(SpellDamageSource.player(SpellSchools.FIRE,data1.caster()), (float) (value/20-1));
 					}
 					living.hurtTime = 0;
 					living.timeUntilRegen = 0;
@@ -750,7 +777,7 @@ public class Spellblades implements ModInitializer {
 			return false;
 		});
 		CustomSpellHandler.register(new Identifier(MOD_ID,"frostblink"),(data) -> {
-			MagicSchool actualSchool = MagicSchool.ARCANE;
+			SpellSchool actualSchool = SpellSchools.ARCANE;
 			CustomSpellHandler.Data data1 = (CustomSpellHandler.Data) data;
 			float modifier = SpellRegistry.getSpell(new Identifier(MOD_ID,"frostblink")).impact[0].action.damage.spell_power_coefficient;
 			float modifier2 = SpellRegistry.getSpell(new Identifier(MOD_ID,"frostblink")).impact[1].action.damage.spell_power_coefficient;
@@ -835,6 +862,15 @@ public class Spellblades implements ModInitializer {
 						.trackedUpdateRate(1)
 						.build()
 		);
+		SMITELIGHTNING = Registry.register(
+				ENTITY_TYPE,
+				new Identifier(MOD_ID, "smitelightning"),
+				FabricEntityTypeBuilder.<SmiteLightning>create(SpawnGroup.MISC, SmiteLightning::new)
+						.dimensions(EntityDimensions.fixed(1F, 1F)) // dimensions in Minecraft units of the render
+						.trackRangeBlocks(128)
+						.trackedUpdateRate(1)
+						.build()
+		);
 		REDLASERENTITY = Registry.register(
 				ENTITY_TYPE,
 				new Identifier(MOD_ID, "redlaser"),
@@ -855,7 +891,7 @@ public class Spellblades implements ModInitializer {
 			float modifier2 = SpellRegistry.getSpell(new Identifier(MOD_ID,"flicker_strike")).impact[1].action.damage.spell_power_coefficient;
 			modifier2 *= 0.2;
 			modifier2 *= data1.caster().getAttributeValue(EntityAttributes.GENERIC_ATTACK_SPEED);
-
+		
 			if(data1.caster() instanceof PlayerDamageInterface player) {
 				List<LivingEntity> list = new ArrayList<>();
 				for(Entity entity: data1.targets()){
@@ -869,24 +905,26 @@ public class Spellblades implements ModInitializer {
 
 				}
 				LivingEntity closest = data1.caster().getWorld().getClosestEntity(list,TargetPredicate.DEFAULT, data1.caster(),data1.caster().getX(),data1.caster().getY(),data1.caster().getZ());
-				BlockPos pos = new BlockPos((int) (closest.getX()-((closest.getWidth()+1)*data1.caster().getRotationVec(1.0F).subtract(0,data1.caster().getRotationVec(1.0F).getY(),0).normalize().getX())),(int) closest.getY(),(int) (closest.getZ()-((closest.getWidth()+1)*data1.caster().getRotationVec(1.0F).subtract(0,data1.caster().getRotationVec(1.0F).getY(),0).normalize().getZ())));
-				Vec3d posvec = new Vec3d(closest.getX()-((closest.getWidth()+1)*data1.caster().getRotationVec(1.0F).subtract(0,data1.caster().getRotationVec(1.0F).getY(),0).normalize().getX()),closest.getY(),closest.getZ()-((closest.getWidth()+1)*data1.caster().getRotationVec(1.0F).subtract(0,data1.caster().getRotationVec(1.0F).getY(),0).normalize().getZ()));
+				if(closest != null) {
+					BlockPos pos = new BlockPos((int) (closest.getX() - ((closest.getWidth() + 1) * data1.caster().getRotationVec(1.0F).subtract(0, data1.caster().getRotationVec(1.0F).getY(), 0).normalize().getX())), (int) closest.getY(), (int) (closest.getZ() - ((closest.getWidth() + 1) * data1.caster().getRotationVec(1.0F).subtract(0, data1.caster().getRotationVec(1.0F).getY(), 0).normalize().getZ())));
+					Vec3d posvec = new Vec3d(closest.getX() - ((closest.getWidth() + 1) * data1.caster().getRotationVec(1.0F).subtract(0, data1.caster().getRotationVec(1.0F).getY(), 0).normalize().getX()), closest.getY(), closest.getZ() - ((closest.getWidth() + 1) * data1.caster().getRotationVec(1.0F).subtract(0, data1.caster().getRotationVec(1.0F).getY(), 0).normalize().getZ()));
 
-				if(closest!= null  && !closest.getWorld().getBlockState(pos).shouldSuffocate(closest.getWorld(),pos) && !closest.getWorld().getBlockState(pos.up()).shouldSuffocate(closest.getWorld(),pos.up())) {
-					data1.caster().requestTeleport(posvec.getX(),posvec.getY(),posvec.getZ());
+					if (closest != null && !closest.getWorld().getBlockState(pos).shouldSuffocate(closest.getWorld(), pos) && !closest.getWorld().getBlockState(pos.up()).shouldSuffocate(closest.getWorld(), pos.up())) {
+						data1.caster().requestTeleport(posvec.getX(), posvec.getY(), posvec.getZ());
 
-					Attacks.attackAll(data1.caster(), List.of(closest), modifier);
-					SpellPower.Result power = SpellPower.getSpellPower(MagicSchool.FIRE, (LivingEntity) data1.caster());
-					SpellPower.Vulnerability vulnerability = SpellPower.Vulnerability.none;
-						vulnerability = SpellPower.getVulnerability(closest, MagicSchool.FIRE);
+						Attacks.attackAll(data1.caster(), List.of(closest), modifier);
+						SpellPower.Result power = SpellPower.getSpellPower(SpellSchools.FIRE, (LivingEntity) data1.caster());
+						SpellPower.Vulnerability vulnerability = SpellPower.Vulnerability.none;
+						vulnerability = SpellPower.getVulnerability(closest, SpellSchools.FIRE);
 
-					double amount = modifier2 * power.randomValue(vulnerability);
-					closest.timeUntilRegen = 0;
+						double amount = modifier2 * power.randomValue(vulnerability);
+						closest.timeUntilRegen = 0;
 
-					closest.damage(SpellDamageSource.player(MagicSchool.FIRE, data1.caster()), (float) amount);
+						closest.damage(SpellDamageSource.player(SpellSchools.FIRE, data1.caster()), (float) amount);
 
-					player.listAdd(closest);
-					return false;
+						player.listAdd(closest);
+						return false;
+					}
 				}
 				else{
 					player.listRefresh();
@@ -897,9 +935,10 @@ public class Spellblades implements ModInitializer {
 			return false;
 		});
 		CustomSpellHandler.register(new Identifier(MOD_ID,"eviscerate"),(data) -> {
-			MagicSchool actualSchool = MagicSchool.FROST;
+			SpellSchool actualSchool = SpellSchools.FROST;
 			CustomSpellHandler.Data data1 = (CustomSpellHandler.Data) data;
 			data1.targets().remove(data1.caster());
+			
 			if(data1.targets().isEmpty()){
 				if(data1.caster() instanceof SpellCasterEntity entity){
 					entity.setSpellCastProcess(null);
@@ -1027,11 +1066,11 @@ public class Spellblades implements ModInitializer {
 			return false;
 		});
 		CustomSpellHandler.register(new Identifier(MOD_ID,"frostflourish"),(data) -> {
-			MagicSchool actualSchool = MagicSchool.FROST;
+			SpellSchool actualSchool = SpellSchools.FROST;
 			CustomSpellHandler.Data data1 = (CustomSpellHandler.Data) data;
 			float modifier = SpellRegistry.getSpell(new Identifier(MOD_ID,"frostflourish")).impact[0].action.damage.spell_power_coefficient;
 			float modifier2 = SpellRegistry.getSpell(new Identifier(MOD_ID,"frostflourish")).impact[0].action.damage.spell_power_coefficient;
-
+			
 			Attacks.attackAll(data1.caster(),data1.targets(),(float)modifier);
 			for(Entity entity: data1.targets()){
 				SpellPower.Result power = SpellPower.getSpellPower(actualSchool, (LivingEntity) data1.caster());
@@ -1104,11 +1143,11 @@ public class Spellblades implements ModInitializer {
 			return true;
 		});
 		CustomSpellHandler.register(new Identifier(MOD_ID,"fireflourish"),(data) -> {
-			MagicSchool actualSchool = MagicSchool.FIRE;
+			SpellSchool actualSchool = SpellSchools.FIRE;
 			CustomSpellHandler.Data data1 = (CustomSpellHandler.Data) data;
 			float modifier = SpellRegistry.getSpell(new Identifier(MOD_ID,"fireflourish")).impact[0].action.damage.spell_power_coefficient;
 			float modifier2 = SpellRegistry.getSpell(new Identifier(MOD_ID,"fireflourish")).impact[0].action.damage.spell_power_coefficient;
-
+			
 			Attacks.attackAll(data1.caster(),data1.targets(),(float)modifier);
 			for(Entity entity: data1.targets()){
 				SpellPower.Result power = SpellPower.getSpellPower(actualSchool, (LivingEntity) data1.caster());
@@ -1178,11 +1217,11 @@ public class Spellblades implements ModInitializer {
 			return true;
 		});
 		CustomSpellHandler.register(new Identifier(MOD_ID,"arcaneflourish"),(data) -> {
-			MagicSchool actualSchool = MagicSchool.ARCANE;
+			SpellSchool actualSchool = SpellSchools.ARCANE;
 			CustomSpellHandler.Data data1 = (CustomSpellHandler.Data) data;
 			float modifier = SpellRegistry.getSpell(new Identifier(MOD_ID,"arcaneflourish")).impact[0].action.damage.spell_power_coefficient;
 			float modifier2 = SpellRegistry.getSpell(new Identifier(MOD_ID,"arcaneflourish")).impact[1].action.damage.spell_power_coefficient;
-
+			
 			Attacks.attackAll(data1.caster(),data1.targets(),(float)modifier);
 			for(Entity entity: data1.targets()){
 				SpellPower.Result power = SpellPower.getSpellPower(actualSchool, (LivingEntity) data1.caster());
@@ -1255,6 +1294,8 @@ public class Spellblades implements ModInitializer {
 		});
 		CustomSpellHandler.register(new Identifier(MOD_ID,"tempest"),(data) -> {
 			CustomSpellHandler.Data data1 = (CustomSpellHandler.Data) data;
+			SpellSchool actualSchool = SpellSchools.FROST;
+			
 			if(data1.caster().getWorld() instanceof ServerWorld world){
 				if(world.getEntitiesByType(TypeFilter.instanceOf(CycloneEntity.class), cyclone -> {
 					if( cyclone.getOwner() == data1.caster() && cyclone.getColor() != 5){
@@ -1277,7 +1318,7 @@ public class Spellblades implements ModInitializer {
 		});
 		CustomSpellHandler.register(new Identifier(MOD_ID,"whirlwind"),(data) -> {
 
-			MagicSchool actualSchool = MagicSchool.FROST;
+			SpellSchool actualSchool = SpellSchools.FROST;
 			CustomSpellHandler.Data data1 = (CustomSpellHandler.Data) data;
 			float modifier = SpellRegistry.getSpell(new Identifier(MOD_ID,"whirlwind")).impact[0].action.damage.spell_power_coefficient;
 			modifier *= 0.4F+0.6F/(float)data1.targets().size()+(0.6F-0.6F/(float)data1.targets().size())*Math.min(3, EnchantmentHelper.getEquipmentLevel(Enchantments.SWEEPING,data1.caster()))/3;
@@ -1306,7 +1347,7 @@ public class Spellblades implements ModInitializer {
 			return false;
 		});
 		CustomSpellHandler.register(new Identifier(MOD_ID,"reckoning"),(data) -> {
-			MagicSchool actualSchool = MagicSchool.FROST;
+			SpellSchool actualSchool = SpellSchools.FROST;
 			CustomSpellHandler.Data data1 = (CustomSpellHandler.Data) data;
 			float modifier = SpellRegistry.getSpell(new Identifier(MOD_ID,"reckoning")).impact[0].action.damage.spell_power_coefficient;
 			modifier *= 0.2;
@@ -1337,7 +1378,8 @@ public class Spellblades implements ModInitializer {
 
 		CustomSpellHandler.register(new Identifier(MOD_ID,"maelstrom"),(data) -> {
 			CustomSpellHandler.Data data1 = (CustomSpellHandler.Data) data;
-
+			SpellSchool actualSchool = SpellSchools.ARCANE;
+			
 			if(data1.caster().getWorld() instanceof ServerWorld world){
 				if(world.getEntitiesByType(TypeFilter.instanceOf(CycloneEntity.class), cyclone -> {
 					if( cyclone.getOwner() == data1.caster()&& cyclone.getColor() != 5){
@@ -1360,6 +1402,8 @@ public class Spellblades implements ModInitializer {
 		});
 		CustomSpellHandler.register(new Identifier(MOD_ID,"inferno"),(data) -> {
 			CustomSpellHandler.Data data1 = (CustomSpellHandler.Data) data;
+			SpellSchool actualSchool = SpellSchools.FIRE;
+			
 			if(data1.caster().getWorld() instanceof ServerWorld world){
 				if(world.getEntitiesByType(TypeFilter.instanceOf(CycloneEntity.class), cyclone -> {
 					if( cyclone.getOwner() == data1.caster()&& cyclone.getColor() != 5){
@@ -1384,15 +1428,19 @@ public class Spellblades implements ModInitializer {
 			CustomSpellHandler.Data data1 = (CustomSpellHandler.Data) data;
 			float modifier = SpellRegistry.getSpell(new Identifier(MOD_ID,"smite")).impact[0].action.damage.spell_power_coefficient;
 			float modifier2 = SpellRegistry.getSpell(new Identifier(MOD_ID,"smite")).impact[1].action.damage.spell_power_coefficient;
-
+			SmiteLightning smiteLightning = new SmiteLightning(SMITELIGHTNING,data1.caster().getWorld());
+			smiteLightning.setPosition(data1.caster().getPos());
+			data1.caster().getWorld().spawnEntity(smiteLightning);
 			Attacks.attackAll(data1.caster(),data1.targets(),(float)modifier);
 			for(Entity target : data1.targets()){
 				if(target instanceof LivingEntity living && living.isUndead()){
 					modifier2 *= 1.5;
 				}
 				if(target instanceof LivingEntity living && data1.caster() instanceof SpellCasterEntity caster && SpellRegistry.getSpell(new Identifier(MOD_ID,"fervoussmite")) != null){
-					SpellPower.Result result = new SpellPower.Result(MagicSchool.HEALING, modifier2 * SpellPower.getSpellPower(MagicSchool.HEALING,data1.caster()).baseValue(), getCriticalChance(data1.caster(), data1.caster().getMainHandStack()), SpellPower.getCriticalMultiplier(data1.caster())+SpellPower.getVulnerability(living,MagicSchool.HEALING).criticalDamageBonus());
-					SpellHelper.performImpacts(data1.caster().getWorld(), data1.caster(), target, data1.caster(), SpellRegistry.getSpell(new Identifier(MOD_ID, "fervoussmite")) ,
+					SpellPower.Result result = new SpellPower.Result(SpellSchools.HEALING, modifier2 * SpellPower.getSpellPower(SpellSchools.HEALING,data1.caster()).baseValue(), data1.impactContext().power().criticalChance(), data1.impactContext().power().criticalDamage());
+					SpellInfo spell = new SpellInfo(SpellRegistry.getSpell (new Identifier(MOD_ID, "fervoussmite")),new Identifier(MOD_ID, "fervoussmite"));
+
+					SpellHelper.performImpacts(data1.caster().getWorld(), data1.caster(), target, data1.caster(), spell ,
 							new SpellHelper.ImpactContext(1, 1, null, result, TargetHelper.TargetingMode.DIRECT));
 
 				}

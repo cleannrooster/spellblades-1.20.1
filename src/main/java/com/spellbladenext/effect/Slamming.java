@@ -13,6 +13,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
 import net.spell_engine.api.spell.Spell;
+import net.spell_engine.api.spell.SpellInfo;
 import net.spell_engine.internals.SpellHelper;
 import net.spell_engine.internals.SpellRegistry;
 import net.spell_engine.internals.casting.SpellCast;
@@ -20,8 +21,8 @@ import net.spell_engine.particle.ParticleHelper;
 import net.spell_engine.utils.AnimationHelper;
 import net.spell_engine.utils.SoundHelper;
 import net.spell_engine.utils.TargetHelper;
-import net.spell_power.api.MagicSchool;
 import net.spell_power.api.SpellPower;
+import net.spell_power.api.SpellSchools;
 
 import java.util.Collection;
 import java.util.List;
@@ -57,8 +58,10 @@ public class Slamming extends CustomEffect{
             List<Entity> list = TargetHelper.targetsFromArea(player,player.getEyePos(), SpellRegistry.getSpell(new Identifier(MOD_ID, "frostvert")).range,new Spell.Release.Target.Area(), target -> TargetHelper.allowedToHurt(player,target) );
             for(Entity entity : list) {
                 if (entity instanceof LivingEntity living) {
-                    SpellHelper.ImpactContext context = new SpellHelper.ImpactContext(1.0F, 1.0F, null, SpellPower.getSpellPower(MagicSchool.FIRE,player), TargetHelper.TargetingMode.AREA);
-                    SpellHelper.performImpacts(player.getWorld(), player, entity, player, SpellRegistry.getSpell(new Identifier(MOD_ID, "frostvert")), context);
+                    SpellHelper.ImpactContext context = new SpellHelper.ImpactContext(1.0F, 1.0F, null, SpellPower.getSpellPower(SpellSchools.FIRE,player), TargetHelper.TargetingMode.AREA);
+                    SpellInfo spell = new SpellInfo(SpellRegistry.getSpell (new Identifier(MOD_ID, "frostvert")),new Identifier(MOD_ID, "frostvert"));
+
+                    SpellHelper.performImpacts(player.getWorld(), player, entity, player, spell, context);
 
                 }
             }

@@ -5,7 +5,7 @@ import com.spellbladenext.items.armor.MagisterArmor;
 import mod.azure.azurelib.model.GeoModel;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.util.Identifier;
-import net.spell_power.api.MagicSchool;
+import net.spell_power.api.SpellSchools;
 
 public class MagisterArmorModel extends GeoModel<MagisterArmor> {
 
@@ -13,18 +13,18 @@ public class MagisterArmorModel extends GeoModel<MagisterArmor> {
     @Override
     public Identifier getModelResource(MagisterArmor animatable) {
         if(animatable.getSlotType() == EquipmentSlot.HEAD){
-            if(animatable.getMagicschool().contains(MagicSchool.ARCANE)){
+            if(animatable.getMagicschool().contains(SpellSchools.ARCANE)){
                 return new Identifier(Spellblades.MOD_ID,"geo/magebane.geo.json");
 
 
 
             }
-            if(animatable.getMagicschool().contains(MagicSchool.FIRE)){
+            if(animatable.getMagicschool().contains(SpellSchools.FIRE)){
                 return new Identifier(Spellblades.MOD_ID,"geo/magebreaker.geo.json");
 
 
             }
-            if(animatable.getMagicschool().contains(MagicSchool.FROST)){
+            if(animatable.getMagicschool().contains(SpellSchools.FROST)){
                 return new Identifier(Spellblades.MOD_ID,"geo/mageseeker.geo.json");
 
             }
@@ -36,17 +36,17 @@ public class MagisterArmorModel extends GeoModel<MagisterArmor> {
     @Override
     public Identifier getTextureResource(MagisterArmor animatable) {
         if(animatable.getSlotType() == EquipmentSlot.HEAD){
-            if(animatable.getMagicschool().contains(MagicSchool.ARCANE)){
+            if(animatable.getMagicschool().contains(SpellSchools.ARCANE)){
 
                 return new Identifier(Spellblades.MOD_ID,"textures/armor/magebane_crown.png");
 
             }
-            if(animatable.getMagicschool().contains(MagicSchool.FROST)){
+            if(animatable.getMagicschool().contains(SpellSchools.FROST)){
 
                 return new Identifier(Spellblades.MOD_ID,"textures/armor/mageseeker_hat.png");
 
             }
-            if(animatable.getMagicschool().contains(MagicSchool.FIRE)){
+            if(animatable.getMagicschool().contains(SpellSchools.FIRE)){
 
                 return new Identifier(Spellblades.MOD_ID,"textures/armor/magebreaker_helmet.png");
 
@@ -54,11 +54,11 @@ public class MagisterArmorModel extends GeoModel<MagisterArmor> {
             }
 
         }
-        if(animatable.getMagicschool().contains(MagicSchool.ARCANE)){
+        if(animatable.getMagicschool().contains(SpellSchools.ARCANE)){
 
             return new Identifier(Spellblades.MOD_ID,"textures/armor/aetherfire.png");
         }
-        if(animatable.getMagicschool().contains(MagicSchool.FIRE)){
+        if(animatable.getMagicschool().contains(SpellSchools.FIRE)){
 
             return new Identifier(Spellblades.MOD_ID,"textures/armor/rimeblaze.png");
 

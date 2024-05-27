@@ -19,7 +19,8 @@ import net.minecraft.util.Formatting;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.spell_engine.api.item.ConfigurableAttributes;
-import net.spell_power.api.MagicSchool;
+import net.spell_power.api.SpellSchool;
+import net.spell_power.api.SpellSchools;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -30,8 +31,8 @@ import static com.extraspellattributes.ReabsorptionInit.*;
 public class Voidforge extends Starforge implements ConfigurableAttributes {
     private Multimap<EntityAttribute, EntityAttributeModifier> attributes;
 
-    public Voidforge(ToolMaterial material, Settings settings, int damage, float speed, MagicSchool school) {
-        super(material, settings,damage, speed, MagicSchool.ARCANE);
+    public Voidforge(ToolMaterial material, Settings settings, int damage, float speed, SpellSchool school) {
+        super(material, settings,damage, speed, SpellSchools.ARCANE);
         this.school = school;
     }
 
@@ -68,7 +69,7 @@ public class Voidforge extends Starforge implements ConfigurableAttributes {
             return super.postHit(stack,target,attacker);
     }
 
-    MagicSchool school = MagicSchool.PHYSICAL_MELEE;
+    SpellSchool school = SpellSchools.ARCANE;
 
     public boolean canMine(BlockState state, World world, BlockPos pos, PlayerEntity miner) {
         return !miner.isCreative();

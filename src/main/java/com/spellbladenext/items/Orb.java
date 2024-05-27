@@ -27,7 +27,8 @@ import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
 import net.minecraft.world.World;
 import net.spell_engine.api.item.weapon.SpellWeaponItem;
-import net.spell_power.api.MagicSchool;
+import net.spell_power.api.SpellSchool;
+import net.spell_power.api.SpellSchools;
 import org.jetbrains.annotations.Nullable;
 
 import java.awt.geom.Arc2D;
@@ -36,12 +37,12 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 public class Orb extends SpellWeaponItem implements GeoItem {
-    public Orb(ToolMaterial material, Settings settings, MagicSchool school) {
+    public Orb(ToolMaterial material, Settings settings, SpellSchool school) {
         super(material, settings);
         this.school = school;
 
     }
-    MagicSchool school = MagicSchool.PHYSICAL_MELEE;
+    SpellSchool school = SpellSchools.ARCANE;
     @Override
     public void createRenderer(Consumer<Object> consumer) {
         consumer.accept(new RenderProvider() {
@@ -57,7 +58,7 @@ public class Orb extends SpellWeaponItem implements GeoItem {
     private AnimatableInstanceCache factory = AzureLibUtil.createInstanceCache(this);
     public static final RawAnimation IDLE = RawAnimation.begin().thenLoop("idle");
 
-    public MagicSchool getSchool() {
+    public SpellSchool getSchool() {
         return school;
     }
     private final Supplier<Object> renderProvider = GeoItem.makeRenderer(this);

@@ -12,9 +12,9 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.Vec3d;
 import net.spell_engine.api.spell.CustomSpellHandler;
 import net.spell_engine.internals.casting.SpellCasterEntity;
-import net.spell_power.api.MagicSchool;
 import net.spell_power.api.SpellDamageSource;
 import net.spell_power.api.SpellPower;
+import net.spell_power.api.SpellSchool;
 
 import java.util.List;
 
@@ -60,7 +60,7 @@ public class Attacks {
     }
     public static void eleWhirlwind(CustomSpellHandler.Data data1) {
         if(((SpellCasterEntity) data1.caster()).getCurrentSpell() != null){
-        MagicSchool actualSchool = ((SpellCasterEntity) data1.caster()).getCurrentSpell().school;
+        SpellSchool actualSchool = ((SpellCasterEntity) data1.caster()).getCurrentSpell().school;
         float modifier = ((SpellCasterEntity) data1.caster()).getCurrentSpell().impact[0].action.damage.spell_power_coefficient;
         modifier *= 0.4F + 0.6F / (float) data1.targets().size() + (0.6F - 0.6F / (float) data1.targets().size()) * Math.min(3, EnchantmentHelper.getEquipmentLevel(Enchantments.SWEEPING, data1.caster())) / 3;
         modifier *= 0.2;

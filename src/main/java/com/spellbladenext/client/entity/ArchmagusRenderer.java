@@ -13,7 +13,10 @@ import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Identifier;
 import net.spell_power.SpellPowerMod;
-import net.spell_power.api.MagicSchool;
+import net.spell_power.api.SpellSchool;
+import net.spell_power.api.SpellSchools;
+
+import static com.spellbladenext.entity.Archmagus.TIER;
 
 public class ArchmagusRenderer<T extends Archmagus, M extends BipedEntityModel<T>> extends DynamicGeoEntityRenderer<Archmagus> {
 
@@ -33,15 +36,15 @@ public class ArchmagusRenderer<T extends Archmagus, M extends BipedEntityModel<T
 
 
     public Identifier getTextureLocation(Archmagus p_114891_) {
-        switch(p_114891_.getMagicSchool()){
-            case ARCANE -> {
-                return ARCANE;
-            }
-            case FIRE -> {
+        if(p_114891_.getMainHandStack().getItem() instanceof Spellblade spellblade){
+            if(spellblade.getSchool().equals(SpellSchools.FIRE)){
                 return FIRE;
             }
-            case FROST -> {
+            if(spellblade.getSchool().equals(SpellSchools.FROST)){
                 return FROST;
+            }
+            if(spellblade.getSchool().equals(SpellSchools.ARCANE)){
+                return ARCANE;
             }
         }
         return DEFAULT_LOCATION;

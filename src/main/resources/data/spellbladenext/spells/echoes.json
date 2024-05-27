@@ -80,6 +80,6 @@
   ],
   "cost": {
     "item_id": "runes:arcane_stone",
-    "cooldown_duration": 0
+    "cooldown_duration": 1
   }
 }

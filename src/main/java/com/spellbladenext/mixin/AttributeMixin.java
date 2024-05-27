@@ -5,8 +5,6 @@ import com.google.common.collect.Maps;
 import com.spellbladenext.Spellblades;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.attribute.*;
-import net.spell_power.api.MagicSchool;
-import net.spell_power.api.attributes.SpellAttributes;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;

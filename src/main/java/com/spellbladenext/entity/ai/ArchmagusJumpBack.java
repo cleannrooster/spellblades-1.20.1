@@ -21,8 +21,8 @@ import net.spell_engine.api.spell.Spell;
 import net.spell_engine.internals.SpellRegistry;
 import net.spell_engine.particle.ParticleHelper;
 import net.spell_engine.utils.SoundHelper;
-import net.spell_power.api.MagicSchool;
 import net.spell_power.api.SpellDamageSource;
+import net.spell_power.api.SpellSchools;
 
 import java.util.List;
 import java.util.Optional;
@@ -115,7 +115,7 @@ public class ArchmagusJumpBack<E extends Archmagus> extends MultiTickTask<E> {
 
         }
         if(time % 10 == 0) {
-            if (livingEntity.getMagicSchool() == MagicSchool.ARCANE) {
+            if (livingEntity.getMagicSchool() == SpellSchools.ARCANE) {
                 Spell spell = SpellRegistry.getSpell(new Identifier(Spellblades.MOD_ID, "arcaneoverdrive"));
                 if (!serverLevel.isClient()) {
                     ParticleHelper.sendBatches(livingEntity, spell.release.particles);
@@ -125,10 +125,10 @@ public class ArchmagusJumpBack<E extends Archmagus> extends MultiTickTask<E> {
 
                 List<Entity> entities = serverLevel.getEntitiesByClass(Entity.class, livingEntity.getBoundingBox().expand(4, 2, 4), entity -> entity != livingEntity);
                 for (Entity entity : entities) {
-                    entity.damage(SpellDamageSource.mob(MagicSchool.ARCANE, livingEntity), (float) livingEntity.getAttributeValue(EntityAttributes.GENERIC_ATTACK_DAMAGE) * 0.2F);
+                    entity.damage(SpellDamageSource.mob(SpellSchools.ARCANE, livingEntity), (float) livingEntity.getAttributeValue(EntityAttributes.GENERIC_ATTACK_DAMAGE) * 0.2F);
                 }
             }
-            if (livingEntity.getMagicSchool() == MagicSchool.FIRE) {
+            if (livingEntity.getMagicSchool() == SpellSchools.FIRE) {
                 Spell spell = SpellRegistry.getSpell(new Identifier(Spellblades.MOD_ID, "fireoverdrive"));
                 if (!serverLevel.isClient()) {
                     ParticleHelper.sendBatches(livingEntity, spell.release.particles);
@@ -137,11 +137,11 @@ public class ArchmagusJumpBack<E extends Archmagus> extends MultiTickTask<E> {
 
                 List<Entity> entities = serverLevel.getEntitiesByClass(Entity.class, livingEntity.getBoundingBox().expand(4, 2, 4), entity -> entity != livingEntity);
                 for (Entity entity : entities) {
-                    entity.damage(SpellDamageSource.mob(MagicSchool.FIRE, livingEntity), (float) livingEntity.getAttributeValue(EntityAttributes.GENERIC_ATTACK_DAMAGE) * 0.2F);
+                    entity.damage(SpellDamageSource.mob(SpellSchools.FIRE, livingEntity), (float) livingEntity.getAttributeValue(EntityAttributes.GENERIC_ATTACK_DAMAGE) * 0.2F);
 
                 }
             }
-            if (livingEntity.getMagicSchool() == MagicSchool.FROST) {
+            if (livingEntity.getMagicSchool() == SpellSchools.FROST) {
                 Spell spell = SpellRegistry.getSpell(new Identifier(Spellblades.MOD_ID, "frostoverdrive"));
                 if (!serverLevel.isClient()) {
                     ParticleHelper.sendBatches(livingEntity, spell.release.particles);
@@ -151,7 +151,7 @@ public class ArchmagusJumpBack<E extends Archmagus> extends MultiTickTask<E> {
 
                 List<Entity> entities = serverLevel.getEntitiesByClass(Entity.class, livingEntity.getBoundingBox().expand(4, 2, 4), entity -> entity != livingEntity);
                 for (Entity entity : entities) {
-                    entity.damage(SpellDamageSource.mob(MagicSchool.FROST, livingEntity), (float) livingEntity.getAttributeValue(EntityAttributes.GENERIC_ATTACK_DAMAGE) * 0.2F);
+                    entity.damage(SpellDamageSource.mob(SpellSchools.FROST, livingEntity), (float) livingEntity.getAttributeValue(EntityAttributes.GENERIC_ATTACK_DAMAGE) * 0.2F);
                 }
             }
         }

@@ -57,8 +57,9 @@ import net.spell_engine.api.spell.Spell;
 import net.spell_engine.utils.SoundHelper;
 import net.spell_engine.utils.TargetHelper;
 import net.spell_power.SpellPowerMod;
-import net.spell_power.api.MagicSchool;
 import net.spell_power.api.SpellDamageSource;
+import net.spell_power.api.SpellSchool;
+import net.spell_power.api.SpellSchools;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -281,11 +282,11 @@ public class Magister extends PathAwareEntity implements InventoryOwner, GeoEnti
 
     protected void playAngrySound() {
     }
-    public MagicSchool getMagicSchool(){
+    public SpellSchool getMagicSchool(){
         if(this.getMainHandStack().getItem() instanceof Spellblade spellblade){
             return spellblade.getSchool();
         }
-        return MagicSchool.ARCANE;
+        return SpellSchools.ARCANE;
     }
 
     @Override
