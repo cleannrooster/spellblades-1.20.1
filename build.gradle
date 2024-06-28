@@ -13,7 +13,9 @@ group = project.maven_group
 base {
 	archivesName = project.archives_base_name
 }
-
+ext.changelog_last_section = { ->
+	return new File("CHANGELOG.md").text.split('\n# ')[0]
+}
 if(project.hasProperty('release_type')) {
 	tasks.register("publishMod") {
 		dependsOn(build)
