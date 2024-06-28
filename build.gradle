@@ -159,7 +159,6 @@ if(project.hasProperty('release_type')) {
 				requiredDependency 'azurelib'
 				requiredDependency 'spell-engine'
 				requiredDependency 'ranged-weapon-api'
-				requiredDependency 'extra-spell-attributes'
 			}
 
 			mainArtifact(remapJar)
@@ -189,7 +188,6 @@ if(project.hasProperty('release_type')) {
 			required.project 'azurelib'
 			required.project 'spell-engine'
 			required.project 'ranged-weapon-api'
-			required.project 'extra-rpg-attributes'
 		}
 	}
 
