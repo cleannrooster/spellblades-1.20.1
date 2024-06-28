@@ -23,9 +23,9 @@ if(project.hasProperty('release_type')) {
 	}
 
 	curseforge {
-		apiKey = System.getenv("CURSEFORGE_API_KEY")
+		apiKey = System.getenv("CLEANNCURSE")
 		project {
-			id = System.getenv("CURSEFORGE_PROJECT_ID")
+			id = System.getenv("CLEANNCURSE")
 			changelog = changelog_last_section()
 			changelogType = 'markdown'
 			releaseType = release_type
