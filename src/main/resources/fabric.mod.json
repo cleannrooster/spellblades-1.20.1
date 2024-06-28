@@ -28,7 +28,7 @@
 	"depends": {
 		"fabricloader": ">=0.14.21",
 		"minecraft": "~1.20.1",
-		"spell_engine": ">=0.14.1",
+		"spell_engine": ">=0.15.4",
 		"extraspellattributes": ">=1.2.0",
 		"java": ">=17",
 		"fabric-api": "*",

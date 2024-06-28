@@ -55,6 +55,7 @@
 
   ],
   "cost": {
+    "rpgmana": 30,
     "cooldown_duration": 4
   }
 }

@@ -4,6 +4,7 @@ import com.google.common.base.Suppliers;
 import com.google.common.collect.ImmutableMultimap;
 import com.spellbladenext.block.Hexblade;
 import com.spellbladenext.block.HexbladeBlockItem;
+import com.spellbladenext.items.TabulaRasa;
 import com.spellbladenext.config.ServerConfig;
 import com.spellbladenext.config.ServerConfigWrapper;
 import com.spellbladenext.effect.CustomEffect;
@@ -52,6 +53,10 @@ import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.*;
+import net.minecraft.loot.LootPool;
+import net.minecraft.loot.LootTables;
+import net.minecraft.loot.entry.ItemEntry;
+import net.minecraft.loot.provider.number.BinomialLootNumberProvider;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
@@ -78,13 +83,14 @@ import net.minecraft.world.GameRules;
 import net.minecraft.world.RaycastContext;
 import net.minecraft.world.World;
 import net.minecraft.world.dimension.DimensionType;
-import net.spell_engine.SpellEngineMod;
 import net.spell_engine.api.item.ItemConfig;
 import net.spell_engine.api.item.trinket.SpellBooks;
 import net.spell_engine.api.loot.LootConfig;
+import net.spell_engine.api.loot.LootConfigV2;
 import net.spell_engine.api.loot.LootHelper;
 import net.spell_engine.api.render.CustomModels;
 import net.spell_engine.api.spell.*;
+import net.spell_engine.internals.SpellContainerHelper;
 import net.spell_engine.internals.SpellHelper;
 import net.spell_engine.internals.SpellRegistry;
 import net.spell_engine.internals.WorldScheduler;
@@ -106,6 +112,7 @@ import java.util.function.Supplier;
 import static com.spellbladenext.items.attacks.Attacks.eleWhirlwind;
 import static java.lang.Math.*;
 import static net.minecraft.registry.Registries.ENTITY_TYPE;
+import static net.spell_engine.api.item.trinket.SpellBooks.itemIdFor;
 import static net.spell_engine.internals.SpellHelper.imposeCooldown;
 import static net.spell_engine.internals.SpellHelper.launchPoint;
 
@@ -139,7 +146,7 @@ public class Spellblades implements ModInitializer {
 
 	public static final Item OFFERING = new Offering(new FabricItemSettings());
 	public static RegistryKey<ItemGroup> KEY = RegistryKey.of(Registries.ITEM_GROUP.getKey(),new Identifier(Spellblades.MOD_ID,"generic"));
-	public static Item spellOil = new SpellOil(new FabricItemSettings().maxCount(1));
+	public static Item spellOil = new RandomSpellOil(new FabricItemSettings().maxCount(1));
 	public static Item whirlwindOil = new WhirlwindOil(new FabricItemSettings().maxCount(1));
 	public static Item smiteOil = new SmiteOil(new FabricItemSettings().maxCount(1));
 	public static Item finalstrikeoil = new FinalStrikeOil(new FabricItemSettings().maxCount(1));
@@ -170,10 +177,14 @@ public class Spellblades implements ModInitializer {
 	public static StatusEffect PORTALSICKNESS = new CustomEffect(StatusEffectCategory.HARMFUL, 0xff4bdd);
 	public static StatusEffect UNLEASH = new CustomEffect(StatusEffectCategory.BENEFICIAL, 0xff4bdd);
 	public static StatusEffect SLAMMING = new Slamming(StatusEffectCategory.BENEFICIAL, 0xff4bdd);
+	public static ThesisBook BOOK;
 
+	public static TabulaRasa TABULARASA;
 	public static final Item NETHERDEBUG = new DebugNetherPortal(new FabricItemSettings().maxCount(1));
 
 	public static StatusEffect HEXED = new Hex(StatusEffectCategory.HARMFUL, 0xff4bdd);
+	public static StatusEffect PHOENIXCURSE = new CustomEffect(StatusEffectCategory.HARMFUL, 0xff4bdd);
+
 	public static StatusEffect MAGISTERFRIEND = new CustomEffect(StatusEffectCategory.BENEFICIAL, 0xff4bdd);
 	public static final RegistryKey<World> DIMENSIONKEY = RegistryKey.of(RegistryKeys.WORLD,new Identifier(Spellblades.MOD_ID,"glassocean"));
 
@@ -185,13 +196,7 @@ public class Spellblades implements ModInitializer {
 			.setDirectory(MOD_ID)
 			.sanitize(true)
 			.build();
-	public static ConfigManager<LootConfig> lootConfig = new ConfigManager<LootConfig>
-			("loot_v5", Default.lootConfig)
-			.builder()
-			.setDirectory(MOD_ID)
-			.sanitize(true)
-			.constrain(LootConfig::constrainValues)
-			.build();
+
 	public static void diebeam(CustomSpellHandler.Data data1) {
 		Vec3d pos = data1.caster().getPos().add(0, data1.caster().getHeight() / 2, 0);
 
@@ -231,6 +236,12 @@ public class Spellblades implements ModInitializer {
 				.icon(() -> new ItemStack(Items.arcane_blade.item()))
 				.displayName(Text.translatable("itemGroup.spellbladenext.general"))
 				.build();
+		SpellContainer container = new SpellContainer(SpellContainer.ContentType.MAGIC, false, new Identifier(MOD_ID,"thesis").toString(), 0, List.of());
+		SpellRegistry.book_containers.put(itemIdFor(new Identifier(MOD_ID,"thesis")), container);
+
+		BOOK = new ThesisBook( new Identifier(MOD_ID,"thesis"),new Item.Settings());
+		TABULARASA = new TabulaRasa( new Identifier(MOD_ID,"tabula_rasa"),new Item.Settings());
+
 		AutoConfig.register(ServerConfigWrapper.class, PartitioningSerializer.wrap(JanksonConfigSerializer::new));
 		config = AutoConfig.getConfigHolder(ServerConfigWrapper.class).getConfig().server;
 		Registry.register(Registries.ITEM,new Identifier(MOD_ID,"spelloil"),spellOil);
@@ -262,12 +273,17 @@ public class Spellblades implements ModInitializer {
 		Registry.register(Registries.ITEM, new Identifier(MOD_ID, "debug"), NETHERDEBUG);
 		Registry.register(Registries.ITEM, new Identifier(MOD_ID, "prismatic"), PRISMATIC);
 		Registry.register(Registries.ITEM, new Identifier(MOD_ID, "thread"), THREAD);
+		Registry.register(Registries.ITEM, new Identifier(MOD_ID, "thesis_spell_book"), BOOK);
+		Registry.register(Registries.ITEM, new Identifier(MOD_ID, "tabula_rasa"), TABULARASA);
+
 		Registry.register(Registries.ATTRIBUTE,new Identifier(MOD_ID,"purpose"),PURPOSE);
 
 /*
 		Registry.register(Registries.ITEM, new Identifier(MOD_ID, "rifle"), RIFLE);
 */
 		Registry.register(Registries.STATUS_EFFECT,new Identifier(MOD_ID,"hexed"),HEXED);
+		Registry.register(Registries.STATUS_EFFECT,new Identifier(MOD_ID,"phoenixcurse"),PHOENIXCURSE);
+
 		Registry.register(Registries.STATUS_EFFECT,new Identifier(MOD_ID,"magisterfriend"),MAGISTERFRIEND);
 		Registry.register(Registries.STATUS_EFFECT,new Identifier(MOD_ID,"portalsickness"),PORTALSICKNESS);
 		Registry.register(Registries.STATUS_EFFECT,new Identifier(MOD_ID,"unleash"),UNLEASH);
@@ -287,7 +303,39 @@ public class Spellblades implements ModInitializer {
 			return amount;
 
 		});
-		lootConfig.refresh();
+
+		for (SpellSchool school : SpellSchools.all()) {
+			school.addSource(SpellSchool.Trait.POWER, SpellSchool.Apply.MULTIPLY, queryArgs -> {
+						double amount = 0;
+
+						if (queryArgs.entity() instanceof PlayerEntity player &&
+								SpellContainerHelper.getEquipped(queryArgs.entity().getMainHandStack(), player) != null && SpellContainerHelper.getEquipped(queryArgs.entity().getMainHandStack(), player).spell_ids != null &&
+								school != ExternalSpellSchools.PHYSICAL_MELEE && school != ExternalSpellSchools.PHYSICAL_RANGED &&
+								SpellContainerHelper.getEquipped(queryArgs.entity().getMainHandStack(), player).spell_ids.contains("spellbladenext:thesis")) {
+							amount += 0.5;
+						}
+						return amount;
+
+					}
+			);
+
+		}
+		for (SpellSchool school : SpellSchools.all()) {
+			school.addSource(SpellSchool.Trait.HASTE, SpellSchool.Apply.MULTIPLY, queryArgs -> {
+						double amount = 0;
+
+						if (queryArgs.entity() instanceof PlayerEntity player &&
+								SpellContainerHelper.getEquipped(queryArgs.entity().getMainHandStack(), player) != null && SpellContainerHelper.getEquipped(queryArgs.entity().getMainHandStack(), player).spell_ids != null &&
+								school != ExternalSpellSchools.PHYSICAL_MELEE && school != ExternalSpellSchools.PHYSICAL_RANGED &&
+								SpellContainerHelper.getEquipped(queryArgs.entity().getMainHandStack(), player).spell_ids.contains("spellbladenext:thesis")) {
+							amount += 0.5;
+						}
+						return amount;
+
+					}
+			);
+
+		}
 		itemConfig.refresh();
 		Items.register(itemConfig.value.weapons);
 		Armors.register(itemConfig.value.armor_sets);
@@ -301,6 +349,70 @@ public class Spellblades implements ModInitializer {
 		CustomModels.registerModelIds(List.of(
 				new Identifier(MOD_ID, "projectile/gladius")
 		));
+		LootTableEvents.MODIFY.register((resourceManager, lootManager, id, tableBuilder, source) -> {
+					if (source.isBuiltin() && LootTables.END_CITY_TREASURE_CHEST.equals(id)) {
+						LootPool.Builder poolBuilder = LootPool.builder()
+								.with(ItemEntry.builder(spellOil));
+						poolBuilder.rolls(BinomialLootNumberProvider.create(1, 0.2F));
+						tableBuilder.pool(poolBuilder);
+						LootPool.Builder poolBuilder2 = LootPool.builder()
+								.with(ItemEntry.builder(whirlwindOil));
+
+						poolBuilder2.rolls(BinomialLootNumberProvider.create(1, 0.2F));
+						tableBuilder.pool(poolBuilder2);
+						LootPool.Builder poolBuilder3 = LootPool.builder()
+								.with(ItemEntry.builder(smiteOil));
+
+						poolBuilder3.rolls(BinomialLootNumberProvider.create(1, 0.2F));
+						tableBuilder.pool(poolBuilder3);
+						LootPool.Builder poolBuilder4 = LootPool.builder()
+								.with(ItemEntry.builder(flickerstrikeoil));
+
+						poolBuilder4.rolls(BinomialLootNumberProvider.create(1, 0.2F));
+						tableBuilder.pool(poolBuilder4);
+						LootPool.Builder poolBuilder5 = LootPool.builder()
+								.with(ItemEntry.builder(finalstrikeoil));
+
+						poolBuilder5.rolls(BinomialLootNumberProvider.create(1, 0.2F));
+						tableBuilder.pool(poolBuilder5);
+						LootPool.Builder poolBuilder6 = LootPool.builder()
+								.with(ItemEntry.builder(eviscerateoil));
+
+						poolBuilder6.rolls(BinomialLootNumberProvider.create(1, 0.2F));
+						tableBuilder.pool(poolBuilder6);
+					}
+			if (source.isBuiltin() && LootTables.SIMPLE_DUNGEON_CHEST.equals(id)) {
+				LootPool.Builder poolBuilder = LootPool.builder()
+						.with(ItemEntry.builder(spellOil));
+				poolBuilder.rolls(BinomialLootNumberProvider.create(1, 0.2F));
+				tableBuilder.pool(poolBuilder);
+				LootPool.Builder poolBuilder2 = LootPool.builder()
+						.with(ItemEntry.builder(whirlwindOil));
+
+				poolBuilder2.rolls(BinomialLootNumberProvider.create(1, 0.2F));
+				tableBuilder.pool(poolBuilder2);
+				LootPool.Builder poolBuilder3 = LootPool.builder()
+						.with(ItemEntry.builder(smiteOil));
+
+				poolBuilder3.rolls(BinomialLootNumberProvider.create(1, 0.2F));
+				tableBuilder.pool(poolBuilder3);
+				LootPool.Builder poolBuilder4 = LootPool.builder()
+						.with(ItemEntry.builder(flickerstrikeoil));
+
+				poolBuilder4.rolls(BinomialLootNumberProvider.create(1, 0.2F));
+				tableBuilder.pool(poolBuilder4);
+				LootPool.Builder poolBuilder5 = LootPool.builder()
+						.with(ItemEntry.builder(finalstrikeoil));
+
+				poolBuilder5.rolls(BinomialLootNumberProvider.create(1, 0.2F));
+				tableBuilder.pool(poolBuilder5);
+				LootPool.Builder poolBuilder6 = LootPool.builder()
+						.with(ItemEntry.builder(eviscerateoil));
+
+				poolBuilder6.rolls(BinomialLootNumberProvider.create(1, 0.2F));
+			}
+		});
+
 		Registry.register(Registries.ITEM_GROUP, KEY, SPELLBLADES);
 		ItemGroupEvents.modifyEntriesEvent(KEY).register((content) -> {
 			content.add(spellOil);
@@ -328,7 +440,8 @@ public class Spellblades implements ModInitializer {
 			content.add(VOID);
 			content.add(SINGULARPURPOSE);
 			content.add(THEAVATAR);
-
+			content.add(BOOK);
+			content.add(TABULARASA);
 			/*content.add(RIFLE);*/
 		});
 		REAVER = Registry.register(
@@ -431,7 +544,7 @@ public class Spellblades implements ModInitializer {
 				ParticleHelper.sendBatches(entity, spell1.impact[0].particles);
 
 			}
-				data1.caster().setFrozenTicks(-600*20);
+				data1.caster().setFrozenTicks(0);
 
 				return true;
 		});
@@ -1461,16 +1574,23 @@ public class Spellblades implements ModInitializer {
 
 
 					if (player.getStatHandler().getStat(Stats.CUSTOM.getOrCreateStat(HEXRAID)) > 0 && !player.hasStatusEffect(PORTALSICKNESS)) {
-						if(player.getStatHandler().getStat(Stats.CUSTOM.getOrCreateStat(SINCELASTHEX)) == 9){
+						if (player.getStatHandler().getStat(Stats.CUSTOM.getOrCreateStat(SINCELASTHEX)) == 9) {
 							player.sendMessage(Text.translatable("Your use of magic has not gone unnoticed.").formatted(Formatting.LIGHT_PURPLE));
 						}
 						player.increaseStat(SINCELASTHEX, 1);
-						if (!player.hasStatusEffect(HEXED) && player.getStatHandler().getStat(Stats.CUSTOM.getOrCreateStat(SINCELASTHEX)) > 10 && player.getRandom().nextFloat() < 0.01 * (player.getStatHandler().getStat(Stats.CUSTOM.getOrCreateStat(HEXRAID)) / 100F) * Math.pow((1.02930223664), player.getStatHandler().getStat(Stats.CUSTOM.getOrCreateStat(SINCELASTHEX)))) {
-							Optional<BlockPos> pos2 = BlockPos.findClosest(player.getBlockPos(), 64, 128,
-									blockPos -> player.getWorld().getBlockState(blockPos).getBlock().equals(HEXBLADE));
-							if (pos2.isPresent() || player.getInventory().containsAny(item -> item.getItem() instanceof HexbladeBlockItem)) {
-							} else {
-								player.addStatusEffect(new StatusEffectInstance(HEXED, 20 * 60 * 3, 0, false, false));
+						if(config.horde){
+							attackevent.horde(player, true);
+						}
+						else {
+
+							if (!player.hasStatusEffect(HEXED) && player.getStatHandler().getStat(Stats.CUSTOM.getOrCreateStat(SINCELASTHEX)) > 10 && player.getRandom().nextFloat() < config.spawnmodifier* 0.01 * (player.getStatHandler().getStat(Stats.CUSTOM.getOrCreateStat(HEXRAID)) / 100F) * Math.pow((1.02930223664), player.getStatHandler().getStat(Stats.CUSTOM.getOrCreateStat(SINCELASTHEX)))) {
+
+								Optional<BlockPos> pos2 = BlockPos.findClosest(player.getBlockPos(), 64, 128,
+										blockPos -> player.getWorld().getBlockState(blockPos).getBlock().equals(HEXBLADE));
+								if (pos2.isPresent() || player.getInventory().containsAny(item -> item.getItem() instanceof HexbladeBlockItem)) {
+								} else {
+									player.addStatusEffect(new StatusEffectInstance(HEXED, 20 * 60 * 3, 0, false, false));
+								}
 							}
 						}
 					}
@@ -1482,9 +1602,6 @@ public class Spellblades implements ModInitializer {
 			for (attackevent attackEvent : attackeventArrayList) {
 				attackEvent.tick();
 			}
-		});
-		LootTableEvents.MODIFY.register((resourceManager, lootManager, id, tableBuilder, source) -> {
-			LootHelper.configure(id, tableBuilder, Spellblades.lootConfig.value, SpellbladeItems.entries);
 		});
 		LOGGER.info("Hello Fabric world!");
 	}

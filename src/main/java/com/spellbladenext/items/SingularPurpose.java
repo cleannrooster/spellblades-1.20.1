@@ -64,7 +64,7 @@ public class SingularPurpose extends TrinketItem {
         if( stack.getOrCreateNbt().get("1") == null && stack.getOrCreateNbt().get("2") == null&& stack.getOrCreateNbt().get("3") == null){
 
             tooltip.add(Text.translatable("Unidentified."));
-            tooltip.add(Text.translatable("The stats of the ").append(Text.translatable("item.spellbladenext.ashes")).append(" used to create this item determines its stats."));
+            tooltip.add(Text.translatable("The stats of the ").append(Text.translatable("item.spellbladenext.omni")).append(" used to create this item determines its stats."));
 
         }
         tooltip.add(Text.translatable("Champion that which you love.").formatted(Formatting.RED).formatted(Formatting.ITALIC));
@@ -80,7 +80,7 @@ public class SingularPurpose extends TrinketItem {
         double var1 =  (stack.getOrCreateNbt().getInt("1modifier")*0.01);
         double var2 =  (stack.getOrCreateNbt().getInt("2modifier")*0.01);
         double var3 =  (stack.getOrCreateNbt().getInt("3modifier")*0.01);
-        modifiers.put(PURPOSE, new EntityAttributeModifier(uuid, "spellblades:purpose", (var1+var2+var3)/5F, EntityAttributeModifier.Operation.MULTIPLY_BASE));
+        modifiers.put(PURPOSE, new EntityAttributeModifier(uuid, "spellblades:purpose", (var1+var2+var3)/3F, EntityAttributeModifier.Operation.MULTIPLY_BASE));
 
         // If the player has access to ring slots, this will give them an extra one
         return modifiers;

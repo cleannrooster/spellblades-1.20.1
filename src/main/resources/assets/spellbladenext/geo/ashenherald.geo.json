@@ -40,7 +40,7 @@
 				},
 				{
 					"name": "bipedRightArm",
-					"pivot": [-5, 22, 0]
+					"pivot": [-4, 22, 0]
 				},
 				{
 					"name": "armorRightArm",
@@ -56,7 +56,7 @@
 				},
 				{
 					"name": "bipedLeftArm",
-					"pivot": [5, 22, 0]
+					"pivot": [4, 22, 0]
 				},
 				{
 					"name": "armorLeftArm",
@@ -72,12 +72,12 @@
 				},
 				{
 					"name": "bipedLeftLeg",
-					"pivot": [1.9, 12, 0]
+					"pivot": [2, 12, 0]
 				},
 				{
 					"name": "armorLeftLeg",
 					"parent": "bipedLeftLeg",
-					"pivot": [1.9, 12, 0],
+					"pivot": [2, 12, 0],
 					"cubes": [
 						{"origin": [-0.25, 4, -0.1], "size": [4, 8, 4], "inflate": 0.7, "pivot": [2, 4, 0.9], "rotation": [-180, 0, 180], "uv": [42, 70], "mirror": true},
 						{"origin": [0.5, 2, -3.75], "size": [5, 11, 7], "pivot": [1.75, 12, 0], "rotation": [0, 0, -7.5], "uv": [48, 43]}
@@ -86,7 +86,7 @@
 				{
 					"name": "armorLeftBoot",
 					"parent": "bipedLeftLeg",
-					"pivot": [1.9, 12, 0],
+					"pivot": [2, 12, 0],
 					"cubes": [
 						{"origin": [-1.25, -0.2, 5.4], "size": [4, 2, 1], "inflate": 0.1, "pivot": [1.5, 4, 1.4], "rotation": [-180, 0, 180], "uv": [81, 77], "mirror": true},
 						{"origin": [-1.75, -0.2, 0.4], "size": [5, 6, 5], "inflate": 0.1, "pivot": [1.5, 4, 1.4], "rotation": [-180, 0, 180], "uv": [59, 71], "mirror": true}
@@ -94,12 +94,12 @@
 				},
 				{
 					"name": "bipedRightLeg",
-					"pivot": [-1.9, 12, 0]
+					"pivot": [-2, 12, 0]
 				},
 				{
 					"name": "armorRightLeg",
 					"parent": "bipedRightLeg",
-					"pivot": [-1.9, 12, 0],
+					"pivot": [-2, 12, 0],
 					"cubes": [
 						{"origin": [-4.75, 4, 0.3], "size": [4, 8, 4], "inflate": 0.7, "pivot": [-2.5, 4, 1.1], "rotation": [-180, 0, 180], "uv": [42, 70], "mirror": true},
 						{"origin": [-5.5, 2, -3.75], "size": [5, 11, 7], "pivot": [-1, 12.5, -0.25], "rotation": [0, 0, 7.5], "uv": [48, 43], "mirror": true}
@@ -108,7 +108,7 @@
 				{
 					"name": "armorRightBoot",
 					"parent": "bipedRightLeg",
-					"pivot": [-1.9, 12, 0],
+					"pivot": [-2, 12, 0],
 					"cubes": [
 						{"origin": [-4.25, -0.2, -1.2], "size": [5, 6, 5], "inflate": 0.1, "pivot": [-2, 4, 0.6], "rotation": [-180, 0, 180], "uv": [59, 71]},
 						{"origin": [-3.75, -0.2, 3.8], "size": [4, 2, 1], "inflate": 0.1, "pivot": [-2, 4, 0.6], "rotation": [-180, 0, 180], "uv": [81, 77]}

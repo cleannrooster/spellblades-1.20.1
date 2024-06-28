@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "D": {
+      "item": "minecraft:white_wool"
+    },
+    "C": {
+      "item": "spellbladenext:thread"
+    }
+  },
+  "pattern": [
+    "CCC",
+    "CDC",
+    "CCC"
+  ],
+  "result": {
+    "item": "spellbladenext:tabula_rasa"
+  }
+}

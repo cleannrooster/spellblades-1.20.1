@@ -10,7 +10,9 @@
 		"ItemStackMixin",
 		"AttributeMixin",
 		"SpellCasterMixin",
-		"SpellCastMixin"
+		"SpellCastMixin",
+		"SpellContainerMixin",
+		"EntityMixin"
 
 	],
 	"client": [

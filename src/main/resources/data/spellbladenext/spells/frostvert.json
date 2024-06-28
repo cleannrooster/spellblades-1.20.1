@@ -93,6 +93,7 @@
   ],
   "cost": {
     "cooldown_duration": 4,
+    "rpgmana": 25,
     "item_id": "runes:fire_stone"
 
   }

@@ -14,6 +14,8 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.TypedActionResult;
 import net.minecraft.world.World;
 
+import static com.spellbladenext.Spellblades.SINCELASTHEX;
+
 
 public class DebugNetherPortal extends Item {
     public DebugNetherPortal(Settings p_41383_) {
@@ -22,7 +24,7 @@ public class DebugNetherPortal extends Item {
 
     @Override
     public TypedActionResult<ItemStack> use(World p_41432_, PlayerEntity p_41433_, Hand p_41434_) {
-        /*if(p_41433_.isSneaking()){
+        if(p_41433_.isSneaking()){
             p_41433_.increaseStat(SINCELASTHEX,1);
             System.out.println(p_41433_.getWorld().getRegistryKey().equals(World.OVERWORLD) && p_41433_.getWorld().isSkyVisible(p_41433_.getSteppingPos().up().up()));
             if(p_41433_ instanceof ServerPlayerEntity) {
@@ -31,11 +33,11 @@ public class DebugNetherPortal extends Item {
 
         }
         else {
-
-        }*/
-        if(!p_41432_.isClient()) {
-            p_41433_.addStatusEffect(new StatusEffectInstance(Spellblades.HEXED,20*60*3,0));
+            if(!p_41432_.isClient()) {
+                p_41433_.addStatusEffect(new StatusEffectInstance(Spellblades.HEXED,20*60*3,0));
+            }
         }
+
         return super.use(p_41432_, p_41433_, p_41434_);
     }
 

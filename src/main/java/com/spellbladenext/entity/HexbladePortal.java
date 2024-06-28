@@ -17,9 +17,13 @@ import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.attribute.DefaultAttributeContainer;
 import net.minecraft.entity.attribute.EntityAttributes;
+import net.minecraft.entity.data.DataTracker;
+import net.minecraft.entity.data.TrackedData;
+import net.minecraft.entity.data.TrackedDataHandlerRegistry;
 import net.minecraft.entity.mob.HostileEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.sound.SoundEvents;
@@ -69,15 +73,33 @@ public class HexbladePortal extends LivingEntity implements GeoEntity {
     public ActionResult interact(PlayerEntity player, Hand hand) {
         return super.interact(player, hand);
     }
+    public static final TrackedData<Integer> SPAWNED;
 
     @Override
     public boolean isCollidable() {
         return false;
     }
+    static {
+        SPAWNED = DataTracker.registerData(HexbladePortal.class, TrackedDataHandlerRegistry.INTEGER);
+    }
+
+        protected void initDataTracker() {
+        super.initDataTracker();
+        this.dataTracker.startTracking(SPAWNED, 0);
+    }
+    public void readCustomDataFromNbt(NbtCompound compoundTag) {
+
+        if (compoundTag.contains("Spawned")) {
+            this.dataTracker.set(SPAWNED, compoundTag.getInt("Spawned"));
+        }
+    }
+    public void writeCustomDataToNbt(NbtCompound compoundTag) {
 
 
+        compoundTag.putInt("Spawned", (Integer) this.dataTracker.get(SPAWNED));
+    }
 
-    @Override
+        @Override
     public Iterable<ItemStack> getArmorItems() {
         return Collections.singleton(ItemStack.EMPTY);
     }
@@ -140,7 +162,7 @@ public class HexbladePortal extends LivingEntity implements GeoEntity {
 
         this.setNoGravity(true);
         this.noClip = true;
-        if (this.spawn && this.age < 100 && this.age % 10 == 5 && !this.ishome) {
+        if (this.spawn && this.getDataTracker().get(SPAWNED) < 8 && this.age < 100 && this.age % 10 == 5 && !this.ishome) {
             Magister piglin = new Magister(Spellblades.REAVER, this.getWorld());
             piglin.tryEquip(new ItemStack(List.of(Items.arcane_blade.item(),Items.frost_blade.item(),Items.fire_blade.item()).get(getRandom().nextInt(3))));
             piglin.setPosition(this.getPos());
@@ -151,7 +173,7 @@ public class HexbladePortal extends LivingEntity implements GeoEntity {
                 piglin.isCaster = true;
             }
 
-
+            this.getDataTracker().set(SPAWNED,this.getDataTracker().get(SPAWNED)+1);
             this.getWorld().spawnEntity(piglin);
             firstPiglin = false;
         }

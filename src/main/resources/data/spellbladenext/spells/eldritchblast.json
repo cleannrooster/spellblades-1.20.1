@@ -83,6 +83,7 @@
   ],
   "cost": {
     "item_id": "runes:arcane_stone",
+    "rpgmana": 60,
     "cooldown_duration": 0.5
 
   }

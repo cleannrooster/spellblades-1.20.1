@@ -60,6 +60,7 @@
 
   ],
   "cost": {
+    "rpgmana": 30,
     "item_id": "runes:arcane_stone"
   }
 }

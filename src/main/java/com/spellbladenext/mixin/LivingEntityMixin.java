@@ -102,7 +102,10 @@ public class LivingEntityMixin {
         }
         if (!living.getWorld().isClient() && living instanceof PlayerEntity player && living instanceof SpellCasterEntity caster && living instanceof PlayerDamageInterface damageInterface &&
                 SpellContainerHelper.getEquipped(living.getMainHandStack(), player) != null && SpellContainerHelper.getEquipped(player.getMainHandStack(), player).spell_ids != null && SpellContainerHelper.getEquipped(player.getMainHandStack(), player).spell_ids.contains("spellbladenext:combustion")) {
-            target.setOnFireFor(2);
+            target.setOnFireFor(4);
+            if(target instanceof LivingEntity livingEntity){
+                livingEntity.addStatusEffect(new StatusEffectInstance(PHOENIXCURSE,80,0,false,true));
+            }
         }
     }
     @Inject(at = @At("HEAD"), method = "Lnet/minecraft/entity/LivingEntity;sendEquipmentChanges(Ljava/util/Map;)V", cancellable = true)

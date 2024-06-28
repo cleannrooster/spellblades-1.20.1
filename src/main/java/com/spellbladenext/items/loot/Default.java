@@ -6,6 +6,7 @@ import com.spellbladenext.items.armor.Armors;
 import net.minecraft.registry.Registries;
 import net.spell_engine.api.item.ItemConfig;
 import net.spell_engine.api.loot.LootConfig;
+import net.spell_engine.api.loot.LootConfigV2;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -14,7 +15,7 @@ import java.util.stream.Collectors;
 
 public class Default {
     public final static ItemConfig itemConfig;
-    public final static LootConfig lootConfig;
+    public final static LootConfigV2 lootConfig;
     static {
         itemConfig = new ItemConfig();
         for (var weapon : Items.entries) {
@@ -25,10 +26,11 @@ public class Default {
         }
 
 
-        lootConfig = new LootConfig();
+        lootConfig = new LootConfigV2();
 
+        LootConfigV2.Pool poolWeapons = new LootConfigV2.Pool();
         final var weapons = "weapons";
-        lootConfig.item_groups.put(weapons, new LootConfig.ItemGroup(List.of(
+/*        lootConfig.injectors.put(weapons, new LootConfig.ItemGroup(List.of(
                 Items.frost_blade.id().toString(),
                 Items.glacial_gladius.id().toString(),
                 Items.frost_claymore.id().toString(),
@@ -48,11 +50,11 @@ public class Default {
 
 
 
-        ),
-                1
-        ).chance(0.5F).enchant());
+        ),*/
+
+       /* ).chance(0.5F).enchant());
         List.of("minecraft:chests/ruined_portal")
-                .forEach(id -> lootConfig.loot_tables.put(id, List.of(weapons)));
+                .forEach(id -> lootConfig..put(id, List.of(weapons)));
 
         List.of("minecraft:chests/spawn_bonus_chest",
                         "minecraft:chests/igloo_chest",
@@ -87,7 +89,7 @@ public class Default {
                         "minecraft:chests/bastion_treasure",
                         "minecraft:chests/ancient_city",
                         "minecraft:chests/stronghold_library")
-                .forEach(id -> lootConfig.loot_tables.put(id, List.of(weapons)));
+                .forEach(id -> lootConfig.loot_tables.put(id, List.of(weapons)));*/
     }
 
     @SafeVarargs

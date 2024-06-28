@@ -25,7 +25,7 @@ public class HexbladeBlockItem extends BlockItem {
 
     @Override
     public ActionResult useOnEntity(ItemStack itemStack, PlayerEntity player, LivingEntity livingEntity, Hand hand) {
-        if(livingEntity instanceof HexbladePortal){
+        if(livingEntity instanceof HexbladePortal && Spellblades.config.glassocean){
             livingEntity.playSound(SoundEvents.ENTITY_ENDERMAN_TELEPORT,1,1);
             if(player.getWorld().isClient()) {
                 return ActionResult.success(player.getWorld().isClient());

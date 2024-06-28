@@ -28,4 +28,11 @@ public class ServerConfig  implements ConfigData {
     public  boolean magusWeather = true;
     @Comment("Reactive ward regen rate coefficient (Default: 1.0)")
     public  float wardrate = 1.0F;
+    @Comment("Horde Spawn with Mutations (Only with Fight or Die: Mutations)")
+    public  boolean horde = false;
+    @Comment("Enable Teleporting to Glass Ocean")
+    public  boolean glassocean = true;
+    @Comment("Horde/Hexblade spawn modifier (Default: 1.0)")
+    public  float spawnmodifier = 1.0F;
+
 }

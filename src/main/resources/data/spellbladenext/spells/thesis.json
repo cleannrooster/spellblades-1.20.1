@@ -1,0 +1,29 @@
+{
+  "school": "PHYSICAL_MELEE",
+  "range": 64,
+  "learn": {
+    "tier": 4
+  },
+  "cast": {
+    "duration": 0,
+    "channel_ticks": 6
+  },
+  "release": {
+    "custom_impact": true,
+    "target": {
+      "type": "SELF"
+    }
+  },
+  "impact": [
+    {
+      "action": {
+        "type": "DAMAGE",
+        "damage": {
+          "knockback": 4,
+          "spell_power_coefficient": 6
+        }
+      }
+    }
+  ]
+
+}

@@ -73,6 +73,7 @@
   ],
   "cost": {
     "cooldown_duration": 12,
+    "rpgmana": 25,
     "item_id": "runes:frost_stone"
 
   }
