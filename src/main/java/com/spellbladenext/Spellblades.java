@@ -410,6 +410,7 @@ public class Spellblades implements ModInitializer {
 						.with(ItemEntry.builder(eviscerateoil));
 
 				poolBuilder6.rolls(BinomialLootNumberProvider.create(1, 0.2F));
+
 			}
 		});
 
