@@ -33,6 +33,12 @@ public class ServerConfig  implements ConfigData {
     @Comment("Enable Teleporting to Glass Ocean")
     public  boolean glassocean = true;
     @Comment("Horde/Hexblade spawn modifier (Default: 1.0)")
+
     public  float spawnmodifier = 1.0F;
+
+    @Comment("Magisters give different xp in the Glass Ocean (Default: false)")
+    public  boolean diffXP = false;
+    @Comment("Magister XP in the Glass Ocean, if different (Default: 25)")
+    public  int magisterXP = 25;
 
 }

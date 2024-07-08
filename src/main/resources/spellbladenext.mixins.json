@@ -18,7 +18,8 @@
 	"client": [
 		"EntityRenderDispatcherMixin",
 		"LivingEntityRendererMixin",
-		"SpellRenderMixin"
+		"SpellRenderMixin",
+		"RenderMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1

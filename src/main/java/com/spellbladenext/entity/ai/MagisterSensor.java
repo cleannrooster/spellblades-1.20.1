@@ -5,6 +5,7 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import com.spellbladenext.entity.Archmagus;
 import com.spellbladenext.entity.Magister;
+import com.spellbladenext.entity.Magus;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.brain.Brain;
 import net.minecraft.entity.ai.brain.LivingTargetCache;
@@ -33,7 +34,7 @@ public class MagisterSensor extends Sensor<LivingEntity> {
         List<LivingEntity> list = Lists.newArrayList();
         LivingTargetCache livingTargetCache = (LivingTargetCache)brain.getOptionalRegisteredMemory(MemoryModuleType.VISIBLE_MOBS).orElse(LivingTargetCache.empty());
         Optional var10000 = livingTargetCache.findFirst((livingEntityx) -> {
-            return livingEntityx instanceof Monster && !(livingEntityx instanceof Magister) && !(livingEntityx instanceof Archmagus);
+            return livingEntityx instanceof Monster && !(livingEntityx instanceof Magister) && !(livingEntityx instanceof Magus);
         });
         Objects.requireNonNull(MobEntity.class);
         Optional<MobEntity> optional = var10000.map(MobEntity.class::cast);

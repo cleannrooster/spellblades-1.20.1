@@ -2,6 +2,7 @@ package com.spellbladenext.items;
 
 import com.spellbladenext.Spellblades;
 import com.spellbladenext.entity.Archmagus;
+import com.spellbladenext.entity.Magus;
 import com.spellbladenext.invasions.piglinsummon;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.entity.player.PlayerEntity;
@@ -33,7 +34,7 @@ public class PrismaticEffigy extends Item {
                 for (int i = 0; i < 10; i++) {
                     BlockPos vec3 = piglinsummon.getSafePositionAroundPlayer2(level, player.getSteppingPos(), 10);
                     if (vec3 != null &&level.isSkyVisible(vec3.up()) &&  !level.isClient()) {
-                        Archmagus magus = new Archmagus(Spellblades.ARCHMAGUS, level);
+                        Magus magus = new Magus(Spellblades.ARCHMAGUS, level);
                         magus.setPosition(vec3.getX(), vec3.getY(), vec3.getZ());
                         if (!player.isCreative()) {
                             player.getStackInHand(interactionHand).decrement(1);

@@ -3,7 +3,9 @@ package com.spellbladenext.entity.ai;
 import com.google.common.collect.ImmutableMap;
 import com.spellbladenext.entity.Archmagus;
 import com.spellbladenext.entity.Magister;
+import com.spellbladenext.entity.Magus;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.ai.brain.LivingTargetCache;
 import net.minecraft.entity.ai.brain.MemoryModuleState;
 import net.minecraft.entity.ai.brain.MemoryModuleType;
 import net.minecraft.entity.ai.brain.task.LookTargetUtil;
@@ -15,6 +17,8 @@ import net.minecraft.item.RangedWeaponItem;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.Text;
 import net.minecraft.util.Hand;
+
+import java.util.Optional;
 
 public class MeleeAttack  extends MultiTickTask<MobEntity> {
     private final int cooldownBetweenAttacks;
@@ -41,7 +45,7 @@ public class MeleeAttack  extends MultiTickTask<MobEntity> {
         LivingEntity livingEntity = this.getAttackTarget(mob);
         mob.lookAtEntity(livingEntity,90,90);
 
-        if(!(mob instanceof Archmagus archmagus && archmagus.getDataTracker().get(Archmagus.BIDED))) {
+        if(!(mob instanceof Magus archmagus && archmagus.getDataTracker().get(Magus.BIDED))) {
 
             mob.swingHand(Hand.MAIN_HAND);
         }
@@ -52,4 +56,5 @@ public class MeleeAttack  extends MultiTickTask<MobEntity> {
     private LivingEntity getAttackTarget(MobEntity mob) {
         return (LivingEntity)mob.getBrain().getOptionalMemory(MemoryModuleType.ATTACK_TARGET).get();
     }
+
 }

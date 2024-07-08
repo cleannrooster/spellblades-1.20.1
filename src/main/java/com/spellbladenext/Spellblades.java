@@ -171,7 +171,7 @@ public class Spellblades implements ModInitializer {
 */
 
 	public static final GameRules.Key<GameRules.BooleanRule> SHOULD_INVADE = GameRuleRegistry.register("hexbladeInvade", GameRules.Category.MOBS, GameRuleFactory.createBooleanRule(true));
-	public static EntityType<Archmagus> ARCHMAGUS;
+	public static EntityType<Magus> ARCHMAGUS;
 
 	public static StatusEffect RunicAbsorption = new RunicAbsorption(StatusEffectCategory.BENEFICIAL, 0xff4bdd);
 	public static StatusEffect PORTALSICKNESS = new CustomEffect(StatusEffectCategory.HARMFUL, 0xff4bdd);
@@ -457,13 +457,13 @@ public class Spellblades implements ModInitializer {
 		ARCHMAGUS = Registry.register(
 				ENTITY_TYPE,
 				new Identifier(MOD_ID, "magus"),
-				FabricEntityTypeBuilder.<Archmagus>create(SpawnGroup.MISC, Archmagus::new)
+				FabricEntityTypeBuilder.<Magus>create(SpawnGroup.MISC, Magus::new)
 						.dimensions(EntityDimensions.fixed(0.6F, 1.8F)) // dimensions in Minecraft units of the render
 						.trackRangeBlocks(128)
 						.trackedUpdateRate(1)
 						.build()
 		);
-		FabricDefaultAttributeRegistry.register(ARCHMAGUS,Archmagus.createAttributes());
+		FabricDefaultAttributeRegistry.register(ARCHMAGUS,Magus.createAttributes());
 
 		FabricDefaultAttributeRegistry.register(REAVER,Magister.createAttributes());
 

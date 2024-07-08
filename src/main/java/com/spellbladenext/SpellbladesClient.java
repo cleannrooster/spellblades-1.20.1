@@ -30,7 +30,7 @@ public class SpellbladesClient implements ClientModInitializer {
     public void onInitializeClient() {
         EntityRendererRegistry.register(Spellblades.REAVER, MagisterRenderer::new);
         EntityRendererRegistry.register(HEXBLADEPORTAL, HexbladePortalRenderer::new);
-        EntityRendererRegistry.register(Spellblades.ARCHMAGUS, ArchmagusRenderer::new);
+        EntityRendererRegistry.register(Spellblades.ARCHMAGUS, MagusRenderer::new);
         EntityRendererRegistry.register(Spellblades.RIFLEPROJECTILE, ArrowEntityRenderer::new);
         EntityRendererRegistry.register(Spellblades.CYCLONEENTITY, CycloneRenderer::new);
         EntityRendererRegistry.register(Spellblades.REDLASERENTITY, RedbeamRenderer::new);

@@ -59,6 +59,12 @@
 					]
 				},
 				{
+					"name": "leftItem",
+					"parent": "leftArm",
+					"pivot": [6, 14, 0],
+					"rotation": [45, 0, 0]
+				},
+				{
 					"name": "rightArm",
 					"parent": "body",
 					"pivot": [-5, 22, 0],
@@ -72,7 +78,6 @@
 					"parent": "rightArm",
 					"pivot": [-6, 14, 0],
 					"rotation": [45, 0, 0]
-
 				},
 				{
 					"name": "head",
