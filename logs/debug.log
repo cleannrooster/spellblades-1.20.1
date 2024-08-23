@@ -1,0 +1,27 @@
+[09:29:34] [main/INFO] (FabricLoader/GameProvider) Loading Minecraft 1.20.1 with Fabric Loader 0.15.6
+[09:29:34] [main/DEBUG] (FabricLoader/GamePatch) Found game constructor: net.minecraft.client.main.Main -> net.minecraft.client.MinecraftClient
+[09:29:34] [main/DEBUG] (FabricLoader/GamePatch) Patching game constructor <init>(Lnet/minecraft/client/RunArgs;)V
+[09:29:34] [main/DEBUG] (FabricLoader/GamePatch) Run directory field is thought to be net/minecraft/client/MinecraftClient/runDirectory
+[09:29:34] [main/DEBUG] (FabricLoader/GamePatch) Applying brand name hook to net/minecraft/client/ClientBrandRetriever::getClientModName
+[09:29:34] [main/DEBUG] (FabricLoader/GamePatch) Applying brand name hook to net/minecraft/server/MinecraftServer::getServerModName
+[09:29:35] [main/DEBUG] (FabricLoader/Mappings) Loading mappings took 143 ms
+[09:29:35] [main/DEBUG] (FabricLoader/GamePatch) Patched 3 classs
+[09:29:35] [main/DEBUG] (FabricLoader/Discovery) Mod discovery time: 84.9 ms
+[09:29:35] [main/WARN] (FabricLoader/Resolution) Mod resolution failed
+[09:29:35] [main/INFO] (FabricLoader/Resolution) Immediate reason: [HARD_DEP_NO_CANDIDATE spellbladenext 1.19.0 {depends spell_engine @ [>=0.15.4]}, ROOT_FORCELOAD_SINGLE spellbladenext 1.19.0]
+[09:29:35] [main/INFO] (FabricLoader/Resolution) Reason: [HARD_DEP spellbladenext 1.19.0 {depends spell_engine @ [>=0.15.4]}, HARD_DEP spellbladenext 1.19.0 {depends extraspellattributes @ [>=1.2.0]}]
+[09:29:35] [main/INFO] (FabricLoader/Resolution) Fix: add [add:spell_engine 0.15.4 ([[0.15.4,∞)]), add:extraspellattributes 1.2.0 ([[1.2.0,∞)])], remove [], replace []
+[09:29:35] [main/ERROR] (FabricLoader) Incompatible mods found!
+net.fabricmc.loader.impl.FormattedException: Some of your mods are incompatible with the game or each other!
+A potential solution has been determined, this may resolve your problem:
+	 - Install spell_engine, version 0.15.4 or later.
+	 - Install extraspellattributes, version 1.2.0 or later.
+More details:
+	 - Mod 'Spellblades and Such' (spellbladenext) 1.19.0 requires version 0.15.4 or later of spell_engine, which is missing!
+	 - Mod 'Spellblades and Such' (spellbladenext) 1.19.0 requires version 1.2.0 or later of extraspellattributes, which is missing!
+	at net.fabricmc.loader.impl.FormattedException.ofLocalized(FormattedException.java:51) ~[fabric-loader-0.15.6.jar:?]
+	at net.fabricmc.loader.impl.FabricLoaderImpl.load(FabricLoaderImpl.java:195) ~[fabric-loader-0.15.6.jar:?]
+	at net.fabricmc.loader.impl.launch.knot.Knot.init(Knot.java:146) ~[fabric-loader-0.15.6.jar:?]
+	at net.fabricmc.loader.impl.launch.knot.Knot.launch(Knot.java:68) ~[fabric-loader-0.15.6.jar:?]
+	at net.fabricmc.loader.impl.launch.knot.KnotClient.main(KnotClient.java:23) ~[fabric-loader-0.15.6.jar:?]
+	at net.fabricmc.devlaunchinjector.Main.main(Main.java:86) ~[?:?]
