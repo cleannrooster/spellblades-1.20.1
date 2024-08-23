@@ -290,13 +290,6 @@ public class Magister extends PathAwareEntity implements InventoryOwner, GeoEnti
     }
 
     @Override
-    protected boolean shouldDropLoot() {
-
-        return !( this.getRandom().nextFloat() > 0.25 && this.getWorld().getRegistryKey() == Spellblades.DIMENSIONKEY);
-
-    }
-
-    @Override
     protected void dropLoot(DamageSource damageSource, boolean bl) {
         if(damageSource.getAttacker() instanceof PlayerEntity player && player.hasStatusEffect(Spellblades.HEXED)){
             player.removeStatusEffect(Spellblades.HEXED);
@@ -512,18 +505,7 @@ public class Magister extends PathAwareEntity implements InventoryOwner, GeoEnti
             offers.add(new TradeOffer(
                     new ItemStack(com.spellbladenext.items.Items.frost_blade.item(), 1),
                     offering, 10, 8, 1F));
-            offers.add(new TradeOffer(
-                    new ItemStack(Spellblades.RUNEGLEAM, 2),
-                    new ItemStack(Spellblades.finalstrikeoil, 1),
-                    10, 8, 1F));
-            offers.add(new TradeOffer(
-                    new ItemStack(Spellblades.RUNEBLAZE, 2),
-                    new ItemStack(Spellblades.flickerstrikeoil, 1),
-                    10, 8, 1F));
-            offers.add(new TradeOffer(
-                    new ItemStack(Spellblades.RUNEFROST, 2),
-                    new ItemStack(Spellblades.eviscerateoil, 1),
-                    10, 8, 1F));
+
         }
         return offers;
     }

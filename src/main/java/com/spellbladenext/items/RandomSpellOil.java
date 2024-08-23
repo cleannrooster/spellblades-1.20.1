@@ -1,5 +1,7 @@
 package com.spellbladenext.items;
 
+import com.spellbladenext.Spellblades;
+import com.spellbladenext.SpellbladesClient;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -9,23 +11,27 @@ import net.minecraft.item.ToolItem;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtList;
 import net.minecraft.nbt.NbtString;
+import net.minecraft.registry.Registries;
 import net.minecraft.screen.slot.Slot;
 import net.minecraft.text.Text;
 import net.minecraft.util.ClickType;
 import net.minecraft.util.Identifier;
 import net.minecraft.world.World;
 import net.spell_engine.api.item.trinket.SpellBookItem;
+import net.spell_engine.api.item.trinket.SpellBookTrinketItem;
 import net.spell_engine.api.item.trinket.SpellBooks;
-import net.spell_engine.api.spell.ExternalSpellSchools;
-import net.spell_engine.api.spell.Spell;
-import net.spell_engine.api.spell.SpellContainer;
-import net.spell_engine.api.spell.SpellPool;
+import net.spell_engine.api.spell.*;
+import net.spell_engine.client.gui.SpellTooltip;
 import net.spell_engine.internals.SpellContainerHelper;
 import net.spell_engine.internals.SpellRegistry;
+import net.spell_engine.mixin.ItemStackMixin;
+import net.spell_engine.spellbinding.SpellBindingScreen;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static net.spell_engine.internals.SpellContainerHelper.containerFromItemStack;
 
@@ -35,7 +41,40 @@ public class RandomSpellOil extends Item {
     }
 
     @Override
+    public Text getName(ItemStack stack) {
+        SpellContainer tabulaContainer = SpellContainerHelper.containerFromItemStack(stack);
+        if(tabulaContainer == null){
+            return Text.translatable("spellblades.unidentified").append(super.getName(stack));
+        }
+        else{
+            if(tabulaContainer.spell_ids.get(0) != null) {
+                return Text.translatable(SpellTooltip.spellTranslationKey(new Identifier(tabulaContainer.spell_ids.get(0))))
+                        .append(Text.of(" "))
+                        .append( super.getName(stack));
+            }
+
+        }
+
+        return super.getName(stack);
+    }
+
+    public static boolean matches(String subject, String nullableRegex) {
+        if (subject == null) {
+            return false;
+        }
+        if (nullableRegex == null || nullableRegex.isEmpty()) {
+            return false;
+        }
+        Pattern pattern = Pattern.compile(nullableRegex, Pattern.CASE_INSENSITIVE);
+        Matcher matcher = pattern.matcher(subject);
+        return matcher.find();
+    }
+    @Override
     public boolean onStackClicked(ItemStack stack, Slot slot, ClickType clickType, PlayerEntity player) {
+        if (matches(Registries.ITEM.getId(slot.getStack().getItem()).toString(), Spellblades.config.blacklist_spell_oil_regex)) {
+            player.sendMessage(Text.translatable("This item is blacklisted by the server."));
+            return true;
+        }
         if(clickType == ClickType.RIGHT && slot.getStack() != null && slot.getStack().getItem() instanceof TabulaRasa item && SpellContainerHelper.containerFromItemStack(stack) != null){
             SpellContainer tabulaContainer = SpellContainerHelper.containerFromItemStack(slot.getStack());
             if(tabulaContainer == null){
@@ -83,6 +122,8 @@ public class RandomSpellOil extends Item {
             for (SpellPool pool : pools) {
                 spells.addAll(pool.spellIds());
             }
+            spells.add(new Identifier(Spellblades.MOD_ID,"smite"));
+            spells.add(new Identifier(Spellblades.MOD_ID,"whirlwind"));
             spells.remove(new Identifier("spellbladenext:thesis"));
             spells.removeIf(spell ->
                 SpellRegistry.getSpell(spell).school.equals(ExternalSpellSchools.PHYSICAL_RANGED)

@@ -22,7 +22,7 @@
             },
             {
               "condition": "minecraft:random_chance",
-              "chance": 0.5
+              "chance": 0.25
             }
           ]
         }
@@ -50,7 +50,7 @@
             },
             {
               "condition": "minecraft:random_chance",
-              "chance": 0.5
+              "chance": 0.25
             }
           ]
         }
@@ -78,7 +78,7 @@
             },
             {
               "condition": "minecraft:random_chance",
-              "chance": 0.5
+              "chance": 0.25
             }
           ]
         }
@@ -90,6 +90,21 @@
         {
           "type": "minecraft:item",
           "name": "spellbladenext:hexbladeitem",
+          "conditions": [
+            {
+              "condition": "minecraft:random_chance",
+              "chance": 0.05
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "spellbladenext:spelloil",
           "conditions": [
             {
               "condition": "minecraft:random_chance",

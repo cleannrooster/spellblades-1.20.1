@@ -1,8 +1,10 @@
 package com.spellbladenext;
 
 import com.spellbladenext.client.entity.*;
+import com.spellbladenext.config.ConfigSync;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
 import net.minecraft.client.render.entity.ArrowEntityRenderer;
 import net.minecraft.client.render.entity.LightningEntityRenderer;
@@ -35,7 +37,10 @@ public class SpellbladesClient implements ClientModInitializer {
         EntityRendererRegistry.register(Spellblades.CYCLONEENTITY, CycloneRenderer::new);
         EntityRendererRegistry.register(Spellblades.REDLASERENTITY, RedbeamRenderer::new);
         EntityRendererRegistry.register(Spellblades.SMITELIGHTNING, LightningEntityRenderer::new);
-
+        ClientPlayNetworking.registerGlobalReceiver(ConfigSync.ID, (client, handler, buf, responseSender) -> {
+            var config = ConfigSync.read(buf);
+            Spellblades.config = config;
+        });
         ClientTickEvents.START_CLIENT_TICK.register(server -> {
                     PlayerEntity player = server.player;
                     World level = server.world;

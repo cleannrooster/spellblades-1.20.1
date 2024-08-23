@@ -60,7 +60,6 @@ public class Spellblade extends SpellWeaponItem implements ConfigurableAttribute
 
     @Override
     public void appendTooltip(ItemStack stack, @Nullable World world, List<Text> tooltip, TooltipContext context) {
-        tooltip.add(Text.translatable("spellbladenext.spellbladetext").formatted(Formatting.LIGHT_PURPLE));
 
         super.appendTooltip(stack, world, tooltip, context);
     }

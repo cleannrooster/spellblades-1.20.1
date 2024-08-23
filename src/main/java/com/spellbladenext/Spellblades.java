@@ -4,6 +4,7 @@ import com.google.common.base.Suppliers;
 import com.google.common.collect.ImmutableMultimap;
 import com.spellbladenext.block.Hexblade;
 import com.spellbladenext.block.HexbladeBlockItem;
+import com.spellbladenext.config.ConfigSync;
 import com.spellbladenext.items.TabulaRasa;
 import com.spellbladenext.config.ServerConfig;
 import com.spellbladenext.config.ServerConfigWrapper;
@@ -32,7 +33,9 @@ import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
 import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroup;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
 import net.fabricmc.fabric.api.loot.v2.LootTableEvents;
+import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricDefaultAttributeRegistry;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricEntityTypeBuilder;
@@ -57,6 +60,7 @@ import net.minecraft.loot.LootPool;
 import net.minecraft.loot.LootTables;
 import net.minecraft.loot.entry.ItemEntry;
 import net.minecraft.loot.provider.number.BinomialLootNumberProvider;
+import net.minecraft.network.PacketByteBuf;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
@@ -84,6 +88,7 @@ import net.minecraft.world.RaycastContext;
 import net.minecraft.world.World;
 import net.minecraft.world.dimension.DimensionType;
 import net.spell_engine.api.item.ItemConfig;
+import net.spell_engine.api.item.trinket.SpellBookItem;
 import net.spell_engine.api.item.trinket.SpellBooks;
 import net.spell_engine.api.loot.LootConfig;
 import net.spell_engine.api.loot.LootConfigV2;
@@ -141,17 +146,11 @@ public class Spellblades implements ModInitializer {
 	public static final Item VOID = new Omni(new FabricItemSettings().maxCount(1));
 	public static final Item SINGULARPURPOSE = new SingularPurpose(new FabricItemSettings().maxCount(1));
 	public static final Item THEAVATAR = new TheAvatar(new FabricItemSettings().maxCount(1));
-
 	public static ArrayList<attackevent> attackeventArrayList = new ArrayList<>();
 
 	public static final Item OFFERING = new Offering(new FabricItemSettings());
 	public static RegistryKey<ItemGroup> KEY = RegistryKey.of(Registries.ITEM_GROUP.getKey(),new Identifier(Spellblades.MOD_ID,"generic"));
 	public static Item spellOil = new RandomSpellOil(new FabricItemSettings().maxCount(1));
-	public static Item whirlwindOil = new WhirlwindOil(new FabricItemSettings().maxCount(1));
-	public static Item smiteOil = new SmiteOil(new FabricItemSettings().maxCount(1));
-	public static Item finalstrikeoil = new FinalStrikeOil(new FabricItemSettings().maxCount(1));
-	public static Item eviscerateoil = new EviscerateOil(new FabricItemSettings().maxCount(1));
-	public static Item flickerstrikeoil = new FlickerStrikeOil(new FabricItemSettings().maxCount(1));
 	public static Item RUNEBLAZE = new Item(new FabricItemSettings().maxCount(64));
 	public static Item RUNEFROST = new Item(new FabricItemSettings().maxCount(64));
 	public static Item RUNEGLEAM = new Item(new FabricItemSettings().maxCount(64));
@@ -173,6 +172,8 @@ public class Spellblades implements ModInitializer {
 	public static final GameRules.Key<GameRules.BooleanRule> SHOULD_INVADE = GameRuleRegistry.register("hexbladeInvade", GameRules.Category.MOBS, GameRuleFactory.createBooleanRule(true));
 	public static EntityType<Magus> ARCHMAGUS;
 
+	public static Item MAGUS_SPAWN_EGG ;
+
 	public static StatusEffect RunicAbsorption = new RunicAbsorption(StatusEffectCategory.BENEFICIAL, 0xff4bdd);
 	public static StatusEffect PORTALSICKNESS = new CustomEffect(StatusEffectCategory.HARMFUL, 0xff4bdd);
 	public static StatusEffect UNLEASH = new CustomEffect(StatusEffectCategory.BENEFICIAL, 0xff4bdd);
@@ -180,6 +181,8 @@ public class Spellblades implements ModInitializer {
 	public static ThesisBook BOOK;
 
 	public static TabulaRasa TABULARASA;
+	private static PacketByteBuf configSerialized = PacketByteBufs.create();
+
 	public static final Item NETHERDEBUG = new DebugNetherPortal(new FabricItemSettings().maxCount(1));
 
 	public static StatusEffect HEXED = new Hex(StatusEffectCategory.HARMFUL, 0xff4bdd);
@@ -239,17 +242,30 @@ public class Spellblades implements ModInitializer {
 		SpellContainer container = new SpellContainer(SpellContainer.ContentType.MAGIC, false, new Identifier(MOD_ID,"thesis").toString(), 0, List.of());
 		SpellRegistry.book_containers.put(itemIdFor(new Identifier(MOD_ID,"thesis")), container);
 
-		BOOK = new ThesisBook( new Identifier(MOD_ID,"thesis"),new Item.Settings());
-		TABULARASA = new TabulaRasa( new Identifier(MOD_ID,"tabula_rasa"),new Item.Settings());
-
+		BOOK = new ThesisBook( new Identifier(MOD_ID,"thesis"),new Item.Settings().maxCount(1));
+		TABULARASA = new TabulaRasa( new Identifier(MOD_ID,"tabula_rasa"),new Item.Settings().maxCount(1));
 		AutoConfig.register(ServerConfigWrapper.class, PartitioningSerializer.wrap(JanksonConfigSerializer::new));
+
 		config = AutoConfig.getConfigHolder(ServerConfigWrapper.class).getConfig().server;
+
+		ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> {
+			sender.sendPacket(ConfigSync.ID, configSerialized);
+		});
+		configSerialized = ConfigSync.write(config);
+
+		ARCHMAGUS = Registry.register(
+				ENTITY_TYPE,
+				new Identifier(MOD_ID, "magus"),
+				FabricEntityTypeBuilder.<Magus>create(SpawnGroup.MISC, Magus::new)
+						.dimensions(EntityDimensions.fixed(0.6F, 1.8F)) // dimensions in Minecraft units of the render
+						.trackRangeBlocks(128)
+						.trackedUpdateRate(1)
+						.build()
+		);
+		MAGUS_SPAWN_EGG = new SpawnEggItem(ARCHMAGUS, 0x09356B, 0xebcb6a, new FabricItemSettings());
+
 		Registry.register(Registries.ITEM,new Identifier(MOD_ID,"spelloil"),spellOil);
-		Registry.register(Registries.ITEM,new Identifier(MOD_ID,"whirlwindoil"),whirlwindOil);
-		Registry.register(Registries.ITEM,new Identifier(MOD_ID,"finalstrikeoil"),finalstrikeoil);
-		Registry.register(Registries.ITEM,new Identifier(MOD_ID,"eviscerateoil"),eviscerateoil);
-		Registry.register(Registries.ITEM,new Identifier(MOD_ID,"flickerstrikeoil"),flickerstrikeoil);
-		Registry.register(Registries.ITEM,new Identifier(MOD_ID,"smiteoil"),smiteOil);
+
 		Registry.register(Registries.ITEM,new Identifier(MOD_ID,"runeblaze_ingot"),RUNEBLAZE);
 		Registry.register(Registries.ITEM,new Identifier(MOD_ID,"runefrost_ingot"),RUNEFROST);
 		Registry.register(Registries.ITEM,new Identifier(MOD_ID,"runegleam_ingot"),RUNEGLEAM);
@@ -275,7 +291,7 @@ public class Spellblades implements ModInitializer {
 		Registry.register(Registries.ITEM, new Identifier(MOD_ID, "thread"), THREAD);
 		Registry.register(Registries.ITEM, new Identifier(MOD_ID, "thesis_spell_book"), BOOK);
 		Registry.register(Registries.ITEM, new Identifier(MOD_ID, "tabula_rasa"), TABULARASA);
-
+		Registry.register(Registries.ITEM, new Identifier(MOD_ID, "magus_spawn_egg"), MAGUS_SPAWN_EGG);
 		Registry.register(Registries.ATTRIBUTE,new Identifier(MOD_ID,"purpose"),PURPOSE);
 
 /*
@@ -354,74 +370,26 @@ public class Spellblades implements ModInitializer {
 						LootPool.Builder poolBuilder = LootPool.builder()
 								.with(ItemEntry.builder(spellOil));
 						poolBuilder.rolls(BinomialLootNumberProvider.create(1, 0.2F));
-						tableBuilder.pool(poolBuilder);
-						LootPool.Builder poolBuilder2 = LootPool.builder()
-								.with(ItemEntry.builder(whirlwindOil));
 
-						poolBuilder2.rolls(BinomialLootNumberProvider.create(1, 0.2F));
-						tableBuilder.pool(poolBuilder2);
-						LootPool.Builder poolBuilder3 = LootPool.builder()
-								.with(ItemEntry.builder(smiteOil));
-
-						poolBuilder3.rolls(BinomialLootNumberProvider.create(1, 0.2F));
-						tableBuilder.pool(poolBuilder3);
-						LootPool.Builder poolBuilder4 = LootPool.builder()
-								.with(ItemEntry.builder(flickerstrikeoil));
-
-						poolBuilder4.rolls(BinomialLootNumberProvider.create(1, 0.2F));
-						tableBuilder.pool(poolBuilder4);
-						LootPool.Builder poolBuilder5 = LootPool.builder()
-								.with(ItemEntry.builder(finalstrikeoil));
-
-						poolBuilder5.rolls(BinomialLootNumberProvider.create(1, 0.2F));
-						tableBuilder.pool(poolBuilder5);
-						LootPool.Builder poolBuilder6 = LootPool.builder()
-								.with(ItemEntry.builder(eviscerateoil));
-
-						poolBuilder6.rolls(BinomialLootNumberProvider.create(1, 0.2F));
-						tableBuilder.pool(poolBuilder6);
 					}
 			if (source.isBuiltin() && LootTables.SIMPLE_DUNGEON_CHEST.equals(id)) {
 				LootPool.Builder poolBuilder = LootPool.builder()
 						.with(ItemEntry.builder(spellOil));
 				poolBuilder.rolls(BinomialLootNumberProvider.create(1, 0.2F));
 				tableBuilder.pool(poolBuilder);
-				LootPool.Builder poolBuilder2 = LootPool.builder()
-						.with(ItemEntry.builder(whirlwindOil));
-
-				poolBuilder2.rolls(BinomialLootNumberProvider.create(1, 0.2F));
-				tableBuilder.pool(poolBuilder2);
-				LootPool.Builder poolBuilder3 = LootPool.builder()
-						.with(ItemEntry.builder(smiteOil));
-
-				poolBuilder3.rolls(BinomialLootNumberProvider.create(1, 0.2F));
-				tableBuilder.pool(poolBuilder3);
-				LootPool.Builder poolBuilder4 = LootPool.builder()
-						.with(ItemEntry.builder(flickerstrikeoil));
-
-				poolBuilder4.rolls(BinomialLootNumberProvider.create(1, 0.2F));
-				tableBuilder.pool(poolBuilder4);
-				LootPool.Builder poolBuilder5 = LootPool.builder()
-						.with(ItemEntry.builder(finalstrikeoil));
-
-				poolBuilder5.rolls(BinomialLootNumberProvider.create(1, 0.2F));
-				tableBuilder.pool(poolBuilder5);
-				LootPool.Builder poolBuilder6 = LootPool.builder()
-						.with(ItemEntry.builder(eviscerateoil));
-
-				poolBuilder6.rolls(BinomialLootNumberProvider.create(1, 0.2F));
 
 			}
 		});
-
 		Registry.register(Registries.ITEM_GROUP, KEY, SPELLBLADES);
+
+		SpellBooks.createAndRegister(new Identifier(MOD_ID,"frost_battlemage"),KEY);
+		SpellBooks.createAndRegister(new Identifier(MOD_ID,"fire_battlemage"),KEY);
+		SpellBooks.createAndRegister(new Identifier(MOD_ID,"arcane_battlemage"),KEY);
+		SpellBooks.createAndRegister(new Identifier(MOD_ID,"runic_echoes"),KEY);
+		SpellBooks.createAndRegister(new Identifier(MOD_ID,"phoenix"),KEY);
+		SpellBooks.createAndRegister(new Identifier(MOD_ID,"deathchill"),KEY);
 		ItemGroupEvents.modifyEntriesEvent(KEY).register((content) -> {
 			content.add(spellOil);
-			content.add(whirlwindOil);
-			content.add(smiteOil);
-			content.add(finalstrikeoil);
-			content.add(flickerstrikeoil);
-			content.add(eviscerateoil);
 			content.add(RUNEBLAZE);
 			content.add(RUNEGLEAM);
 			content.add(RUNEFROST);
@@ -443,6 +411,41 @@ public class Spellblades implements ModInitializer {
 			content.add(THEAVATAR);
 			content.add(BOOK);
 			content.add(TABULARASA);
+			content.add(MAGUS_SPAWN_EGG);
+			List<SpellBookItem> books = SpellBooks.sorted();
+			List<SpellPool> pools = new ArrayList<SpellPool>();
+			List<Identifier> spells = new ArrayList<Identifier>();
+
+			for (SpellBookItem book : books) {
+				pools.add(SpellRegistry.spellPool(book.getPoolId()));
+			}
+			for (SpellBookItem book : books) {
+				pools.add(SpellRegistry.spellPool(book.getPoolId()));
+			}
+			for (SpellPool pool : pools) {
+				spells.addAll(pool.spellIds());
+			}
+
+			spells.add(new Identifier(Spellblades.MOD_ID,"smite"));
+			spells.add(new Identifier(Spellblades.MOD_ID,"whirlwind"));
+
+
+			spells.remove(new Identifier("spellbladenext:thesis"));
+			spells.removeIf(spell ->
+					SpellRegistry.getSpell(spell).school.equals(ExternalSpellSchools.PHYSICAL_RANGED)
+			);
+			for(Identifier id : spells){
+				SpellContainer container2 = new SpellContainer(false,"",1,List.of(id.toString()));
+				ItemStack stack = spellOil.getDefaultStack();
+				SpellContainerHelper.addContainerToItemStack(container2, stack);
+				content.add(stack);
+			}
+			for(Identifier id : spells){
+				ItemStack stack = BOOK.getDefaultStack();
+				SpellContainerHelper.addSpell(id,stack);
+				content.add(stack);
+			}
+
 			/*content.add(RIFLE);*/
 		});
 		REAVER = Registry.register(
@@ -454,25 +457,11 @@ public class Spellblades implements ModInitializer {
 						.trackedUpdateRate(1)
 						.build()
 		);
-		ARCHMAGUS = Registry.register(
-				ENTITY_TYPE,
-				new Identifier(MOD_ID, "magus"),
-				FabricEntityTypeBuilder.<Magus>create(SpawnGroup.MISC, Magus::new)
-						.dimensions(EntityDimensions.fixed(0.6F, 1.8F)) // dimensions in Minecraft units of the render
-						.trackRangeBlocks(128)
-						.trackedUpdateRate(1)
-						.build()
-		);
+
 		FabricDefaultAttributeRegistry.register(ARCHMAGUS,Magus.createAttributes());
 
 		FabricDefaultAttributeRegistry.register(REAVER,Magister.createAttributes());
 
-		SpellBooks.createAndRegister(new Identifier(MOD_ID,"frost_battlemage"),KEY);
-		SpellBooks.createAndRegister(new Identifier(MOD_ID,"fire_battlemage"),KEY);
-		SpellBooks.createAndRegister(new Identifier(MOD_ID,"arcane_battlemage"),KEY);
-		SpellBooks.createAndRegister(new Identifier(MOD_ID,"runic_echoes"),KEY);
-		SpellBooks.createAndRegister(new Identifier(MOD_ID,"phoenix"),KEY);
-		SpellBooks.createAndRegister(new Identifier(MOD_ID,"deathchill"),KEY);
 
 		CustomSpellHandler.register(new Identifier(MOD_ID,"bladestorm"),(data) -> {
 			CustomSpellHandler.Data data1 = (CustomSpellHandler.Data) data;
@@ -777,7 +766,14 @@ public class Spellblades implements ModInitializer {
 			CustomSpellHandler.Data data1 = (CustomSpellHandler.Data) data;
 			float modifier = SpellRegistry.getSpell(new Identifier(MOD_ID,"finalstrike")).impact[0].action.damage.spell_power_coefficient;
 			float modifier2 = SpellRegistry.getSpell(new Identifier(MOD_ID,"finalstrike")).impact[1].action.damage.spell_power_coefficient;
-			
+			SpellPower.Result power2 = SpellPower.getSpellPower(actualSchool, (LivingEntity) data1.caster());
+			int amp = Math.min(49, (int) power2.randomValue() / 4 - 1);
+			if (amp >= 0) {
+
+				data1.caster().addStatusEffect(new StatusEffectInstance(StatusEffects.STRENGTH, (int) (SpellHelper.getCooldownDuration(data1.caster(), SpellRegistry.getSpell(new Identifier(Spellblades.MOD_ID,"finalstrike"))) * 20 ), amp));
+				data1.caster().addStatusEffect(new StatusEffectInstance(StatusEffects.HASTE, (int) (SpellHelper.getCooldownDuration(data1.caster(), SpellRegistry.getSpell(new Identifier(Spellblades.MOD_ID,"finalstrike"))) * 20 ), amp));
+
+			}
 			List<Entity> list = TargetHelper.targetsFromRaycast(data1.caster(),SpellRegistry.getSpell(new Identifier(MOD_ID,"finalstrike")).range, Objects::nonNull);
 
 			if(!data1.targets().isEmpty()) {
@@ -1005,7 +1001,14 @@ public class Spellblades implements ModInitializer {
 			float modifier2 = SpellRegistry.getSpell(new Identifier(MOD_ID,"flicker_strike")).impact[1].action.damage.spell_power_coefficient;
 			modifier2 *= 0.2;
 			modifier2 *= data1.caster().getAttributeValue(EntityAttributes.GENERIC_ATTACK_SPEED);
-		
+			SpellPower.Result power2 = SpellPower.getSpellPower(SpellSchools.FIRE, (LivingEntity) data1.caster());
+			int amp = Math.min(49, (int) power2.randomValue() / 4 - 1);
+			if (amp >= 0) {
+
+				data1.caster().addStatusEffect(new StatusEffectInstance(StatusEffects.STRENGTH, (int) (SpellHelper.getCooldownDuration(data1.caster(), SpellRegistry.getSpell(new Identifier(Spellblades.MOD_ID,"flicker_strike"))) * 20 ), amp));
+				data1.caster().addStatusEffect(new StatusEffectInstance(StatusEffects.HASTE, (int) (SpellHelper.getCooldownDuration(data1.caster(), SpellRegistry.getSpell(new Identifier(Spellblades.MOD_ID,"flicker_strike"))) * 20 ), amp));
+
+			}
 			if(data1.caster() instanceof PlayerDamageInterface player) {
 				List<LivingEntity> list = new ArrayList<>();
 				for(Entity entity: data1.targets()){
@@ -1052,7 +1055,14 @@ public class Spellblades implements ModInitializer {
 			SpellSchool actualSchool = SpellSchools.FROST;
 			CustomSpellHandler.Data data1 = (CustomSpellHandler.Data) data;
 			data1.targets().remove(data1.caster());
-			
+			SpellPower.Result power2 = SpellPower.getSpellPower(actualSchool, (LivingEntity) data1.caster());
+			int amp = Math.min(49, (int) power2.randomValue() / 4 - 1);
+			if (amp >= 0) {
+
+				data1.caster().addStatusEffect(new StatusEffectInstance(StatusEffects.STRENGTH, (int) (SpellHelper.getCooldownDuration(data1.caster(), SpellRegistry.getSpell(new Identifier(Spellblades.MOD_ID,"eviscerate"))) * 20 ), amp));
+				data1.caster().addStatusEffect(new StatusEffectInstance(StatusEffects.HASTE, (int) (SpellHelper.getCooldownDuration(data1.caster(), SpellRegistry.getSpell(new Identifier(Spellblades.MOD_ID,"eviscerate"))) * 20 ), amp));
+
+			}
 			if(data1.targets().isEmpty()){
 				if(data1.caster() instanceof SpellCasterEntity entity){
 					entity.setSpellCastProcess(null);
@@ -1180,8 +1190,19 @@ public class Spellblades implements ModInitializer {
 			return false;
 		});
 		CustomSpellHandler.register(new Identifier(MOD_ID,"frostflourish"),(data) -> {
+
 			SpellSchool actualSchool = SpellSchools.FROST;
 			CustomSpellHandler.Data data1 = (CustomSpellHandler.Data) data;
+
+
+				SpellPower.Result power2 = SpellPower.getSpellPower(actualSchool, (LivingEntity) data1.caster());
+				int amp = Math.min(49, (int) power2.randomValue() / 4 - 1);
+				if (amp >= 0) {
+
+					data1.caster().addStatusEffect(new StatusEffectInstance(StatusEffects.STRENGTH, (int) (SpellHelper.getCooldownDuration(data1.caster(), SpellRegistry.getSpell(new Identifier(Spellblades.MOD_ID,"frostflourish"))) * 20 ), amp));
+					data1.caster().addStatusEffect(new StatusEffectInstance(StatusEffects.HASTE, (int) (SpellHelper.getCooldownDuration(data1.caster(), SpellRegistry.getSpell(new Identifier(Spellblades.MOD_ID,"frostflourish"))) * 20 ), amp));
+
+				}
 			float modifier = SpellRegistry.getSpell(new Identifier(MOD_ID,"frostflourish")).impact[0].action.damage.spell_power_coefficient;
 			float modifier2 = SpellRegistry.getSpell(new Identifier(MOD_ID,"frostflourish")).impact[0].action.damage.spell_power_coefficient;
 			
@@ -1259,6 +1280,14 @@ public class Spellblades implements ModInitializer {
 		CustomSpellHandler.register(new Identifier(MOD_ID,"fireflourish"),(data) -> {
 			SpellSchool actualSchool = SpellSchools.FIRE;
 			CustomSpellHandler.Data data1 = (CustomSpellHandler.Data) data;
+			SpellPower.Result power2 = SpellPower.getSpellPower(actualSchool, (LivingEntity) data1.caster());
+			int amp = Math.min(49, (int) power2.randomValue() / 4 - 1);
+			if (amp >= 0) {
+
+				data1.caster().addStatusEffect(new StatusEffectInstance(StatusEffects.STRENGTH, (int) (SpellHelper.getCooldownDuration(data1.caster(), SpellRegistry.getSpell(new Identifier(Spellblades.MOD_ID,"fireflourish"))) * 20 ), amp));
+				data1.caster().addStatusEffect(new StatusEffectInstance(StatusEffects.HASTE, (int) (SpellHelper.getCooldownDuration(data1.caster(), SpellRegistry.getSpell(new Identifier(Spellblades.MOD_ID,"fireflourish"))) * 20 ), amp));
+
+			}
 			float modifier = SpellRegistry.getSpell(new Identifier(MOD_ID,"fireflourish")).impact[0].action.damage.spell_power_coefficient;
 			float modifier2 = SpellRegistry.getSpell(new Identifier(MOD_ID,"fireflourish")).impact[0].action.damage.spell_power_coefficient;
 			
@@ -1335,7 +1364,15 @@ public class Spellblades implements ModInitializer {
 			CustomSpellHandler.Data data1 = (CustomSpellHandler.Data) data;
 			float modifier = SpellRegistry.getSpell(new Identifier(MOD_ID,"arcaneflourish")).impact[0].action.damage.spell_power_coefficient;
 			float modifier2 = SpellRegistry.getSpell(new Identifier(MOD_ID,"arcaneflourish")).impact[1].action.damage.spell_power_coefficient;
-			
+
+			SpellPower.Result power2 = SpellPower.getSpellPower(actualSchool, (LivingEntity) data1.caster());
+			int amp = Math.min(49, (int) power2.randomValue() / 4 - 1);
+			if (amp >= 0) {
+
+				data1.caster().addStatusEffect(new StatusEffectInstance(StatusEffects.STRENGTH, (int) (SpellHelper.getCooldownDuration(data1.caster(), SpellRegistry.getSpell(new Identifier(Spellblades.MOD_ID,"arcaneflourish"))) * 20 ), amp));
+				data1.caster().addStatusEffect(new StatusEffectInstance(StatusEffects.HASTE, (int) (SpellHelper.getCooldownDuration(data1.caster(), SpellRegistry.getSpell(new Identifier(Spellblades.MOD_ID,"arcaneflourish"))) * 20 ), amp));
+
+			}
 			Attacks.attackAll(data1.caster(),data1.targets(),(float)modifier);
 			for(Entity entity: data1.targets()){
 				SpellPower.Result power = SpellPower.getSpellPower(actualSchool, (LivingEntity) data1.caster());
@@ -1409,7 +1446,15 @@ public class Spellblades implements ModInitializer {
 		CustomSpellHandler.register(new Identifier(MOD_ID,"tempest"),(data) -> {
 			CustomSpellHandler.Data data1 = (CustomSpellHandler.Data) data;
 			SpellSchool actualSchool = SpellSchools.FROST;
-			
+
+			SpellPower.Result power2 = SpellPower.getSpellPower(actualSchool, (LivingEntity) data1.caster());
+			int amp = Math.min(49, (int) power2.randomValue() / 4 - 1);
+			if (amp >= 0) {
+
+				data1.caster().addStatusEffect(new StatusEffectInstance(StatusEffects.STRENGTH, (int) (SpellHelper.getCooldownDuration(data1.caster(), SpellRegistry.getSpell(new Identifier(Spellblades.MOD_ID,"tempest"))) * 20 ), amp));
+				data1.caster().addStatusEffect(new StatusEffectInstance(StatusEffects.HASTE, (int) (SpellHelper.getCooldownDuration(data1.caster(), SpellRegistry.getSpell(new Identifier(Spellblades.MOD_ID,"tempest"))) * 20 ), amp));
+
+			}
 			if(data1.caster().getWorld() instanceof ServerWorld world){
 				if(world.getEntitiesByType(TypeFilter.instanceOf(CycloneEntity.class), cyclone -> {
 					if( cyclone.getOwner() == data1.caster() && cyclone.getColor() != 5){
@@ -1493,7 +1538,15 @@ public class Spellblades implements ModInitializer {
 		CustomSpellHandler.register(new Identifier(MOD_ID,"maelstrom"),(data) -> {
 			CustomSpellHandler.Data data1 = (CustomSpellHandler.Data) data;
 			SpellSchool actualSchool = SpellSchools.ARCANE;
-			
+
+			SpellPower.Result power2 = SpellPower.getSpellPower(actualSchool, (LivingEntity) data1.caster());
+			int amp = Math.min(49, (int) power2.randomValue() / 4 - 1);
+			if (amp >= 0) {
+
+				data1.caster().addStatusEffect(new StatusEffectInstance(StatusEffects.STRENGTH, (int) (SpellHelper.getCooldownDuration(data1.caster(), SpellRegistry.getSpell(new Identifier(Spellblades.MOD_ID,"maelstrom"))) * 20 ), amp));
+				data1.caster().addStatusEffect(new StatusEffectInstance(StatusEffects.HASTE, (int) (SpellHelper.getCooldownDuration(data1.caster(), SpellRegistry.getSpell(new Identifier(Spellblades.MOD_ID,"maelstrom"))) * 20 ), amp));
+
+			}
 			if(data1.caster().getWorld() instanceof ServerWorld world){
 				if(world.getEntitiesByType(TypeFilter.instanceOf(CycloneEntity.class), cyclone -> {
 					if( cyclone.getOwner() == data1.caster()&& cyclone.getColor() != 5){
@@ -1517,7 +1570,15 @@ public class Spellblades implements ModInitializer {
 		CustomSpellHandler.register(new Identifier(MOD_ID,"inferno"),(data) -> {
 			CustomSpellHandler.Data data1 = (CustomSpellHandler.Data) data;
 			SpellSchool actualSchool = SpellSchools.FIRE;
-			
+
+			SpellPower.Result power2 = SpellPower.getSpellPower(actualSchool, (LivingEntity) data1.caster());
+			int amp = Math.min(49, (int) power2.randomValue() / 4 - 1);
+			if (amp >= 0) {
+
+				data1.caster().addStatusEffect(new StatusEffectInstance(StatusEffects.STRENGTH, (int) (SpellHelper.getCooldownDuration(data1.caster(), SpellRegistry.getSpell(new Identifier(Spellblades.MOD_ID,"inferno"))) * 20 ), amp));
+				data1.caster().addStatusEffect(new StatusEffectInstance(StatusEffects.HASTE, (int) (SpellHelper.getCooldownDuration(data1.caster(), SpellRegistry.getSpell(new Identifier(Spellblades.MOD_ID,"inferno"))) * 20 ), amp));
+
+			}
 			if(data1.caster().getWorld() instanceof ServerWorld world){
 				if(world.getEntitiesByType(TypeFilter.instanceOf(CycloneEntity.class), cyclone -> {
 					if( cyclone.getOwner() == data1.caster()&& cyclone.getColor() != 5){

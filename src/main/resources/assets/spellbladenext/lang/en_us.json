@@ -15,6 +15,7 @@
   "item.spellbladenext.theavatar": "The Avatar",
   "item.spellbladenext.thesis_spell_book": "Thesis of Awakening",
   "item.spellbladenext.thesis_spell_book.desc": "Fear not the mage who has cast a thousand different spells once, fear the mage who has cast a single spell a thousand times.",
+  "item.spellbladenext.magus_spawn_egg": "Magus Spawn Egg",
 
   "item.spellbladenext.omni": "Crystallised Omniscience",
   "item.spellbladenext.tabula_rasa": "Tabula Rasa",
@@ -39,10 +40,10 @@
   "item.spellbladenext.rifle": "Runeblaze Rifle",
 
   "item.spellbladenext.spelloil": "Spell Oil",
-  "item.spellbladenext.spelloil.desc1": "Adds the bound spell to an unbound tool.",
-  "item.spellbladenext.spelloil.desc2": "Drag to an item and right click to apply. IRREVERSIBLE.",
+  "item.spellbladenext.spelloil.desc1": "Binds the spell to an item that can cast spells, but does not already have a spell bound.",
+  "item.spellbladenext.spelloil.desc2": "Drag to an item and right click to apply. IRREVERSIBLE. See Spell Engine Keybind 1 if used incorrrectly.",
 
-  "item.spellbladenext.whirlwindoil": "Whirlwind Oil",
+  "item.spellbladenext.whirlwindoil": "Cyclone Oil",
   "item.spellbladenext.smiteoil": "Smite Oil",
   "item.spellbladenext.eviscerateoil": "Massacre Oil",
   "item.spellbladenext.finalstrikeoil": "Sonic Strike Oil",
@@ -61,6 +62,7 @@
   "entity.spellbladenext.magister": "Hexblade Magister",
   "entity.spellbladenext.magus": "Magus",
   "entity.spellbladenext.hexbladeportal": "Hexblade Portal",
+  "entity.spellbladenext.cycloneentity": "Cyclone",
 
   "item.spellbladenext.monkeystaff": "Pillar of the Monkey King",
   "spell.spellbladenext.thesis.name": "Awakened",
@@ -106,16 +108,16 @@
   "spell.spellbladenext.fireoverdrive.description": "{damage} Fire damage in an area around you. Activates normally and on hit.",
 
   "spell.spellbladenext.finalstrike.name": "Sonic Strike",
-  "spell.spellbladenext.finalstrike.description": "Charge up a deadly attack against all enemies in a line, teleporting behind the last one and dealing {damage_1} physical damage plus an additional {damage_2} arcane spell damage.",
+  "spell.spellbladenext.finalstrike.description": "Charge up a deadly attack against all enemies in a line, teleporting behind the last one and dealing {damage_1} physical damage plus an additional {damage_2} arcane spell damage. Gain 1 Haste and Strength per 4 arcane power.",
 
   "spell.spellbladenext.eviscerate.name": "Massacre",
-  "spell.spellbladenext.eviscerate.description": "Become intangible, attacking the nearest enemy five times over a second, dealing {damage_1} physical damage and {damage_2} frost damage, both multiplied by your attack speed. If this kills the enemy before the last hit, these effects continue onto another enemy.",
+  "spell.spellbladenext.eviscerate.description": "Become intangible, attacking the nearest enemy five times over a second, dealing {damage_1} physical damage and {damage_2} frost damage, both multiplied by your attack speed. If this kills the enemy before the last hit, these effects continue onto another enemy. Gain 1 Haste and Strength per 4 frost power.",
 
   "spell.spellbladenext.whirlingblades.name": "Riptide",
   "spell.spellbladenext.whirlingblades.description": "Aim and launch yourself as if with a riptide-enchanted trident",
 
   "spell.spellbladenext.flicker_strike.name": "Flickering Flame",
-  "spell.spellbladenext.flicker_strike.description": "Jump onto nearby enemies equally, dealing {damage_1} physical damage plus an additional {damage_2} fire damage, scaled by attack speed. Focuses on one target if there is only one target.",
+  "spell.spellbladenext.flicker_strike.description": "Jump onto nearby enemies equally, dealing {damage_1} physical damage plus an additional {damage_2} fire damage, scaled by attack speed. Focuses on one target if there is only one target. Gain 1 Haste and Strength per 4 fire power.",
 
   "spell.spellbladenext.frostblink.name": "Arcane Flicker",
   "spell.spellbladenext.frostblink.description": "Teleport behind an enemy, dealing {damage_1} physical damage plus an additional {damage_2} arcane damage.",
@@ -137,25 +139,27 @@
   "spell.spellbladenext.smite.description": "Smite enemies in front of you in an area, dealing {damage_1} physical and {damage_2} extra healing damage to each enemy hit, 50%% more healing damage against undead. Gives you the Spellblade passive upon use.",
 
   "spell.spellbladenext.maelstrom.name": "Maelstrom",
-  "spell.spellbladenext.maelstrom.description": "Spin continuously, dealing {damage_1} physical damage and {damage_2} arcane damage per second, multiplied by attack speed. Penalty for hitting multiple mobs, mitigated by Sweeping Edge. Shift to stop moving.",
+  "spell.spellbladenext.maelstrom.description": "Spin continuously, dealing {damage_1} physical damage and {damage_2} arcane damage per second, multiplied by attack speed. Gain 1 Haste and Strength per 4 arcane power. Penalty for hitting multiple mobs, mitigated by Sweeping Edge. Shift to stop moving.",
 
   "spell.spellbladenext.inferno.name": "Inferno",
-  "spell.spellbladenext.inferno.description": "Spin continuously, dealing {damage_1} physical damage and {damage_2} fire damage per second multiplied by attack speed. Penalty for hitting multiple mobs, mitigated by Sweeping Edge. Shift to stop moving.",
+  "spell.spellbladenext.inferno.description": "Spin continuously, dealing {damage_1} physical damage and {damage_2} fire damage per second multiplied by attack speed. Gain 1 Haste and Strength per 4 fire power. Penalty for hitting multiple mobs, mitigated by Sweeping Edge. Shift to stop moving.",
 
   "spell.spellbladenext.tempest.name": "Tempest",
-  "spell.spellbladenext.tempest.description": "Spin continuously, dealing {damage_1} physical damage and {damage_2} frost damage per second, multiplied by attack speed. Penalty for hitting multiple mobs, mitigated by Sweeping Edge. Shift to stop moving.",
+  "spell.spellbladenext.tempest.description": "Spin continuously, dealing {damage_1} physical damage and {damage_2} frost damage per second, multiplied by attack speed. Gain 1 Haste and Strength per 4 frost power. Penalty for hitting multiple mobs, mitigated by Sweeping Edge. Shift to stop moving.",
 
-  "spell.spellbladenext.whirlwind.name": "Whirlwind",
+  "spell.spellbladenext.whirlwind.name": "Cyclone",
   "spell.spellbladenext.whirlwind.description": "Spin continuously, {damage} physical damage per second, multiplied by your attack speed. Penalty for hitting multiple mobs, mitigated by Sweeping Edge. Shift to stop moving.",
 
   "spell.spellbladenext.arcaneflourish.name": "Arcane Flourish",
-  "spell.spellbladenext.arcaneflourish.description": "Spin rapidly, dealing {damage_1} physical damage, plus {damage_2} arcane damage.",
-
+  "spell.spellbladenext.arcaneflourish.description": "Spin rapidly, dealing {damage_1} physical damage, plus {damage_2} arcane damage. Gain 1 Haste and Strength per 4 arcane power.",
+  "spellblades.unidentified":"Unidentified ",
+  "biome.spellbladenext.glassocean": "Mirror's Edge",
+  "dimension.spellbladenext.glassocean": "Glass Ocean",
   "spell.spellbladenext.fireflourish.name": "Fire Flourish",
-  "spell.spellbladenext.fireflourish.description": "Spin rapidly, dealing {damage_1} physical damage, plus {damage_2} fire damage.",
+  "spell.spellbladenext.fireflourish.description": "Spin rapidly, dealing {damage_1} physical damage, plus {damage_2} fire damage. Gain 1 Haste and Strength per 4 fire power.",
 
   "spell.spellbladenext.frostflourish.name": "Frost Flourish",
-  "spell.spellbladenext.frostflourish.description": "Spin rapidly, dealing {damage_1} physical damage, plus {damage_2} frost damage.",
+  "spell.spellbladenext.frostflourish.description": "Spin rapidly, dealing {damage_1} physical damage, plus {damage_2} frost damage. Gain 1 Haste and Strength per 4 frost power.",
   "item.spellbladenext.runegleam_ingot": "Runegleam Ingot",
   "item.spellbladenext.runeblaze_ingot": "Runeblaze Ingot",
   "item.spellbladenext.runefrost_ingot": "Runefrost Ingot",
@@ -219,7 +223,7 @@
   "item.spellbladenext.voidforge": "Voidforge",
   "item.spellbladenext.weaverswand": "Weaver's Wand",
 
-  "item.spellbladenext.prismatic": "Prismatic Effigy",
+  "item.spellbladenext.prismatic": "Prismatic Pearl",
   "item.spellbladenext.magus_head": "Magus Hood",
   "item.spellbladenext.magus_chest": "Magus Robe",
   "item.spellbladenext.magus_legs": "Magus Leggings",

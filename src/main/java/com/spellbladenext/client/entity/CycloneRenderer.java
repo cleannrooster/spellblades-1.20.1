@@ -25,16 +25,16 @@ public class CycloneRenderer<T extends CycloneEntity> extends GeoEntityRenderer<
         if(animatable.getOwner() != null ){
 
             if(animatable.getColor() != 5){
-                this.scaleWidth = animatable.getOwner().getHeight() * 1.75F;
-                this.scaleHeight = animatable.getOwner().getHeight() * 1.5F;
+                this.scaleWidth = animatable.getOwner().getHeight() * 1.25F;
+                this.scaleHeight = animatable.getOwner().getHeight() * 1.25F;
 
                 poseStack.translate(-animatable.lastRenderX,-animatable.lastRenderY,-animatable.lastRenderZ);
                 poseStack.translate(animatable.getOwner().lastRenderX,animatable.getOwner().lastRenderY,animatable.getOwner().lastRenderZ);
 
             }
             else{
-                this.scaleWidth = 2 * 1.75F;
-                this.scaleHeight = 2 * 1.5F;
+                this.scaleWidth = 2 * 1.25F;
+                this.scaleHeight = 2 * 1.25F;
 
             }
 

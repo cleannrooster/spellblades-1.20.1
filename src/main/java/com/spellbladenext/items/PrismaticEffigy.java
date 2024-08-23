@@ -28,9 +28,12 @@ public class PrismaticEffigy extends Item {
     @Override
     public TypedActionResult<ItemStack> use(World level, PlayerEntity player, Hand interactionHand) {
 
-        if(level instanceof ServerWorld level1 && level1.getRegistryKey() == Spellblades.DIMENSIONKEY) {
-
-            if ( level1.getRegistryKey() == Spellblades.DIMENSIONKEY && level1.getEntitiesByType(TypeFilter.instanceOf(Archmagus.class), archmagus -> archmagus.distanceTo(player) < 200).isEmpty()) {
+        if(level instanceof ServerWorld level1 ) {
+            if((level1.getRegistryKey() != Spellblades.DIMENSIONKEY && !Spellblades.config.magusWeaker)){
+                player.sendMessage(Text.translatable("Magus cannot be summoned outside the Glass Ocean."));
+                return super.use(level, player, interactionHand);
+            }
+            if ( level1.getEntitiesByType(TypeFilter.instanceOf(Magus.class), archmagus -> archmagus.distanceTo(player) < 200).isEmpty()) {
                 for (int i = 0; i < 10; i++) {
                     BlockPos vec3 = piglinsummon.getSafePositionAroundPlayer2(level, player.getSteppingPos(), 10);
                     if (vec3 != null &&level.isSkyVisible(vec3.up()) &&  !level.isClient()) {
@@ -43,8 +46,13 @@ public class PrismaticEffigy extends Item {
                             }
                             magus.spawnedfromitem = true;
                         }
+                        if(level1.getRegistryKey() == Spellblades.DIMENSIONKEY) {
+                            player.sendMessage(Text.translatable("Magus' full power is unleashed in the Glass Ocean!"));
+                        }
+                        else if(Spellblades.config.magusWeaker){
+                            player.sendMessage(Text.translatable("This dimension seems to diminish Magus' power."));
+                        }
                         level.spawnEntity(magus);
-                        player.sendMessage(Text.translatable("Magus' full power is unleashed in the Glass Ocean!"));
 
                         return TypedActionResult.consume(player.getStackInHand(interactionHand));
 
@@ -60,7 +68,9 @@ public class PrismaticEffigy extends Item {
 
     @Override
     public void appendTooltip(ItemStack itemStack, @Nullable World level, List<Text> list, TooltipContext tooltipFlag) {
-        list.add(Text.translatable("Use in the Glass Ocean to summon Magus, if available."));
+        list.add(Text.translatable("Use to summon Magus, if available."));
+        list.add(Text.translatable("Magus is stronger and drops more stuff in the Glass Ocean."));
+
         super.appendTooltip(itemStack, level, list, tooltipFlag);
     }
 }

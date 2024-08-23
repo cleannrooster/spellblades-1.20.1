@@ -62,21 +62,7 @@ public class SpellCastMixin {
         if (!player.isSpectator()) {
             Spell spell = SpellRegistry.getSpell(spellId);
             if (spell != null) {
-                SpellInfo spellInfo = new SpellInfo(spell, spellId);
-                ItemStack itemStack = player.getMainHandStack();
-                SpellSchool actualSchool = SpellRegistry.getSpell(spellId).school;
 
-                if (actualSchool != ExternalSpellSchools.PHYSICAL_MELEE && action == SpellCast.Action.RELEASE && (itemStack.getItem() instanceof Spellblade || itemStack.getItem() instanceof Claymore || Objects.equals(spellId, new Identifier(Spellblades.MOD_ID, "smite")))) {
-
-                    SpellPower.Result power2 = SpellPower.getSpellPower(actualSchool, (LivingEntity) player);
-                    int amp = Math.min(49, (int) power2.randomValue() / 4 - 1);
-                    if (amp >= 0) {
-
-                        player.addStatusEffect(new StatusEffectInstance(StatusEffects.STRENGTH, (int) (SpellHelper.getCooldownDuration(player, SpellRegistry.getSpell(spellId)) * 20 * progress), amp));
-                        player.addStatusEffect(new StatusEffectInstance(StatusEffects.HASTE, (int) (SpellHelper.getCooldownDuration(player, SpellRegistry.getSpell(spellId)) * 20 * progress), amp));
-
-                    }
-                }
                 if (Spellblades.config.horde && spell.school != ExternalSpellSchools.PHYSICAL_RANGED && spell.school != ExternalSpellSchools.PHYSICAL_MELEE && spell.school != SpellSchools.HEALING) {
                     attackevent.horde(player,false);
                 }

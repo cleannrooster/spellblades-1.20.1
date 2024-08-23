@@ -1,5 +1,6 @@
 package com.spellbladenext.items;
 
+import com.spellbladenext.Spellblades;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.entity.Entity;
 import net.minecraft.item.Item;
@@ -34,6 +35,24 @@ public class ThesisBook extends SpellBookTrinketItem implements SpellBookItem {
         super(poolId,settings);
         this.poolId = poolId;
     }
+    @Override
+    public Text getName(ItemStack stack) {
+        SpellContainer tabulaContainer = SpellContainerHelper.containerFromItemStack(stack);
+        if(tabulaContainer == null){
+            return Text.translatable("spellblades.unidentified").append(super.getName(stack));
+        }
+        else{
+            if(tabulaContainer.spell_ids != null && !tabulaContainer.spell_ids.isEmpty() &&  tabulaContainer.spell_ids.get(0) != null) {
+                return Text.translatable("Thesis on")
+                        .append(Text.of(" "))
+                        .append(Text.translatable(SpellTooltip.spellTranslationKey(new Identifier(tabulaContainer.spell_ids.get(0)))));
+            }
+
+        }
+
+        return super.getName(stack);
+    }
+
 
     public boolean isEnchantable(ItemStack stack) {
         return false;
@@ -61,6 +80,9 @@ public class ThesisBook extends SpellBookTrinketItem implements SpellBookItem {
             for (SpellPool pool : pools) {
                 spells.addAll(pool.spellIds());
             }
+
+            spells.add(new Identifier(Spellblades.MOD_ID,"smite"));
+            spells.add(new Identifier(Spellblades.MOD_ID,"whirlwind"));
             spells.remove(new Identifier("spellbladenext:thesis"));
             spells.removeIf(spell ->
                     SpellRegistry.getSpell(spell).school.equals(ExternalSpellSchools.PHYSICAL_RANGED)

@@ -32,9 +32,11 @@ private  BufferBuilderStorage bufferBuilders;
     public void renderCleann(MatrixStack matrices, float tickDelta, long limitTime, boolean renderBlockOutline, Camera camera, GameRenderer gameRenderer, LightmapTextureManager lightmapTextureManager, Matrix4f projectionMatrix, CallbackInfo info) {
         WorldRenderer renderer = (WorldRenderer) (Object) this;
         if (MinecraftClient.getInstance().world != null) {
-                for(Entity entity : MinecraftClient.getInstance().world.getEntities()) {
-                    if (entity instanceof Magus magus) {
 
+            int number = 0;
+                for(Entity entity : MinecraftClient.getInstance().world.getEntities()) {
+                    if (entity instanceof Magus magus && number < 2) {
+                        number++;
 
                         for (int ii = 0; ii < magus.getPositions().size(); ii++) {
                             if (ii % 2 == 0) {
@@ -46,7 +48,7 @@ private  BufferBuilderStorage bufferBuilders;
                                     float g = entity.getYaw(tickDelta);
                                 matrices.push();
                                 matrices.scale(1.05F,1.05F,1.05F);
-                                    entityRenderDispatcher.render(entity, j, k, l, g, tickDelta, matrices, bufferBuilders.getEntityVertexConsumers(), entityRenderDispatcher.getLight(entity,tickDelta)/(2*(4-(ii/2))));
+                                    entityRenderDispatcher.render(entity, j, k, l, g, tickDelta, matrices, bufferBuilders.getEntityVertexConsumers(), (int)(entityRenderDispatcher.getLight(entity,tickDelta)*(1-0.1*(4-(ii/2)))));
                                 matrices.pop();
                             }
                         }

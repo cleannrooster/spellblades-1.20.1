@@ -7,6 +7,9 @@ import com.spellbladenext.items.armor.MagusArmor;
 import mod.azure.azurelib.model.GeoModel;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.util.Identifier;
+import net.spell_power.api.enchantment.Enchantments_SpellPowerMechanics;
+import net.spell_power.api.enchantment.SpellPowerEnchanting;
+import net.spell_power.internals.SchoolFilteredEnchantment;
 
 public class MagusArmorItemModel extends GeoModel<MagusArmor> {
     @Override
@@ -32,7 +35,6 @@ public class MagusArmorItemModel extends GeoModel<MagusArmor> {
 
         return new Identifier(Spellblades.MOD_ID, "textures/armor/robestexture_default.png");
     }
-
 
     @Override
     public Identifier getAnimationResource(MagusArmor orb) {

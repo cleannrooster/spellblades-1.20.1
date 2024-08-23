@@ -26,6 +26,8 @@ public class ServerConfig  implements ConfigData {
     public  boolean hexblade_on = true;
     @Comment("Magus changes the weather on phase end (Default: TRUE)")
     public  boolean magusWeather = true;
+    @Comment("Magus can be summoned outside the glass ocean (Default: TRUE)")
+    public  boolean magusWeaker = true;
     @Comment("Reactive ward regen rate coefficient (Default: 1.0)")
     public  float wardrate = 1.0F;
     @Comment("Horde Spawn with Mutations (Only with Fight or Die: Mutations)")
@@ -40,5 +42,6 @@ public class ServerConfig  implements ConfigData {
     public  boolean diffXP = false;
     @Comment("Magister XP in the Glass Ocean, if different (Default: 25)")
     public  int magisterXP = 25;
-
+    @Comment("Do not apply Spell Oil capability to any item matching this regex. (Not applied of empty)")
+    public String blacklist_spell_oil_regex = "";
 }

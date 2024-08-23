@@ -4,41 +4,25 @@
       "item": "spellbladenext:hexbladeitem"
     },
     "title": "Shadow Wizard Money Gang",
-    "description": "Initiate hostilities with a Hexblade Magister",
+    "description": "Be visited by a Hexblade Magister",
     "show_toast": true,
     "announce_to_chat": true
   },
   "parent": "spellbladenext:spellblades/root",
   "criteria": {
     "requirement": {
-      "trigger": "minecraft:player_hurt_entity",
+      "trigger": "minecraft:effects_changed",
       "conditions": {
-        "entity": [
-          {
-            "condition": "minecraft:entity_properties",
-            "entity": "this",
-            "predicate": {
-              "type": "spellbladenext:magister"
-            }
-          }
-        ]
-      }
-    },
-    "requirement2": {
-      "trigger": "minecraft:entity_hurt_player",
-      "conditions": {
-        "damage": {
-          "source_entity": {
-            "type": "spellbladenext:magister"
-          }
+        "effects": {
+          "spellbladenext:hexed": {}
         }
       }
     }
+
   },
   "requirements": [
     [
-     "requirement",
-      "requirement2"
+     "requirement"
 
     ]
   ]

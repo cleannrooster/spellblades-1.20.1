@@ -210,6 +210,8 @@ public class MagusThrowGoal<E extends Magus> extends Goal{
                 projectile.getPitch(mob.getPitch());
                 projectile.setYaw(mob.getYaw());
                 mob.getWorld().spawnEntity(projectile);
+                mob.getDataTracker().set(Magus.TIER,0);
+
             } else {
                 Spell spell = SpellRegistry.getSpell(new Identifier(Spellblades.MOD_ID, "flameslash"));
                 SpellHelper.ImpactContext context = new SpellHelper.ImpactContext(1, 1.0F, (Vec3d) null, new SpellPower.Result(SpellSchools.FIRE, mob.getAttributeValue(EntityAttributes.GENERIC_ATTACK_DAMAGE) * 1.5, 0, 1), impactTargetingMode(spell));
@@ -233,6 +235,8 @@ public class MagusThrowGoal<E extends Magus> extends Goal{
                 projectile.getPitch(mob.getPitch());
                 projectile.setYaw(mob.getYaw());
                 mob.getWorld().spawnEntity(projectile);
+                mob.getDataTracker().set(Magus.TIER,1);
+
             }
         }
     }
@@ -298,7 +302,7 @@ public class MagusThrowGoal<E extends Magus> extends Goal{
     }
 
     protected void resetCooldown() {
-        this.cooldown = this.getTickCount(40);
+        this.cooldown = this.getTickCount(30);
     }
 
     protected boolean isCooledDown() {

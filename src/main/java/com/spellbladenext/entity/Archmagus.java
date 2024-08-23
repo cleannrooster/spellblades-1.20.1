@@ -373,11 +373,7 @@ public class Archmagus extends HostileEntity implements InventoryOwner, GeoEntit
 
     @Override
     protected void updatePostDeath() {
-        if(this.getServer() != null && this.getServer().getWorld(World.OVERWORLD) != null && (this.getServer().getWorld(World.OVERWORLD).isThundering() || this.getServer().getWorld(World.OVERWORLD).isRaining())) {
-            if(Spellblades.config.magusWeather) {
-                this.getServer().getWorld(World.OVERWORLD).setWeather(0, 12000, false, false);
-            }
-        }
+
         super.updatePostDeath();
     }
 

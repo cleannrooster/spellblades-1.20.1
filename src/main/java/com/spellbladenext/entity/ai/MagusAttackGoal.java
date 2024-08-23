@@ -1,24 +1,34 @@
 package com.spellbladenext.entity.ai;
 
+import com.spellbladenext.entity.Magister;
 import com.spellbladenext.entity.Magus;
 import com.spellbladenext.items.attacks.Attacks;
 import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
 import net.minecraft.command.argument.EntityAnchorArgumentType;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.brain.LivingTargetCache;
 import net.minecraft.entity.ai.brain.MemoryModuleType;
 import net.minecraft.entity.ai.goal.Goal;
 import net.minecraft.entity.ai.pathing.Path;
+import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.predicate.entity.EntityPredicates;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.Vec3d;
+import net.spell_engine.api.spell.Spell;
 import net.spell_engine.internals.WorldScheduler;
 import net.spell_engine.particle.Particles;
+import net.spell_engine.utils.SoundHelper;
+import net.spell_engine.utils.TargetHelper;
+import net.spell_power.api.SpellDamageSource;
 
 import java.util.EnumSet;
+import java.util.List;
 import java.util.Optional;
+import java.util.function.Predicate;
 
 import static java.lang.Math.cos;
 import static java.lang.Math.sin;
@@ -82,6 +92,7 @@ public class MagusAttackGoal<E extends Magus> extends Goal{
         return !end;
     }
 
+
     public void start() {
         this.mob.setAttacking(true);
         this.realtime = 0;
@@ -99,6 +110,7 @@ public class MagusAttackGoal<E extends Magus> extends Goal{
                 this.mob.setOnGround(false);
                 this.mob.setVelocity(vec3);
             }
+            mob.getDataTracker().set(Magus.TIER,2);
         }
     }
 
@@ -125,10 +137,12 @@ public class MagusAttackGoal<E extends Magus> extends Goal{
         if(this.time == 5){
             this.mob.triggerAnim("slashtwo","slashtwo");
             this.spawnParticlesSlash(-90,-90);
+            this.attack(false);
         }
         if(this.time == 10){
             this.mob.triggerAnim("slashthree","slashthree");
             this.spawnParticlesSlash(-90,0);
+            this.attack(true);
 
         }
         if(this.time == 13){
@@ -142,21 +156,25 @@ public class MagusAttackGoal<E extends Magus> extends Goal{
         if(this.time == 15){
             this.mob.triggerAnim("slashone","slashone");
             this.spawnParticlesSlash(-90,45);
+            this.attack(false);
 
         }
         if(this.time == 20){
             this.mob.triggerAnim("slashtwo","slashtwo");
             this.spawnParticlesSlash(-90,-90);
+            this.attack(false);
 
         }
         if(this.time == 25){
             this.mob.triggerAnim("slashthree","slashthree");
             this.spawnParticlesSlash(-90,0);
+            this.attack(true);
 
         }
         if(this.time == 30){
             this.mob.triggerAnim("ryuenjin","ryuenjin");
             this.spawnParticlesSlash(-90,180);
+            this.attack(true);
 
         }
         if(this.time == 35){
@@ -171,6 +189,7 @@ public class MagusAttackGoal<E extends Magus> extends Goal{
             if(this.time == 0){
                 this.mob.triggerAnim("slashone","slashone");
                 this.spawnParticlesSlash(-90,45);
+                this.attack(false);
 
 
 
@@ -232,18 +251,30 @@ public class MagusAttackGoal<E extends Magus> extends Goal{
 
         }
     }
-    protected void attack(LivingEntity target, double squaredDistance) {
-        double d = this.getSquaredMaxAttackDistance(target);
-        if (squaredDistance <= d && this.cooldown <= 0) {
-            this.resetCooldown();
-            this.mob.swingHand(Hand.MAIN_HAND);
-            this.mob.tryAttack(target);
+    protected void attack(boolean narrow) {
+        SoundHelper.playSoundEvent(this.mob.getWorld(), this.mob, SoundEvents.ENTITY_PLAYER_ATTACK_SWEEP);
+        Spell.Release.Target.Area area = new Spell.Release.Target.Area();
+        area.angle_degrees = 180;
+        if(narrow){
+            area.angle_degrees = 90;
+
+        }
+        Predicate<Entity> selectionPredicate = (person) -> {
+            return !(person instanceof Magister);
+        };
+        List<Entity> list = TargetHelper.targetsFromArea(this.mob, this.mob.getBoundingBox().getCenter(), 4F, area, selectionPredicate);
+        for (Entity entity : list) {
+            entity.timeUntilRegen = 0;
+            if (entity.damage(SpellDamageSource.mob(mob.getMagicSchool(), this.mob), (float)((float) 1F* this.mob.getAttributeValue(EntityAttributes.GENERIC_ATTACK_DAMAGE) / 3F))) {
+                entity.timeUntilRegen = 0;
+                entity.damage(this.mob.getDamageSources().mobAttack(this.mob), (float) ( 0.5F * this.mob.getAttributeValue(EntityAttributes.GENERIC_ATTACK_DAMAGE) / 3F));
+            }
         }
 
     }
 
     protected void resetCooldown() {
-        this.cooldown = this.getTickCount(60);
+        this.cooldown = this.getTickCount(50);
     }
 
     protected boolean isCooledDown() {
