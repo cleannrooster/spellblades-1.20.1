@@ -7,6 +7,7 @@ import com.spellbladenext.items.Orb;
 import com.spellbladenext.items.Starforge;
 import com.spellbladenext.items.interfaces.PlayerDamageInterface;
 import net.fabricmc.loader.api.FabricLoader;
+import net.minecraft.client.render.DimensionEffects;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.LivingEntity;
@@ -21,10 +22,12 @@ import net.minecraft.fluid.Fluids;
 import net.minecraft.item.ItemStack;
 import net.minecraft.registry.Registry;
 import net.minecraft.registry.entry.RegistryEntry;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.World;
 import net.spell_engine.api.spell.Spell;
 import net.spell_engine.api.spell.SpellInfo;
 import net.spell_engine.internals.SpellContainerHelper;
@@ -104,12 +107,12 @@ public class LivingEntityMixin {
         }
     }
 
-        @Inject(at = @At("HEAD"), method = "tick", cancellable = true)
+    @Inject(at = @At("HEAD"), method = "tick", cancellable = true)
     public void tick_SB_HEAD(CallbackInfo info) {
 
             LivingEntity living = (LivingEntity) (Object) this;
 
-        if(!living.getWorld().isClient() && living instanceof PlayerEntity player && living instanceof SpellCasterEntity caster && living instanceof PlayerDamageInterface damageInterface  &&
+            if(!living.getWorld().isClient() && living instanceof PlayerEntity player && living instanceof SpellCasterEntity caster && living instanceof PlayerDamageInterface damageInterface  &&
                 SpellContainerHelper.getEquipped(living.getMainHandStack(), player) != null && SpellContainerHelper.getEquipped(player.getMainHandStack(), player).spell_ids != null && SpellContainerHelper.getEquipped(player.getMainHandStack(), player).spell_ids.contains("spellbladenext:echoes")){
             if(damageInterface.getDiebeamStacks() < 3 &&  living.age % 80 == 0) {
                 damageInterface.addDiebeamStack(1);

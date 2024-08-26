@@ -127,6 +127,9 @@ public class Spellblades implements ModInitializer {
 	// That way, it's clear which mod wrote info, warnings, and errors.
     public static final Logger LOGGER = LoggerFactory.getLogger("spellbladenext");
 	public static ItemGroup SPELLBLADES;
+	public static ItemGroup THESIS;
+	public static ItemGroup SPELLOILS;
+
 	public static String MOD_ID = "spellbladenext";
 	public static EntityType<Magister> REAVER;
 	public static EntityType<HexbladePortal> HEXBLADEPORTAL;
@@ -150,6 +153,9 @@ public class Spellblades implements ModInitializer {
 
 	public static final Item OFFERING = new Offering(new FabricItemSettings());
 	public static RegistryKey<ItemGroup> KEY = RegistryKey.of(Registries.ITEM_GROUP.getKey(),new Identifier(Spellblades.MOD_ID,"generic"));
+	public static RegistryKey<ItemGroup> SPELLOILSKEY = RegistryKey.of(Registries.ITEM_GROUP.getKey(),new Identifier(Spellblades.MOD_ID,"oils"));
+	public static RegistryKey<ItemGroup> THESISKEY = RegistryKey.of(Registries.ITEM_GROUP.getKey(),new Identifier(Spellblades.MOD_ID,"thesis"));
+
 	public static Item spellOil = new RandomSpellOil(new FabricItemSettings().maxCount(1));
 	public static Item RUNEBLAZE = new Item(new FabricItemSettings().maxCount(64));
 	public static Item RUNEFROST = new Item(new FabricItemSettings().maxCount(64));
@@ -238,6 +244,14 @@ public class Spellblades implements ModInitializer {
 		SPELLBLADES = FabricItemGroup.builder()
 				.icon(() -> new ItemStack(Items.arcane_blade.item()))
 				.displayName(Text.translatable("itemGroup.spellbladenext.general"))
+				.build();
+		SPELLOILS = FabricItemGroup.builder()
+				.icon(() -> new ItemStack(spellOil.asItem()))
+				.displayName(Text.translatable("itemGroup.spellbladenext.spelloils"))
+				.build();
+		THESIS = FabricItemGroup.builder()
+				.icon(() -> new ItemStack(BOOK.asItem()))
+				.displayName(Text.translatable("itemGroup.spellbladenext.thesis"))
 				.build();
 		SpellContainer container = new SpellContainer(SpellContainer.ContentType.MAGIC, false, new Identifier(MOD_ID,"thesis").toString(), 0, List.of());
 		SpellRegistry.book_containers.put(itemIdFor(new Identifier(MOD_ID,"thesis")), container);
@@ -381,6 +395,8 @@ public class Spellblades implements ModInitializer {
 			}
 		});
 		Registry.register(Registries.ITEM_GROUP, KEY, SPELLBLADES);
+		Registry.register(Registries.ITEM_GROUP, SPELLOILSKEY, SPELLOILS);
+		Registry.register(Registries.ITEM_GROUP, THESISKEY, THESIS);
 
 		SpellBooks.createAndRegister(new Identifier(MOD_ID,"frost_battlemage"),KEY);
 		SpellBooks.createAndRegister(new Identifier(MOD_ID,"fire_battlemage"),KEY);
@@ -412,6 +428,12 @@ public class Spellblades implements ModInitializer {
 			content.add(BOOK);
 			content.add(TABULARASA);
 			content.add(MAGUS_SPAWN_EGG);
+
+
+
+			/*content.add(RIFLE);*/
+		});
+		ItemGroupEvents.modifyEntriesEvent(THESISKEY).register((content) -> {
 			List<SpellBookItem> books = SpellBooks.sorted();
 			List<SpellPool> pools = new ArrayList<SpellPool>();
 			List<Identifier> spells = new ArrayList<Identifier>();
@@ -431,24 +453,61 @@ public class Spellblades implements ModInitializer {
 
 
 			spells.remove(new Identifier("spellbladenext:thesis"));
-			spells.removeIf(spell ->
-					SpellRegistry.getSpell(spell).school.equals(ExternalSpellSchools.PHYSICAL_RANGED)
-			);
-			for(Identifier id : spells){
-				SpellContainer container2 = new SpellContainer(false,"",1,List.of(id.toString()));
-				ItemStack stack = spellOil.getDefaultStack();
-				SpellContainerHelper.addContainerToItemStack(container2, stack);
-				content.add(stack);
-			}
+			spells.removeIf(spell -> {
+						if (SpellRegistry.getSpell(spell) != null && SpellRegistry.getSpell(spell).school != null) {
+							return SpellRegistry.getSpell(spell).school.equals(ExternalSpellSchools.PHYSICAL_RANGED);
+						}
+						else {
+							return false;
+						}
+                    });
 			for(Identifier id : spells){
 				ItemStack stack = BOOK.getDefaultStack();
 				SpellContainerHelper.addSpell(id,stack);
 				content.add(stack);
 			}
 
-			/*content.add(RIFLE);*/
-		});
-		REAVER = Registry.register(
+				}
+		);
+		ItemGroupEvents.modifyEntriesEvent(SPELLOILSKEY).register((content) -> {
+			List<SpellBookItem> books = SpellBooks.sorted();
+			List<SpellPool> pools = new ArrayList<SpellPool>();
+			List<Identifier> spells = new ArrayList<Identifier>();
+
+			for (SpellBookItem book : books) {
+				pools.add(SpellRegistry.spellPool(book.getPoolId()));
+			}
+			for (SpellBookItem book : books) {
+				pools.add(SpellRegistry.spellPool(book.getPoolId()));
+			}
+			for (SpellPool pool : pools) {
+				spells.addAll(pool.spellIds());
+			}
+
+			spells.add(new Identifier(Spellblades.MOD_ID,"smite"));
+			spells.add(new Identifier(Spellblades.MOD_ID,"whirlwind"));
+
+
+			spells.remove(new Identifier("spellbladenext:thesis"));
+			spells.removeIf(spell -> {
+				if (SpellRegistry.getSpell(spell) != null && SpellRegistry.getSpell(spell).school != null) {
+
+					return SpellRegistry.getSpell(spell).school.equals(ExternalSpellSchools.PHYSICAL_RANGED);
+				}
+				else {
+					return false;
+				}
+			});
+			for(Identifier id : spells){
+				SpellContainer container2 = new SpellContainer(false,"",1,List.of(id.toString()));
+				ItemStack stack = spellOil.getDefaultStack();
+				SpellContainerHelper.addContainerToItemStack(container2, stack);
+				content.add(stack);
+			}
+
+				}
+		);
+			REAVER = Registry.register(
 				ENTITY_TYPE,
 				new Identifier(MOD_ID, "magister"),
 				FabricEntityTypeBuilder.<Magister>create(SpawnGroup.MISC, Magister::new)

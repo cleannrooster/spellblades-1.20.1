@@ -15,6 +15,8 @@
   "item.spellbladenext.theavatar": "The Avatar",
   "item.spellbladenext.thesis_spell_book": "Thesis of Awakening",
   "item.spellbladenext.thesis_spell_book.desc": "Fear not the mage who has cast a thousand different spells once, fear the mage who has cast a single spell a thousand times.",
+  "item.spellbladenext.thesis_spell_book.desc2": "Awaken your spell at a spell binding table.",
+
   "item.spellbladenext.magus_spawn_egg": "Magus Spawn Egg",
 
   "item.spellbladenext.omni": "Crystallised Omniscience",
@@ -25,6 +27,9 @@
 
   "spellblades.avatarof" : "Avatar of",
   "itemGroup.spellbladenext.general": "Spellblades and Such",
+  "itemGroup.spellbladenext.thesis": "SnS Thesis Books",
+  "itemGroup.spellbladenext.spelloils": "SnS Spell Oils",
+
   "item.spellbladenext.arcane_blade": "Arcane Spellblade",
    "item.spellbladenext.frost_blade": "Frost Spellblade",
     "item.spellbladenext.fire_blade": "Fire Spellblade",
@@ -155,6 +160,10 @@
   "spellblades.unidentified":"Unidentified ",
   "biome.spellbladenext.glassocean": "Mirror's Edge",
   "dimension.spellbladenext.glassocean": "Glass Ocean",
+  "dimensiontype.spellbladenext.glassocean": "Glass Ocean",
+  "travelerstitles.spellbladenext.glassocean": "Glass Ocean",
+  "dimension.spellbladenext.glassocean": "Glass Ocean",
+
   "spell.spellbladenext.fireflourish.name": "Fire Flourish",
   "spell.spellbladenext.fireflourish.description": "Spin rapidly, dealing {damage_1} physical damage, plus {damage_2} fire damage. Gain 1 Haste and Strength per 4 fire power.",
 
