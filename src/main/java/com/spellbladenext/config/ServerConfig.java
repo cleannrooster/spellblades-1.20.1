@@ -17,7 +17,8 @@ public class ServerConfig  implements ConfigData {
     public  int omni_lower = 5;
     @Comment("Coefficient for Voidforge gained damage (Default: 1x, results in 100% gained as)")
     public  int voidforge = 1;
-
+    @Comment("Spellblade passive maximum Strength and Haste(Default: 10")
+    public  int passive = 10;
     @Comment("Distance from 0,0 below which Hexblades will not invade in the Glass Ocean (Default: 0)")
     public  int hexblade_grace = 0;
     @Comment("Damage multiplier for spin attacks (eg: Whirlwind) (Default: 1.0)")
@@ -44,4 +45,7 @@ public class ServerConfig  implements ConfigData {
     public  int magisterXP = 25;
     @Comment("Do not apply Spell Oil capability to any item matching this regex. (Not applied of empty)")
     public String blacklist_spell_oil_regex = "";
+    @Comment("Enable tabula rasa (Default: true")
+    public boolean tab = true;
+
 }

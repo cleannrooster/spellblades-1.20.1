@@ -1,5 +1,6 @@
 package com.spellbladenext.items;
 
+import com.spellbladenext.Spellblades;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemStack;
@@ -24,7 +25,10 @@ public class TabulaRasa extends SpellBookTrinketItem {
 
         tooltip.add(Text.translatable("item.spellbladenext.tabula_rasa.desc").formatted(Formatting.RED).formatted(Formatting.ITALIC));
         tooltip.add(Text.translatable("item.spellbladenext.tabula_rasa.desc2").formatted(Formatting.GRAY));
+        if(!Spellblades.config.tab){
+            tooltip.add(Text.translatable("DISABLED via server config").formatted(Formatting.RED).formatted(Formatting.BOLD));
 
+        }
         super.appendTooltip(stack, world, tooltip, context);
     }
 }

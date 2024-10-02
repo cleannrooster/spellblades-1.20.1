@@ -5,6 +5,7 @@
     "tier": 3
   },
   "cast": {
+    "movement_speed": 1.1,
     "duration": 5,
     "haste_affected": false,
     "channel_ticks": 4,
@@ -29,7 +30,7 @@
     "target": {
       "type": "AREA",
       "area": {
-        "vertical_range_multiplier": 0.5
+        "vertical_range_multiplier": 1.6
       }
     }
   },
@@ -40,7 +41,7 @@
         "type": "DAMAGE",
         "damage": {
           "knockback": 0.5,
-          "spell_power_coefficient": 0.5
+          "spell_power_coefficient": 1.8
         }
       },
       "sound": {

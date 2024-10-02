@@ -1,5 +1,6 @@
 package com.spellbladenext.mixin;
 
+import com.extraspellattributes.api.SpellStatusEffectInstance;
 import com.google.common.collect.Maps;
 import com.spellbladenext.Spellblades;
 import com.spellbladenext.config.ServerConfig;
@@ -38,6 +39,7 @@ import net.spell_engine.particle.ParticleHelper;
 import net.spell_engine.utils.TargetHelper;
 import net.spell_power.api.SpellDamageSource;
 import net.spell_power.api.SpellPower;
+import net.spell_power.api.SpellSchools;
 import net.spell_power.mixin.DamageSourcesAccessor;
 import net.spell_engine.internals.casting.SpellCasterEntity;
 import net.tinyconfig.ConfigManager;
@@ -52,6 +54,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Predicate;
 
 import static com.extraspellattributes.ReabsorptionInit.*;
@@ -98,11 +101,13 @@ public class LivingEntityMixin {
 
             }
         }
-        if (!living.getWorld().isClient() && living instanceof PlayerEntity player && living instanceof SpellCasterEntity caster && living instanceof PlayerDamageInterface damageInterface &&
-                SpellContainerHelper.getEquipped(living.getMainHandStack(), player) != null && SpellContainerHelper.getEquipped(player.getMainHandStack(), player).spell_ids != null && SpellContainerHelper.getEquipped(player.getMainHandStack(), player).spell_ids.contains("spellbladenext:combustion")) {
-            target.setOnFireFor(4);
-            if(target instanceof LivingEntity livingEntity){
-                livingEntity.addStatusEffect(new StatusEffectInstance(PHOENIXCURSE,80,0,false,true));
+        if (!living.getWorld().isClient() && living instanceof SpellCasterEntity entity && living instanceof PlayerEntity player && SpellContainerHelper.getEquipped(living.getMainHandStack(),player) != null && SpellContainerHelper.getEquipped(player.getMainHandStack(),player).spell_ids.contains("spellbladenext:combustion") && ammoForSpell(player, SpellRegistry.getSpell(new Identifier(MOD_ID, "combustion")), player.getMainHandStack()).satisfied() && !entity.getCooldownManager().isCoolingDown(new Identifier(MOD_ID, "combustion"))) {
+            if(target instanceof LivingEntity livingEntity && !livingEntity.hasStatusEffect(PHOENIXCURSE)){
+                target.setOnFireFor(2);
+                livingEntity.addStatusEffect(new SpellStatusEffectInstance(PHOENIXCURSE,SpellRegistry.getSpell(new Identifier(Spellblades.MOD_ID,"combustion")), (float) SpellPower.getSpellPower(SpellSchools.FIRE,living).randomValue(),living,40,0,false,false,false,null, Optional.empty()));
+                ((WorldScheduler)livingEntity.getWorld()).schedule(1,()->{
+                    entity.getCooldownManager().set(new Identifier(MOD_ID,"combustion"),(int) (20*SpellHelper.getCooldownDuration(living,SpellRegistry.getSpell(new Identifier(MOD_ID,"combustion")))));
+                });
             }
         }
     }

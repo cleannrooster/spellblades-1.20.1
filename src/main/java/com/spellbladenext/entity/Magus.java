@@ -68,6 +68,7 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Util;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.spell_engine.api.spell.Spell;
@@ -380,7 +381,6 @@ public class Magus extends HostileEntity implements InventoryOwner, GeoEntity {
         }
 
         double damagemodifier = min(1,0.05+(double)this.dataTracker.get(modifier)/100);
-
         super.applyDamage(damageSource, (float) (f*damagemodifier));
     }
 

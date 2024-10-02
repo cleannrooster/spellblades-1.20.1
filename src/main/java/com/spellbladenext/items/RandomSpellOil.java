@@ -2,6 +2,8 @@ package com.spellbladenext.items;
 
 import com.spellbladenext.Spellblades;
 import com.spellbladenext.SpellbladesClient;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -41,21 +43,23 @@ public class RandomSpellOil extends Item {
     }
 
     @Override
+    @Environment(EnvType.CLIENT)
     public Text getName(ItemStack stack) {
         SpellContainer tabulaContainer = SpellContainerHelper.containerFromItemStack(stack);
+
         if(tabulaContainer == null){
-            return Text.translatable("spellblades.unidentified").append(super.getName(stack));
+            return Text.translatable("spellblades.unidentified").append(Text.translatable(this.getTranslationKey(stack)));
         }
         else{
             if(tabulaContainer.spell_ids.get(0) != null) {
                 return Text.translatable(SpellTooltip.spellTranslationKey(new Identifier(tabulaContainer.spell_ids.get(0))))
                         .append(Text.of(" "))
-                        .append( super.getName(stack));
+                        .append( Text.translatable(this.getTranslationKey(stack)));
             }
 
         }
 
-        return super.getName(stack);
+        return Text.translatable(this.getTranslationKey(stack));
     }
 
     public static boolean matches(String subject, String nullableRegex) {

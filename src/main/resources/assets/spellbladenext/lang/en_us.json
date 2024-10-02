@@ -78,13 +78,13 @@
   "spell.spellbladenext.monkeyslam.name": "Grand Vault",
   "spell.spellbladenext.monkeyslam.description": "Leap into the clouds, becoming invulnerable while channeling.",
   "spell.spellbladenext.reckoning.name": "Monkey King's Reckoning",
-  "spell.spellbladenext.reckoning.description": "Spin, dealing {damage} physical damage per second, multiplied by your attack speed. No penalty for hitting multiple enemies.",
+  "spell.spellbladenext.reckoning.description": "Spin, dealing {damage} physical damage per second.",
   "spell.spellbladenext.combustion.name": "Phoenix Curse",
-  "spell.spellbladenext.combustion.description": "Passive: Your damage sets enemies on fire for 4 seconds and gives them Phoenix's Curse for the same duration, preventing fires on them from going out. Active: Channel to make already burning enemies around you take fire damage faster, taking {damage} fire damage per second.",
+  "spell.spellbladenext.combustion.description": "Passive: On a cooldown, Your damage sets enemies on fire for 2 seconds and gives them Phoenix's Curse for the same duration, preventing fires on them from going out and dealing {damage} fire spell damage 4 times over 2 seconds. Active: Deal {damage} fire spell damage to nearby enemies.",
   "spell.spellbladenext.phoenixdive.name": "Phoenix Dive",
   "spell.spellbladenext.phoenixdive.description": "Blink towards the target direction, performing a nova for {damage} fire damage upon landing and setting hit enemies on fire.",
   "spell.spellbladenext.snuffout.name": "Wildfire",
-  "spell.spellbladenext.snuffout.description": "The flames around you blaze into an inferno, causing enemies that are on fire to deal {damage} fire damage to enemies around them.",
+  "spell.spellbladenext.snuffout.description": "The flames around you blaze into an inferno, causing enemies that are on fire to deal {damage} fire damage to enemies around them, extinguishing them",
 
   "spell.spellbladenext.sniper.name": "Runeblaze Round",
   "spell.spellbladenext.sniper.description": "Charge and shoot your rifle, dealing 2x ranged damage and an additional {damage} ranged physical damage.",
@@ -116,13 +116,13 @@
   "spell.spellbladenext.finalstrike.description": "Charge up a deadly attack against all enemies in a line, teleporting behind the last one and dealing {damage_1} physical damage plus an additional {damage_2} arcane spell damage. Gain 1 Haste and Strength per 4 arcane power.",
 
   "spell.spellbladenext.eviscerate.name": "Massacre",
-  "spell.spellbladenext.eviscerate.description": "Become intangible, attacking the nearest enemy five times over a second, dealing {damage_1} physical damage and {damage_2} frost damage, both multiplied by your attack speed. If this kills the enemy before the last hit, these effects continue onto another enemy. Gain 1 Haste and Strength per 4 frost power.",
+  "spell.spellbladenext.eviscerate.description": "Become intangible, attacking the nearest enemy five times over a second, dealing {damage_1} physical damage and {damage_2} frost damage. If this kills the enemy before the last hit, these effects continue onto another enemy. Gain 1 Haste and Strength per 4 frost power.",
 
   "spell.spellbladenext.whirlingblades.name": "Riptide",
   "spell.spellbladenext.whirlingblades.description": "Aim and launch yourself as if with a riptide-enchanted trident",
 
   "spell.spellbladenext.flicker_strike.name": "Flickering Flame",
-  "spell.spellbladenext.flicker_strike.description": "Jump onto nearby enemies equally, dealing {damage_1} physical damage plus an additional {damage_2} fire damage, scaled by attack speed. Focuses on one target if there is only one target. Gain 1 Haste and Strength per 4 fire power.",
+  "spell.spellbladenext.flicker_strike.description": "Jump onto nearby enemies equally, dealing {damage_1} physical damage plus an additional {damage_2} fire damage. Focuses on one target if there is only one target. Gain 1 Haste and Strength per 4 fire power.",
 
   "spell.spellbladenext.frostblink.name": "Arcane Flicker",
   "spell.spellbladenext.frostblink.description": "Teleport behind an enemy, dealing {damage_1} physical damage plus an additional {damage_2} arcane damage.",
@@ -144,16 +144,16 @@
   "spell.spellbladenext.smite.description": "Smite enemies in front of you in an area, dealing {damage_1} physical and {damage_2} extra healing damage to each enemy hit, 50%% more healing damage against undead. Gives you the Spellblade passive upon use.",
 
   "spell.spellbladenext.maelstrom.name": "Maelstrom",
-  "spell.spellbladenext.maelstrom.description": "Spin continuously, dealing {damage_1} physical damage and {damage_2} arcane damage per second, multiplied by attack speed. Gain 1 Haste and Strength per 4 arcane power. Penalty for hitting multiple mobs, mitigated by Sweeping Edge. Shift to stop moving.",
+  "spell.spellbladenext.maelstrom.description": "Spin continuously, dealing {damage_1} physical damage and {damage_2} arcane damage per second. Gain 1 Haste and Strength per 4 arcane power. ",
 
   "spell.spellbladenext.inferno.name": "Inferno",
-  "spell.spellbladenext.inferno.description": "Spin continuously, dealing {damage_1} physical damage and {damage_2} fire damage per second multiplied by attack speed. Gain 1 Haste and Strength per 4 fire power. Penalty for hitting multiple mobs, mitigated by Sweeping Edge. Shift to stop moving.",
+  "spell.spellbladenext.inferno.description": "Spin continuously, dealing {damage_1} physical damage and {damage_2} fire damage per second. Gain 1 Haste and Strength per 4 fire power. ",
 
   "spell.spellbladenext.tempest.name": "Tempest",
-  "spell.spellbladenext.tempest.description": "Spin continuously, dealing {damage_1} physical damage and {damage_2} frost damage per second, multiplied by attack speed. Gain 1 Haste and Strength per 4 frost power. Penalty for hitting multiple mobs, mitigated by Sweeping Edge. Shift to stop moving.",
+  "spell.spellbladenext.tempest.description": "Spin continuously, dealing {damage_1} physical damage and {damage_2} frost damage per second. Gain 1 Haste and Strength per 4 frost power",
 
   "spell.spellbladenext.whirlwind.name": "Cyclone",
-  "spell.spellbladenext.whirlwind.description": "Spin continuously, {damage} physical damage per second, multiplied by your attack speed. Penalty for hitting multiple mobs, mitigated by Sweeping Edge. Shift to stop moving.",
+  "spell.spellbladenext.whirlwind.description": "Spin continuously, {damage} physical damage per second. ",
 
   "spell.spellbladenext.arcaneflourish.name": "Arcane Flourish",
   "spell.spellbladenext.arcaneflourish.description": "Spin rapidly, dealing {damage_1} physical damage, plus {damage_2} arcane damage. Gain 1 Haste and Strength per 4 arcane power.",

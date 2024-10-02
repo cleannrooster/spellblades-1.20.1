@@ -64,14 +64,12 @@ public class Attacks {
         float modifier = ((SpellCasterEntity) data1.caster()).getCurrentSpell().impact[0].action.damage.spell_power_coefficient;
         modifier *= 0.4F + 0.6F / (float) data1.targets().size() + (0.6F - 0.6F / (float) data1.targets().size()) * Math.min(3, EnchantmentHelper.getEquipmentLevel(Enchantments.SWEEPING, data1.caster())) / 3;
         modifier *= 0.2;
-        modifier *= data1.caster().getAttributeValue(EntityAttributes.GENERIC_ATTACK_SPEED);
         modifier *= Spellblades.config.spin_attack_coeff;
         float modifier2 = ((SpellCasterEntity) data1.caster()).getCurrentSpell().impact[1].action.damage.spell_power_coefficient;
         modifier2 *= 0.4F + 0.6F / (float) data1.targets().size() + (0.6F - 0.6F / (float) data1.targets().size()) * Math.min(3, EnchantmentHelper.getEquipmentLevel(Enchantments.SWEEPING, data1.caster())) / 3;
         modifier2 *= 0.2;
             modifier2 *= Spellblades.config.spin_attack_coeff;
 
-            modifier2 *= data1.caster().getAttributeValue(EntityAttributes.GENERIC_ATTACK_SPEED);
 
 
         attackAll(data1.caster(), data1.targets(), (float) modifier);

@@ -1,6 +1,8 @@
 package com.spellbladenext.items;
 
 import com.spellbladenext.Spellblades;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.entity.Entity;
 import net.minecraft.item.Item;
@@ -36,10 +38,11 @@ public class ThesisBook extends SpellBookTrinketItem implements SpellBookItem {
         this.poolId = poolId;
     }
     @Override
+    @Environment(EnvType.CLIENT)
     public Text getName(ItemStack stack) {
         SpellContainer tabulaContainer = SpellContainerHelper.containerFromItemStack(stack);
         if(tabulaContainer == null){
-            return Text.translatable("spellblades.unidentified").append(super.getName(stack));
+            return Text.translatable("spellblades.unidentified").append(Text.translatable(this.getTranslationKey(stack)));
         }
         else{
             if(tabulaContainer.spell_ids != null && !tabulaContainer.spell_ids.isEmpty() &&  tabulaContainer.spell_ids.get(0) != null) {
@@ -50,7 +53,7 @@ public class ThesisBook extends SpellBookTrinketItem implements SpellBookItem {
 
         }
 
-        return super.getName(stack);
+        return Text.translatable(this.getTranslationKey(stack));
     }
 
 

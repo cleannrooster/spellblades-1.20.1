@@ -10,7 +10,7 @@
       "id": "spell_engine:generic_fire_casting",
       "randomness": 0
     },
-    "duration": 1
+    "duration": 0.25
   },
   "release": {
     "custom_impact": true,

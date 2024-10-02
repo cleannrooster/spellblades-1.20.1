@@ -6,6 +6,7 @@
   },
   "cast": {
     "duration": 8,
+    "movement_speed": 1.1,
     "animation": "spellbladenext:spinstaff",
     "channel_ticks": 4,
     "sound": {
@@ -28,7 +29,7 @@
         "type": "DAMAGE",
         "damage": {
           "knockback": 0.5,
-          "spell_power_coefficient": 0.8
+          "spell_power_coefficient": 4
         }
       },
       "particles": [

@@ -1,17 +1,15 @@
 package com.spellbladenext;
 
+import com.extraspellattributes.api.SpellStatusEffect;
 import com.google.common.base.Suppliers;
 import com.google.common.collect.ImmutableMultimap;
 import com.spellbladenext.block.Hexblade;
 import com.spellbladenext.block.HexbladeBlockItem;
 import com.spellbladenext.config.ConfigSync;
+import com.spellbladenext.effect.*;
 import com.spellbladenext.items.TabulaRasa;
 import com.spellbladenext.config.ServerConfig;
 import com.spellbladenext.config.ServerConfigWrapper;
-import com.spellbladenext.effect.CustomEffect;
-import com.spellbladenext.effect.Hex;
-import com.spellbladenext.effect.RunicAbsorption;
-import com.spellbladenext.effect.Slamming;
 import com.spellbladenext.entity.*;
 import com.spellbladenext.invasions.attackevent;
 import com.spellbladenext.items.*;
@@ -186,18 +184,18 @@ public class Spellblades implements ModInitializer {
 	public static StatusEffect SLAMMING = new Slamming(StatusEffectCategory.BENEFICIAL, 0xff4bdd);
 	public static ThesisBook BOOK;
 
-	public static TabulaRasa TABULARASA;
 	private static PacketByteBuf configSerialized = PacketByteBufs.create();
 
 	public static final Item NETHERDEBUG = new DebugNetherPortal(new FabricItemSettings().maxCount(1));
 
 	public static StatusEffect HEXED = new Hex(StatusEffectCategory.HARMFUL, 0xff4bdd);
-	public static StatusEffect PHOENIXCURSE = new CustomEffect(StatusEffectCategory.HARMFUL, 0xff4bdd);
+	public static SpellStatusEffect PHOENIXCURSE = new PhoenixCurse(StatusEffectCategory.HARMFUL, 0xff4bdd,SpellRegistry.getSpell(new Identifier(Spellblades.MOD_ID,"combustion")));
 
 	public static StatusEffect MAGISTERFRIEND = new CustomEffect(StatusEffectCategory.BENEFICIAL, 0xff4bdd);
 	public static final RegistryKey<World> DIMENSIONKEY = RegistryKey.of(RegistryKeys.WORLD,new Identifier(Spellblades.MOD_ID,"glassocean"));
 
 	public static final RegistryKey<DimensionType> DIMENSION_TYPE_RESOURCE_KEY = RegistryKey.of(RegistryKeys.DIMENSION_TYPE,new Identifier(Spellblades.MOD_ID,"glassocean"));
+	public static TabulaRasa TABULARASA;
 
 	public static ConfigManager<ItemConfig> itemConfig = new ConfigManager<ItemConfig>
 			("items_v7", Default.itemConfig)
@@ -257,7 +255,7 @@ public class Spellblades implements ModInitializer {
 		SpellRegistry.book_containers.put(itemIdFor(new Identifier(MOD_ID,"thesis")), container);
 
 		BOOK = new ThesisBook( new Identifier(MOD_ID,"thesis"),new Item.Settings().maxCount(1));
-		TABULARASA = new TabulaRasa( new Identifier(MOD_ID,"tabula_rasa"),new Item.Settings().maxCount(1));
+
 		AutoConfig.register(ServerConfigWrapper.class, PartitioningSerializer.wrap(JanksonConfigSerializer::new));
 
 		config = AutoConfig.getConfigHolder(ServerConfigWrapper.class).getConfig().server;
@@ -304,7 +302,7 @@ public class Spellblades implements ModInitializer {
 		Registry.register(Registries.ITEM, new Identifier(MOD_ID, "prismatic"), PRISMATIC);
 		Registry.register(Registries.ITEM, new Identifier(MOD_ID, "thread"), THREAD);
 		Registry.register(Registries.ITEM, new Identifier(MOD_ID, "thesis_spell_book"), BOOK);
-		Registry.register(Registries.ITEM, new Identifier(MOD_ID, "tabula_rasa"), TABULARASA);
+
 		Registry.register(Registries.ITEM, new Identifier(MOD_ID, "magus_spawn_egg"), MAGUS_SPAWN_EGG);
 		Registry.register(Registries.ATTRIBUTE,new Identifier(MOD_ID,"purpose"),PURPOSE);
 
@@ -325,9 +323,11 @@ public class Spellblades implements ModInitializer {
 		PURPOSE.setTracked(true);
 		SpellSchools.HEALING.addSource(SpellSchool.Trait.POWER, SpellSchool.Apply.ADD,queryArgs -> {
 			double amount = 0;
-			for(SpellSchool school : SpellSchools.all()){
-				if(school != ExternalSpellSchools.PHYSICAL_MELEE && school != ExternalSpellSchools.PHYSICAL_RANGED && school != SpellSchools.HEALING) {
-					amount += SpellPower.getSpellPower(school, queryArgs.entity()).baseValue() * 0.01 * (queryArgs.entity().getAttributeValue(PURPOSE) - 100);
+			if(queryArgs.entity().getAttributeValue(PURPOSE) - 100 > 0) {
+				for (SpellSchool school : SpellSchools.all()) {
+					if (school.attribute != null && school != ExternalSpellSchools.PHYSICAL_MELEE && school != ExternalSpellSchools.PHYSICAL_RANGED && school != SpellSchools.HEALING) {
+						amount += SpellPower.getSpellPower(school, queryArgs.entity()).baseValue() * 0.01 * (queryArgs.entity().getAttributeValue(PURPOSE) - 100);
+					}
 				}
 			}
 			return amount;
@@ -426,13 +426,19 @@ public class Spellblades implements ModInitializer {
 			content.add(SINGULARPURPOSE);
 			content.add(THEAVATAR);
 			content.add(BOOK);
-			content.add(TABULARASA);
+
 			content.add(MAGUS_SPAWN_EGG);
 
 
 
 			/*content.add(RIFLE);*/
 		});
+			TABULARASA = new TabulaRasa(new Identifier(MOD_ID, "tabula_rasa"), new Item.Settings().maxCount(1));
+			Registry.register(Registries.ITEM, new Identifier(MOD_ID, "tabula_rasa"), TABULARASA);
+			ItemGroupEvents.modifyEntriesEvent(KEY).register((content) -> {
+
+				content.add(TABULARASA);
+			});
 		ItemGroupEvents.modifyEntriesEvent(THESISKEY).register((content) -> {
 			List<SpellBookItem> books = SpellBooks.sorted();
 			List<SpellPool> pools = new ArrayList<SpellPool>();
@@ -825,14 +831,7 @@ public class Spellblades implements ModInitializer {
 			CustomSpellHandler.Data data1 = (CustomSpellHandler.Data) data;
 			float modifier = SpellRegistry.getSpell(new Identifier(MOD_ID,"finalstrike")).impact[0].action.damage.spell_power_coefficient;
 			float modifier2 = SpellRegistry.getSpell(new Identifier(MOD_ID,"finalstrike")).impact[1].action.damage.spell_power_coefficient;
-			SpellPower.Result power2 = SpellPower.getSpellPower(actualSchool, (LivingEntity) data1.caster());
-			int amp = Math.min(49, (int) power2.randomValue() / 4 - 1);
-			if (amp >= 0) {
-
-				data1.caster().addStatusEffect(new StatusEffectInstance(StatusEffects.STRENGTH, (int) (SpellHelper.getCooldownDuration(data1.caster(), SpellRegistry.getSpell(new Identifier(Spellblades.MOD_ID,"finalstrike"))) * 20 ), amp));
-				data1.caster().addStatusEffect(new StatusEffectInstance(StatusEffects.HASTE, (int) (SpellHelper.getCooldownDuration(data1.caster(), SpellRegistry.getSpell(new Identifier(Spellblades.MOD_ID,"finalstrike"))) * 20 ), amp));
-
-			}
+			SpellbladePassive(actualSchool,data1);
 			List<Entity> list = TargetHelper.targetsFromRaycast(data1.caster(),SpellRegistry.getSpell(new Identifier(MOD_ID,"finalstrike")).range, Objects::nonNull);
 
 			if(!data1.targets().isEmpty()) {
@@ -1056,18 +1055,11 @@ public class Spellblades implements ModInitializer {
 			CustomSpellHandler.Data data1 = (CustomSpellHandler.Data) data;
 			float modifier = SpellRegistry.getSpell(new Identifier(MOD_ID,"flicker_strike")).impact[0].action.damage.spell_power_coefficient;
 			modifier *= 0.2;
-			modifier *= data1.caster().getAttributeValue(EntityAttributes.GENERIC_ATTACK_SPEED);
 			float modifier2 = SpellRegistry.getSpell(new Identifier(MOD_ID,"flicker_strike")).impact[1].action.damage.spell_power_coefficient;
 			modifier2 *= 0.2;
-			modifier2 *= data1.caster().getAttributeValue(EntityAttributes.GENERIC_ATTACK_SPEED);
 			SpellPower.Result power2 = SpellPower.getSpellPower(SpellSchools.FIRE, (LivingEntity) data1.caster());
-			int amp = Math.min(49, (int) power2.randomValue() / 4 - 1);
-			if (amp >= 0) {
+			SpellbladePassive(SpellSchools.FIRE,data1);
 
-				data1.caster().addStatusEffect(new StatusEffectInstance(StatusEffects.STRENGTH, (int) (SpellHelper.getCooldownDuration(data1.caster(), SpellRegistry.getSpell(new Identifier(Spellblades.MOD_ID,"flicker_strike"))) * 20 ), amp));
-				data1.caster().addStatusEffect(new StatusEffectInstance(StatusEffects.HASTE, (int) (SpellHelper.getCooldownDuration(data1.caster(), SpellRegistry.getSpell(new Identifier(Spellblades.MOD_ID,"flicker_strike"))) * 20 ), amp));
-
-			}
 			if(data1.caster() instanceof PlayerDamageInterface player) {
 				List<LivingEntity> list = new ArrayList<>();
 				for(Entity entity: data1.targets()){
@@ -1115,13 +1107,8 @@ public class Spellblades implements ModInitializer {
 			CustomSpellHandler.Data data1 = (CustomSpellHandler.Data) data;
 			data1.targets().remove(data1.caster());
 			SpellPower.Result power2 = SpellPower.getSpellPower(actualSchool, (LivingEntity) data1.caster());
-			int amp = Math.min(49, (int) power2.randomValue() / 4 - 1);
-			if (amp >= 0) {
+			SpellbladePassive(actualSchool,data1);
 
-				data1.caster().addStatusEffect(new StatusEffectInstance(StatusEffects.STRENGTH, (int) (SpellHelper.getCooldownDuration(data1.caster(), SpellRegistry.getSpell(new Identifier(Spellblades.MOD_ID,"eviscerate"))) * 20 ), amp));
-				data1.caster().addStatusEffect(new StatusEffectInstance(StatusEffects.HASTE, (int) (SpellHelper.getCooldownDuration(data1.caster(), SpellRegistry.getSpell(new Identifier(Spellblades.MOD_ID,"eviscerate"))) * 20 ), amp));
-
-			}
 			if(data1.targets().isEmpty()){
 				if(data1.caster() instanceof SpellCasterEntity entity){
 					entity.setSpellCastProcess(null);
@@ -1143,10 +1130,8 @@ public class Spellblades implements ModInitializer {
 			}
 			float modifier = SpellRegistry.getSpell(new Identifier(MOD_ID,"eviscerate")).impact[0].action.damage.spell_power_coefficient;
 			modifier *= 0.2;
-			modifier *= data1.caster().getAttributeValue(EntityAttributes.GENERIC_ATTACK_SPEED);
 			float modifier2 = SpellRegistry.getSpell(new Identifier(MOD_ID,"eviscerate")).impact[1].action.damage.spell_power_coefficient;
 			modifier2 *= 0.2;
-			modifier2 *= data1.caster().getAttributeValue(EntityAttributes.GENERIC_ATTACK_SPEED);
 
 			if(data1.caster() instanceof PlayerDamageInterface playerDamageInterface && playerDamageInterface.getLastAttacked() != null && data1.targets().contains(playerDamageInterface.getLastAttacked())) {
 				EntityAttributeModifier modifier1 = new EntityAttributeModifier(UUID.randomUUID(),"knockbackresist",1, EntityAttributeModifier.Operation.ADDITION);
@@ -1255,13 +1240,8 @@ public class Spellblades implements ModInitializer {
 
 
 				SpellPower.Result power2 = SpellPower.getSpellPower(actualSchool, (LivingEntity) data1.caster());
-				int amp = Math.min(49, (int) power2.randomValue() / 4 - 1);
-				if (amp >= 0) {
+			SpellbladePassive(actualSchool,data1);
 
-					data1.caster().addStatusEffect(new StatusEffectInstance(StatusEffects.STRENGTH, (int) (SpellHelper.getCooldownDuration(data1.caster(), SpellRegistry.getSpell(new Identifier(Spellblades.MOD_ID,"frostflourish"))) * 20 ), amp));
-					data1.caster().addStatusEffect(new StatusEffectInstance(StatusEffects.HASTE, (int) (SpellHelper.getCooldownDuration(data1.caster(), SpellRegistry.getSpell(new Identifier(Spellblades.MOD_ID,"frostflourish"))) * 20 ), amp));
-
-				}
 			float modifier = SpellRegistry.getSpell(new Identifier(MOD_ID,"frostflourish")).impact[0].action.damage.spell_power_coefficient;
 			float modifier2 = SpellRegistry.getSpell(new Identifier(MOD_ID,"frostflourish")).impact[0].action.damage.spell_power_coefficient;
 			
@@ -1340,13 +1320,8 @@ public class Spellblades implements ModInitializer {
 			SpellSchool actualSchool = SpellSchools.FIRE;
 			CustomSpellHandler.Data data1 = (CustomSpellHandler.Data) data;
 			SpellPower.Result power2 = SpellPower.getSpellPower(actualSchool, (LivingEntity) data1.caster());
-			int amp = Math.min(49, (int) power2.randomValue() / 4 - 1);
-			if (amp >= 0) {
+			SpellbladePassive(actualSchool,data1);
 
-				data1.caster().addStatusEffect(new StatusEffectInstance(StatusEffects.STRENGTH, (int) (SpellHelper.getCooldownDuration(data1.caster(), SpellRegistry.getSpell(new Identifier(Spellblades.MOD_ID,"fireflourish"))) * 20 ), amp));
-				data1.caster().addStatusEffect(new StatusEffectInstance(StatusEffects.HASTE, (int) (SpellHelper.getCooldownDuration(data1.caster(), SpellRegistry.getSpell(new Identifier(Spellblades.MOD_ID,"fireflourish"))) * 20 ), amp));
-
-			}
 			float modifier = SpellRegistry.getSpell(new Identifier(MOD_ID,"fireflourish")).impact[0].action.damage.spell_power_coefficient;
 			float modifier2 = SpellRegistry.getSpell(new Identifier(MOD_ID,"fireflourish")).impact[0].action.damage.spell_power_coefficient;
 			
@@ -1425,13 +1400,8 @@ public class Spellblades implements ModInitializer {
 			float modifier2 = SpellRegistry.getSpell(new Identifier(MOD_ID,"arcaneflourish")).impact[1].action.damage.spell_power_coefficient;
 
 			SpellPower.Result power2 = SpellPower.getSpellPower(actualSchool, (LivingEntity) data1.caster());
-			int amp = Math.min(49, (int) power2.randomValue() / 4 - 1);
-			if (amp >= 0) {
+			SpellbladePassive(actualSchool,data1);
 
-				data1.caster().addStatusEffect(new StatusEffectInstance(StatusEffects.STRENGTH, (int) (SpellHelper.getCooldownDuration(data1.caster(), SpellRegistry.getSpell(new Identifier(Spellblades.MOD_ID,"arcaneflourish"))) * 20 ), amp));
-				data1.caster().addStatusEffect(new StatusEffectInstance(StatusEffects.HASTE, (int) (SpellHelper.getCooldownDuration(data1.caster(), SpellRegistry.getSpell(new Identifier(Spellblades.MOD_ID,"arcaneflourish"))) * 20 ), amp));
-
-			}
 			Attacks.attackAll(data1.caster(),data1.targets(),(float)modifier);
 			for(Entity entity: data1.targets()){
 				SpellPower.Result power = SpellPower.getSpellPower(actualSchool, (LivingEntity) data1.caster());
@@ -1507,13 +1477,8 @@ public class Spellblades implements ModInitializer {
 			SpellSchool actualSchool = SpellSchools.FROST;
 
 			SpellPower.Result power2 = SpellPower.getSpellPower(actualSchool, (LivingEntity) data1.caster());
-			int amp = Math.min(49, (int) power2.randomValue() / 4 - 1);
-			if (amp >= 0) {
+			SpellbladePassive(actualSchool,data1);
 
-				data1.caster().addStatusEffect(new StatusEffectInstance(StatusEffects.STRENGTH, (int) (SpellHelper.getCooldownDuration(data1.caster(), SpellRegistry.getSpell(new Identifier(Spellblades.MOD_ID,"tempest"))) * 20 ), amp));
-				data1.caster().addStatusEffect(new StatusEffectInstance(StatusEffects.HASTE, (int) (SpellHelper.getCooldownDuration(data1.caster(), SpellRegistry.getSpell(new Identifier(Spellblades.MOD_ID,"tempest"))) * 20 ), amp));
-
-			}
 			if(data1.caster().getWorld() instanceof ServerWorld world){
 				if(world.getEntitiesByType(TypeFilter.instanceOf(CycloneEntity.class), cyclone -> {
 					if( cyclone.getOwner() == data1.caster() && cyclone.getColor() != 5){
@@ -1528,8 +1493,10 @@ public class Spellblades implements ModInitializer {
 					data1.caster().getWorld().spawnEntity(cyclone);
 
 				}
-				eleWhirlwind(data1);
-
+				for(Entity entity : data1.targets()) {
+					SpellHelper.performImpacts(data1.caster().getWorld(), data1.caster(),entity,data1.caster(),new SpellInfo(
+							SpellRegistry.getSpell(Identifier.of(MOD_ID,"tempest")),Identifier.of(MOD_ID,"tempest")),data1.impactContext() );
+				}
 			}
 
 			return false;
@@ -1542,7 +1509,6 @@ public class Spellblades implements ModInitializer {
 			modifier *= 0.4F+0.6F/(float)data1.targets().size()+(0.6F-0.6F/(float)data1.targets().size())*Math.min(3, EnchantmentHelper.getEquipmentLevel(Enchantments.SWEEPING,data1.caster()))/3;
 			modifier *= 0.2;
 			modifier *= Spellblades.config.spin_attack_coeff;
-			modifier *= data1.caster().getAttributeValue(EntityAttributes.GENERIC_ATTACK_SPEED);
 			if(data1.caster().getWorld() instanceof ServerWorld world){
 				if(world.getEntitiesByType(TypeFilter.instanceOf(CycloneEntity.class), cyclone -> {
 					if( cyclone.getOwner() == data1.caster()&& cyclone.getColor() != 5){
@@ -1558,8 +1524,10 @@ public class Spellblades implements ModInitializer {
 					data1.caster().getWorld().spawnEntity(cyclone);
 
 				}
-				Attacks.attackAll(data1.caster(),data1.targets(),(float)modifier);
-
+				for(Entity entity : data1.targets()) {
+					SpellHelper.performImpacts(data1.caster().getWorld(), data1.caster(),entity,data1.caster(),new SpellInfo(
+							SpellRegistry.getSpell(Identifier.of(MOD_ID,"whirlwind")),Identifier.of(MOD_ID,"whirlwind")),data1.impactContext() );
+				}
 			}
 
 			return false;
@@ -1571,7 +1539,6 @@ public class Spellblades implements ModInitializer {
 			modifier *= 0.2;
 			modifier *= Spellblades.config.spin_attack_coeff;
 
-			modifier *= data1.caster().getAttributeValue(EntityAttributes.GENERIC_ATTACK_SPEED);
 			if(data1.caster().getWorld() instanceof ServerWorld world){
 				if(world.getEntitiesByType(TypeFilter.instanceOf(CycloneEntity.class), cyclone -> {
 					if( cyclone.getOwner() == data1.caster()&& cyclone.getColor() != 5){
@@ -1599,13 +1566,8 @@ public class Spellblades implements ModInitializer {
 			SpellSchool actualSchool = SpellSchools.ARCANE;
 
 			SpellPower.Result power2 = SpellPower.getSpellPower(actualSchool, (LivingEntity) data1.caster());
-			int amp = Math.min(49, (int) power2.randomValue() / 4 - 1);
-			if (amp >= 0) {
+			SpellbladePassive(actualSchool,data1);
 
-				data1.caster().addStatusEffect(new StatusEffectInstance(StatusEffects.STRENGTH, (int) (SpellHelper.getCooldownDuration(data1.caster(), SpellRegistry.getSpell(new Identifier(Spellblades.MOD_ID,"maelstrom"))) * 20 ), amp));
-				data1.caster().addStatusEffect(new StatusEffectInstance(StatusEffects.HASTE, (int) (SpellHelper.getCooldownDuration(data1.caster(), SpellRegistry.getSpell(new Identifier(Spellblades.MOD_ID,"maelstrom"))) * 20 ), amp));
-
-			}
 			if(data1.caster().getWorld() instanceof ServerWorld world){
 				if(world.getEntitiesByType(TypeFilter.instanceOf(CycloneEntity.class), cyclone -> {
 					if( cyclone.getOwner() == data1.caster()&& cyclone.getColor() != 5){
@@ -1621,8 +1583,10 @@ public class Spellblades implements ModInitializer {
 					data1.caster().getWorld().spawnEntity(cyclone);
 
 				}
-				eleWhirlwind(data1);
-
+				for(Entity entity : data1.targets()) {
+					SpellHelper.performImpacts(data1.caster().getWorld(), data1.caster(),entity,data1.caster(),new SpellInfo(
+							SpellRegistry.getSpell(Identifier.of(MOD_ID,"maelstrom")),Identifier.of(MOD_ID,"maelstrom")),data1.impactContext() );
+				}
 			}
 			return false;
 		});
@@ -1631,13 +1595,8 @@ public class Spellblades implements ModInitializer {
 			SpellSchool actualSchool = SpellSchools.FIRE;
 
 			SpellPower.Result power2 = SpellPower.getSpellPower(actualSchool, (LivingEntity) data1.caster());
-			int amp = Math.min(49, (int) power2.randomValue() / 4 - 1);
-			if (amp >= 0) {
+			SpellbladePassive(actualSchool,data1);
 
-				data1.caster().addStatusEffect(new StatusEffectInstance(StatusEffects.STRENGTH, (int) (SpellHelper.getCooldownDuration(data1.caster(), SpellRegistry.getSpell(new Identifier(Spellblades.MOD_ID,"inferno"))) * 20 ), amp));
-				data1.caster().addStatusEffect(new StatusEffectInstance(StatusEffects.HASTE, (int) (SpellHelper.getCooldownDuration(data1.caster(), SpellRegistry.getSpell(new Identifier(Spellblades.MOD_ID,"inferno"))) * 20 ), amp));
-
-			}
 			if(data1.caster().getWorld() instanceof ServerWorld world){
 				if(world.getEntitiesByType(TypeFilter.instanceOf(CycloneEntity.class), cyclone -> {
 					if( cyclone.getOwner() == data1.caster()&& cyclone.getColor() != 5){
@@ -1652,14 +1611,21 @@ public class Spellblades implements ModInitializer {
 
 					data1.caster().getWorld().spawnEntity(cyclone);
 				}
-				eleWhirlwind(data1);
-
+				for(Entity entity : data1.targets()) {
+					SpellHelper.performImpacts(data1.caster().getWorld(), data1.caster(),entity,data1.caster(),new SpellInfo(
+							SpellRegistry.getSpell(Identifier.of(MOD_ID,"inferno")),Identifier.of(MOD_ID,"inferno")),data1.impactContext() );
+				}
 			}
 			return false;
 		});
 		CustomSpellHandler.register(new Identifier(MOD_ID,"smite"),(data) -> {
 
 			CustomSpellHandler.Data data1 = (CustomSpellHandler.Data) data;
+			SpellSchool actualSchool = SpellSchools.HEALING;
+
+			SpellPower.Result power2 = SpellPower.getSpellPower(actualSchool, (LivingEntity) data1.caster());
+			SpellbladePassive(actualSchool,data1);
+
 			float modifier = SpellRegistry.getSpell(new Identifier(MOD_ID,"smite")).impact[0].action.damage.spell_power_coefficient;
 			float modifier2 = SpellRegistry.getSpell(new Identifier(MOD_ID,"smite")).impact[1].action.damage.spell_power_coefficient;
 			SmiteLightning smiteLightning = new SmiteLightning(SMITELIGHTNING,data1.caster().getWorld());
@@ -1725,5 +1691,15 @@ public class Spellblades implements ModInitializer {
 			}
 		});
 		LOGGER.info("Hello Fabric world!");
+	}
+	public void SpellbladePassive(SpellSchool actualSchool, CustomSpellHandler.Data data1){
+		SpellPower.Result power2 = SpellPower.getSpellPower(actualSchool, (LivingEntity) data1.caster());
+		int amp = Math.min(config.passive-1, (int)(data1.caster().getAttributeValue(actualSchool.attribute) / 4 - 1));
+		if (amp >= 0) {
+
+			data1.caster().addStatusEffect(new StatusEffectInstance(StatusEffects.STRENGTH, (int) (SpellHelper.getCooldownDuration(data1.caster(), SpellRegistry.getSpell(new Identifier(Spellblades.MOD_ID,"finalstrike"))) * 20 ), amp));
+			data1.caster().addStatusEffect(new StatusEffectInstance(StatusEffects.HASTE, (int) (SpellHelper.getCooldownDuration(data1.caster(), SpellRegistry.getSpell(new Identifier(Spellblades.MOD_ID,"finalstrike"))) * 20 ), amp));
+
+		}
 	}
 }
