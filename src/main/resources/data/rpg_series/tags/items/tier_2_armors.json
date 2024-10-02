@@ -1,17 +1,17 @@
 {
   "replace": false,
   "values": [
-    "spellbladenext:runeblaze_head",
-    "spellbladenext:runeblaze_chest",
-    "spellbladenext:runeblaze_legs",
-    "spellbladenext:runeblaze_feet",
-    "spellbladenext:runegleam_head",
-    "spellbladenext:runegleam_chest",
-    "spellbladenext:runegleam_legs",
-    "spellbladenext:runegleam_feet",
-    "spellbladenext:runefrost_head",
-    "spellbladenext:runefrost_chest",
-    "spellbladenext:runefrost_legs",
-    "spellbladenext:runefrost_feet"
+    "spellbladenext:runeblazing_head",
+    "spellbladenext:runeblazing_chest",
+    "spellbladenext:runeblazing_legs",
+    "spellbladenext:runeblazing_feet",
+    "spellbladenext:runegleaming_head",
+    "spellbladenext:runegleaming_chest",
+    "spellbladenext:runegleaming_legs",
+    "spellbladenext:runegleaming_feet",
+    "spellbladenext:runefrosted_head",
+    "spellbladenext:runefrosted_chest",
+    "spellbladenext:runefrosted_legs",
+    "spellbladenext:runefrosted_feet"
   ]
 }
