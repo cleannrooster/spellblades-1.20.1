@@ -2,7 +2,7 @@
   "school": "ARCANE",
   "range": 96,
   "learn": {
-    "tier": 3
+    "tier": 4
   },
   "cast": {
     "duration": 2,
@@ -66,7 +66,7 @@
       "action": {
         "type": "DAMAGE",
         "damage": {
-          "spell_power_coefficient": 1.0
+          "spell_power_coefficient": 0.8
         }
       },
       "particles": [
@@ -84,7 +84,7 @@
   "cost": {
     "item_id": "runes:arcane_stone",
     "rpgmana": 60,
-    "cooldown_duration": 0.5
+    "cooldown_duration": 8
 
   }
 }

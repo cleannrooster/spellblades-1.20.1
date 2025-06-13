@@ -56,7 +56,7 @@
         }
       }
     },
-    "animation": "spellbladenext:recoil",
+    "animation": "spell_engine:recoil",
     "sound": {
       "id": "minecraft:entity.generic.explode"
     }

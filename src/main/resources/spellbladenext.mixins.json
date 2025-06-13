@@ -13,7 +13,8 @@
 		"SpellCastMixin",
 		"SpellContainerMixin",
 		"EntityMixin",
-		"SpellProjectileMixin"
+		"SpellProjectileMixin",
+		"AnimationHelperMixin"
 	],
 	"client": [
 		"EntityRenderDispatcherMixin",

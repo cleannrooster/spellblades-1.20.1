@@ -5,8 +5,9 @@
     "tier": 1
   },
   "cast": {
-    "movement_speed": 1.1,
     "duration": 8,
+    "movement_speed": 1.1,
+
     "animation": "spellbladenext:spin",
     "channel_ticks": 4,
     "sound": {

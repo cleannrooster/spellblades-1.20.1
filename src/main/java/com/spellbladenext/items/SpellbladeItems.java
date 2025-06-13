@@ -14,7 +14,6 @@ public class SpellbladeItems {
         for(var weaponEntry: Items.entries) {
             entries.put(weaponEntry.id().toString(), weaponEntry.item());
         }
-        entries.put("spellblades:spelloil", Spellblades.spellOil);
         entries.put("spellblades:monkeystaff", Spellblades.MONKEYSTAFF);
 
 

@@ -1,0 +1,61 @@
+{
+  "school": "HEALING",
+  "range": 4,
+  "learn": {
+    "tier": 4
+  },
+  "cast": {
+    "channel_ticks": 1,
+    "duration": 1,
+    "animation": "spellbladenext:charge"
+  },
+  "release": {
+    "custom_impact": true,
+    "target": {
+      "type": "AREA",
+      "area": {
+        "vertical_range_multiplier": 1
+      }
+    },
+    "particles": [
+      {
+        "particle_id": "cloud",
+        "shape": "CIRCLE",
+        "origin": "CENTER",
+        "count": 130.0,
+        "min_speed": 0.5,
+        "max_speed": 0.9
+      }
+    ],
+    "sound": {
+      "id": "minecraft:entity.player.attack.knockback"
+    },
+    "animation": "spellbladenext:two_handed_slam_spellblade_2"
+  },
+  "impact": [
+    {
+      "school": "PHYSICAL_MELEE",
+      "action": {
+        "type": "DAMAGE",
+        "damage": {
+          "knockback": 1,
+          "spell_power_coefficient": 0.8
+        }
+      }
+    },
+    {
+      "action": {
+        "school": "HEALING",
+        "type": "DAMAGE",
+        "damage": {
+          "knockback": 1,
+          "spell_power_coefficient": 0.8
+        }
+      }
+    }
+  ],
+  "cost": {
+    "rpgmana": 30,
+    "cooldown_duration": 16
+  }
+}

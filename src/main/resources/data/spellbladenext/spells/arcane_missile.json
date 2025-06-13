@@ -24,7 +24,8 @@
   },
   "release": {
     "target": {
-      "type": "PROJECTILE",
+      "type": "PROJECTILE",    "animation": "spell_engine:one_handed_projectile_release",
+
 
       "projectile": {
         "launch_properties": {
@@ -54,7 +55,6 @@
         }
       }
     },
-    "animation": "spell_engine:one_handed_projectile_release",
     "sound": {
       "id": "minecraft:entity.illusioner.cast_spell"
     }

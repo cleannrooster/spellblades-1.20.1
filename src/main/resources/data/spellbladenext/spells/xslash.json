@@ -1,0 +1,93 @@
+{
+  "school": "LIGHTNING",
+  "range": 4,
+  "learn": {
+    "tier": 3
+  },
+  "cast": {
+    "duration": 0.65,
+    "haste_affected" : false,
+    "animation": "spell_engine:doubleslashattack",
+    "sound": {
+      "id": "spell_engine:generic_lightning_casting"
+    },
+    "particles": [
+      {
+        "particle_id": "spell_engine:electric_arc_a",
+        "shape": "SPHERE",
+        "origin": "FEET",
+        "count": 2.0,
+        "min_speed": 0,
+        "max_speed": 0
+      },
+      {
+        "particle_id": "spell_engine:electric_arc_b",
+        "shape": "SPHERE",
+        "origin": "CENTER",
+        "count": 3.0,
+        "min_speed": 0,
+        "max_speed": 0
+      }
+    ],
+    "channel_ticks": 7
+  },
+  "release": {
+    "custom_impact": true,
+    "target": {
+      "type": "BEAM"
+    },
+    "animation": "spell_engine:doubleslashending",
+    "sound": {
+      "id": "entity.player.attack.sweep"
+    }
+  },
+  "impact": [
+    {
+      "school": "PHYSICAL_MELEE",
+      "action": {
+        "type": "DAMAGE",
+        "damage": {
+          "knockback": 0.0,
+          "spell_power_coefficient": 2
+        }
+      }
+    },
+    {
+      "action": {
+        "type": "DAMAGE",
+        "damage": {
+          "knockback": 0.0,
+          "spell_power_coefficient": 2
+        }
+      },
+      "particles": [
+        {
+          "particle_id": "spell_engine:electric_arc_a",
+          "shape": "SPHERE",
+          "origin": "CENTER",
+          "count": 20.0,
+          "min_speed": 0.2,
+          "max_speed": 0.6
+        },
+        {
+          "particle_id": "spell_engine:smoke_medium",
+          "shape": "SPHERE",
+          "origin": "CENTER",
+          "count": 30.0,
+          "min_speed": 0.5,
+          "max_speed": 0.9
+        }
+      ],
+      "sound": {
+        "id": "minecraft:entity.player.attack.sweep"
+      }
+    }
+
+  ],
+  "cost": {
+    "cooldown_duration": 4,
+    "rpgmana": 60,
+    "item_id": "runes:lightning_stone"
+
+  }
+}

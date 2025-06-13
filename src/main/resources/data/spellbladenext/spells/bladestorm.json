@@ -2,7 +2,7 @@
   "school": "ARCANE",
   "range": 16,
   "learn": {
-    "tier": 2
+    "tier": 3
   },
   "cast": {
     "animation": "spell_engine:one_handed_projectile_charge",
@@ -42,7 +42,7 @@
         "type": "DAMAGE",
         "damage": {
           "knockback": 1,
-          "spell_power_coefficient": 0.4
+          "spell_power_coefficient": 0.25
         }
       },
       "particles": [
@@ -61,6 +61,7 @@
   ],
   "cost": {
     "rpgmana": 30,
-    "item_id": "runes:arcane_stone"
+    "item_id": "runes:arcane_stone",
+    "cooldown_duration": 8
   }
 }

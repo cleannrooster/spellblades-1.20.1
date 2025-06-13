@@ -2,7 +2,7 @@
   "school": "FIRE",
   "range": 8,
   "learn": {
-    "tier": 1
+    "tier": 2
   },
   "cast": {
     "animation": "spell_engine:one_handed_projectile_charge",
@@ -73,8 +73,8 @@
       "action": {
         "type": "DAMAGE",
         "damage": {
-          "knockback": 0.5,
-          "spell_power_coefficient": 0.5
+          "knockback": 0,
+          "spell_power_coefficient": 0.35
         }
       },
       "particles": [
@@ -106,7 +106,7 @@
     }
   ],
   "cost": {
-    "cooldown_duration": 1,
+    "cooldown_duration": 0.625,
     "rpgmana": 30,
     "item_id": "runes:fire_stone"
   }

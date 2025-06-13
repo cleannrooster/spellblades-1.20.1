@@ -1,6 +1,7 @@
 {
   "school": "FIRE",
   "range": 6,
+  "group": "primary",
   "learn": {
     "tier": 1
   },

@@ -16,6 +16,8 @@ public interface PlayerDamageInterface {
     float getDamageAbsorbed();
     void resetDamageAbsorbed();
     void absorbDamage(float i);
+    void nextSwing();
+    boolean isSecondSwing();
     int getDiebeamStacks();
     void addDiebeamStack(int i);
     void resetDiebeamStack();

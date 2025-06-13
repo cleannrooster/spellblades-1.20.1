@@ -38,6 +38,17 @@ public class PlayerMixin implements PlayerDamageInterface {
     public void repeat(){
         repeats++;
     }
+    public boolean second = false;
+    @Override
+    public void nextSwing() {
+        this.second = !this.second;
+
+    }
+    @Override
+    public boolean isSecondSwing() {
+        return this.second;
+
+    }
     public int getRepeats(){
         return repeats;
     }

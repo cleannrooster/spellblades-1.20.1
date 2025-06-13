@@ -1,0 +1,99 @@
+{
+  "school": "ARMOR",
+  "range": 32,
+  "learn": {
+    "tier": 2
+  },
+  "cast": {
+    "duration": 0.5,
+    "animation": "spell_engine:one_handed_throw_charge",
+    "particles": [ ]
+  },
+  "release": {
+    "target": {
+      "type": "PROJECTILE",
+      "projectile": {
+        "launch_properties": {
+          "velocity": 1.2
+        },
+
+        "projectile": {
+          "homing_angle": 2.0,
+          "perks": {
+            "bounce": 3,
+            "ricochet": 3,
+
+            "chain_reaction_size" : 3
+          },
+          "client_data": {
+            "travel_particles":[{
+              "particle_id": "spell_engine:holy_spark_mini",
+              "shape": "SPHERE",
+              "origin": "CENTER",
+              "count": 3,
+              "min_speed": 0.1,
+              "max_speed": 0.4,
+              "angle": 60
+            },
+              {
+                "particle_id": "spell_engine:holy_spark_mini",
+                "shape": "SPHERE",
+                "origin": "CENTER",
+                "count": 1,
+                "min_speed": 0.1,
+                "max_speed": 0.4
+              },
+              {
+                "particle_id": "spell_engine:holy_spark_mini",
+                "shape": "SPHERE",
+                "origin": "CENTER",
+                "count": 1.0,
+                "min_speed": 0.05,
+                "max_speed": 0.3,
+                "angle": 75
+
+              },
+              {
+                "particle_id": "spell_engine:holy_spark",
+                "shape": "SPHERE",
+                "origin": "CENTER",
+                "count": 1.0,
+                "min_speed": 0.05,
+                "max_speed": 0.1
+              }
+            ],
+
+            "model": {
+              "model_id": "spellbladenext:projectile/shield",
+              "scale": 1,
+              "rotate_degrees_per_tick": 0,
+              "orientation": "TOWARDS_MOTION"
+            }
+          }
+        }
+      }
+    },
+    "animation": "spell_engine:one_handed_throw_release_instant",
+    "sound": {
+      "id": "minecraft:entity.player.attack.sweep"
+    }
+  },
+  "impact": [
+    {
+      "action": {
+        "type": "DAMAGE",
+        "damage": {
+          "spell_power_coefficient": 0.7
+        }
+      },
+      "sound": {
+        "id": "entity.player.attack.strong"
+      }
+    }
+  ],
+  "cost": {
+    "exhaust": 0.3,
+    "effect_id":"spellbladenext:bolster",
+    "cooldown_duration": 6
+  }
+}

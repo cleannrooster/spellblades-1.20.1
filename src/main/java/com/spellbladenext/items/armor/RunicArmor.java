@@ -53,7 +53,7 @@ public class RunicArmor extends CustomArmor {
         // builder.putAll(super.getAttributeModifiers(this.slot));
         builder.putAll(attributes);
         UUID uuid = (UUID)MODIFIERS.get(this.type);
-        builder.put(WARDING,new EntityAttributeModifier(uuid,"warding",4, EntityAttributeModifier.Operation.ADDITION));
+        builder.put(WARDING,new EntityAttributeModifier(uuid,"warding",1.5, EntityAttributeModifier.Operation.ADDITION));
 
         this.attributes = builder.build();
 

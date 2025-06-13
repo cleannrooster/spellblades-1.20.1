@@ -1,0 +1,47 @@
+{
+  "range": 16.0,
+  "school": "HEALING",
+  "learn": {
+    "tier": 3
+  },
+  "cast": {
+    "duration": 0
+  },
+  "release": {
+    "custom_impact": true,
+    "target": {
+      "type": "AREA",
+      "area": {
+        "vertical_range_multiplier": 0.5
+      }
+    },
+    "animation": "spell_engine:one_handed_shout_release",
+    "sound": {
+      "id": "entity.elder_guardian.curse",
+      "volume": 1,
+      "pitch": 0.8
+    },
+    "particles": [
+    ]
+  },
+  "impact": [
+    {
+      "action": {
+        "type": "STATUS_EFFECT",
+        "status_effect": {
+          "effect_id": "minecraft:strength",
+          "duration": 8,
+          "apply_mode": "SET",
+          "amplifier_power_multiplier": 0.5,
+
+          "amplifier": 0,
+          "show_particles": true
+        }
+      }
+    }
+  ],
+  "cost": {
+    "exhaust": 0.3,
+    "cooldown_duration": 30
+  }
+}

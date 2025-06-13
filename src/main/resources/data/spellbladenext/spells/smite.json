@@ -1,12 +1,14 @@
 {
   "school": "HEALING",
   "range": 3.5,
+  "group": "primary",
+
   "learn": {
     "tier": 1
   },
   "cast": {
 
-    "duration": 1,
+    "duration": 0.5,
     "animation": "spellbladenext:raise_lightning"
   },
   "release": {
@@ -39,7 +41,7 @@
       "action": {
         "type": "DAMAGE",
         "damage": {
-          "knockback": 1,
+          "knockback": 3,
           "spell_power_coefficient": 1.0
         }
       }
@@ -49,7 +51,7 @@
         "type": "DAMAGE",
         "damage": {
           "knockback": 1,
-          "spell_power_coefficient": 3.0
+          "spell_power_coefficient": 1.5
         }
       }
     }

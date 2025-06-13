@@ -75,19 +75,19 @@ public class HeraldArmor extends CustomArmor implements GeoItem {
         // builder.putAll(super.getAttributeModifiers(this.slot));
         builder.putAll(attributes);
         UUID uuid = (UUID)MODIFIERS.get(this.type);
-        builder.put(WARDING,new EntityAttributeModifier(uuid,"warding",2, EntityAttributeModifier.Operation.ADDITION));
+        builder.put(WARDING,new EntityAttributeModifier(uuid,"warding",4, EntityAttributeModifier.Operation.ADDITION));
         if(this.magicschool.contains(SpellSchools.ARCANE)) {
-            builder.put(CONVERTTOARCANE, new EntityAttributeModifier(uuid, "gained1", 0.125, EntityAttributeModifier.Operation.MULTIPLY_BASE));
+            builder.put(CONVERTTOARCANE, new EntityAttributeModifier(uuid, "gained1", 0.12, EntityAttributeModifier.Operation.MULTIPLY_BASE));
         }
         if(this.magicschool.contains(SpellSchools.FIRE)) {
-            builder.put(CONVERTTOFIRE, new EntityAttributeModifier(uuid, "gained2", 0.125, EntityAttributeModifier.Operation.MULTIPLY_BASE));
+            builder.put(CONVERTTOFIRE, new EntityAttributeModifier(uuid, "gained2", 0.12, EntityAttributeModifier.Operation.MULTIPLY_BASE));
 
         }
         if(this.magicschool.contains(SpellSchools.FROST)) {
-            builder.put(CONVERTTOFROST, new EntityAttributeModifier(uuid, "gained3", 0.125, EntityAttributeModifier.Operation.MULTIPLY_BASE));
+            builder.put(CONVERTTOFROST, new EntityAttributeModifier(uuid, "gained3", 0.12, EntityAttributeModifier.Operation.MULTIPLY_BASE));
 
         }
-            builder.put(CONVERTTOHEAL,new EntityAttributeModifier(uuid,"gained4",0.125, EntityAttributeModifier.Operation.MULTIPLY_BASE));
+            builder.put(CONVERTTOHEAL,new EntityAttributeModifier(uuid,"gained4",0.06, EntityAttributeModifier.Operation.MULTIPLY_BASE));
 
         this.attributes = builder.build();
     }

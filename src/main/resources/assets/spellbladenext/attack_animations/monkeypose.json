@@ -1,37 +1,94 @@
 {
     "name": "monkeypose",
     "author": "",
-    "description": "",
+    "description": "monkeypose",
     "emote":{
         "isLoop": "true",
         "returnTick": 1,
         "beginTick":0,
-        "endTick":1,
-        "stopTick":11,
+        "endTick":10,
+        "stopTick":10,
         "degrees":false,
         "moves":[
+
             {
                 "tick":1,
-                "easing": "EASEINOUTQUAD",
+                "easing": "LINEAR",
                 "turn": 0,
                 "rightArm":{
-                    "yaw":0.785398
+                    "yaw":-0.04712389409542084
                 }
             },
             {
                 "tick":1,
-                "easing": "EASEINOUTQUAD",
+                "easing": "LINEAR",
                 "turn": 0,
                 "rightArm":{
-                    "roll":0.785398
+                    "roll":-0.45727625489234924
                 }
             },
             {
                 "tick":1,
-                "easing": "EASEINOUTQUAD",
+                "easing": "LINEAR",
                 "turn": 0,
                 "rightArm":{
-                    "pitch":0.785398
+                    "z":0.03999999910593033
+                }
+            },
+            {
+                "tick":1,
+                "easing": "LINEAR",
+                "turn": 0,
+                "rightArm":{
+                    "x":-4.960000038146973
+                }
+            },
+            {
+                "tick":1,
+                "easing": "LINEAR",
+                "turn": 0,
+                "rightArm":{
+                    "pitch":-7.876671314239502
+                }
+            },
+            {
+                "tick":1,
+                "easing": "LINEAR",
+                "turn": 0,
+                "leftArm":{
+                    "roll":-0.0628318190574646
+                }
+            },
+            {
+                "tick":1,
+                "easing": "LINEAR",
+                "turn": 0,
+                "leftArm":{
+                    "yaw":1.1938050985336304
+                }
+            },
+            {
+                "tick":1,
+                "easing": "LINEAR",
+                "turn": 0,
+                "leftArm":{
+                    "pitch":-1.1623892784118652
+                }
+            },
+            {
+                "tick":1,
+                "easing": "LINEAR",
+                "turn": 0,
+                "leftArm":{
+                    "z":-4.880000114440918
+                }
+            },
+            {
+                "tick":1,
+                "easing": "LINEAR",
+                "turn": 0,
+                "leftArm":{
+                    "x":2.8400001525878906
                 }
             }
         ]

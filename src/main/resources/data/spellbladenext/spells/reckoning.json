@@ -5,9 +5,10 @@
     "tier": 1
   },
   "cast": {
-    "duration": 8,
     "movement_speed": 1.1,
-    "animation": "spellbladenext:spinstaff",
+
+    "duration": 2,
+    "animation": "spellbladenext:staffspin",
     "channel_ticks": 4,
     "sound": {
       "id": "spell_engine:generic_frost_casting",
@@ -46,7 +47,6 @@
     }
   ],
   "cost": {
-    "cooldown_duration": 4,
-    "cooldown_proportional": true
+    "cooldown_duration": 2
   }
 }

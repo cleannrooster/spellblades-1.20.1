@@ -28,12 +28,5 @@ public class PhoenixCurse extends SpellStatusEffect {
     @Override
     public void applySpellEffect(LivingEntity entity,LivingEntity owner, int amplifier, float spellPower, Spell spell) {
 
-        if(owner != null && owner instanceof PlayerEntity player  &&  spell != null && spellPower > 0){
-            entity.hurtTime = 0;
-            entity.timeUntilRegen = 0;
-            entity.damage(SpellDamageSource.player(spell.school,player),spellPower*spell.impact[0].action.damage.spell_power_coefficient);
-            entity.hurtTime = 0;
-            entity.timeUntilRegen = 0;
-        }
     }
 }

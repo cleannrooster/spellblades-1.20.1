@@ -1,0 +1,83 @@
+{
+  "range": 4.0,
+  "school": "ARMOR",
+  "learn": {
+    "tier": 3
+  },
+  "cast": {
+    "duration": 10,
+    "animation": "spellbladenext:shieldslam",
+    "channel_ticks": 20
+  },
+  "release": {
+    "custom_impact": true,
+    "target": {
+      "type": "AREA",
+      "area": {
+        "vertical_range_multiplier": 1,
+        "include_caster": true
+      }
+    },
+    "particles": [
+      {
+        "particle_id": "smoke",
+        "shape": "CIRCLE",
+        "origin": "CENTER",
+        "count": 8.0,
+        "min_speed": 0.2,
+        "max_speed": 0.6
+      },
+      {
+        "particle_id": "cloud",
+        "shape": "CIRCLE",
+        "origin": "CENTER",
+        "count": 8.0,
+        "min_speed": 0.5,
+        "max_speed": 0.9
+      }
+    ],
+    "sound": {
+      "id": "minecraft:entity.player.attack.crit"
+    }
+  },
+  "impact": [
+    {
+      "action": {
+        "type": "DAMAGE",
+        "damage": {
+          "knockback": 1.5,
+          "spell_power_coefficient": 0.8
+        }
+      },
+      "particles": [
+        {
+          "particle_id": "poof",
+          "shape": "SPHERE",
+          "origin": "CENTER",
+          "count": 3
+        }
+      ],
+      "sound": {
+        "id": "minecraft:entity.player.attack.crit"
+      }
+    },
+    {
+      "action": {
+        "type": "STATUS_EFFECT",
+        "apply_to_caster": true,
+        "status_effect": {
+          "effect_id": "spellbladenext:defiance",
+          "duration": 2,
+          "apply_mode": "SET",
+          "amplifier": 5,
+          "show_particles": false
+        }
+      }
+    }
+  ],
+  "cost": {
+    "exhaust": 0.3,
+    "cooldown_duration": 12,
+    "cooldown_proportional": true
+  }
+}

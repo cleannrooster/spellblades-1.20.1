@@ -2,7 +2,7 @@
   "school": "FROST",
   "range": 12,
   "learn": {
-    "tier": 3
+    "tier": 4
   },
   "cast": {
     "duration": 0.5,
@@ -49,20 +49,31 @@
       "action": {
         "type": "DAMAGE",
         "damage": {
-          "knockback": 0.5,
-          "spell_power_coefficient": 0.8
+          "knockback": 0,
+          "spell_power_coefficient": 0.2
         }
       },
       "particles": [
         {
-          "particle_id": "spell_engine:snowflake",
+          "particle_id": "spell_engine:frost_hit",
           "shape": "PIPE",
           "origin": "FEET",
-          "count": 60.0,
+          "count": 100.0,
           "min_speed": 0.05,
-          "max_speed": 0.4
+          "max_speed": 0.1
+        },
+        {
+          "particle_id": "spell_engine:snowflake",
+          "shape": "CIRCLE",
+          "origin": "FEET",
+          "count": 100.0,
+          "min_speed": 0.1,
+          "max_speed": 0.3
         }
-      ]
+      ],
+      "sound": {
+        "id": "spell_engine:generic_frost_release"
+      }
     }
   ],
   "cost": {

@@ -47,5 +47,14 @@ public class ServerConfig  implements ConfigData {
     public String blacklist_spell_oil_regex = "";
     @Comment("Enable tabula rasa (Default: true")
     public boolean tab = true;
+    @Comment("ARMOR spell school multiplier (Default: 1.0")
+    public double ARMORMULT = 1.0;
+    @Comment("Defiance of Destiny ARMOR Coefficient (Default: 0.0) (Defiance of Destiny healing is (1% of your max health)*(1+(Armor)*(ArmorCoeff)+(Healing Power)*(HealCoeff))*(Effect Amplifier)*(coeff)")
+    public double ArmorCoeff = 0.0;
+
+    @Comment("Defiance of Destiny HEALING Coefficient (Default: 1F) (Defiance of Destiny healing is (1% of your max health)*(1+(Armor)*(ArmorCoeff)+(Healing Power)*(HealCoeff))*(Effect Amplifier)*(coeff)")
+    public double HealCoeff = 1;
+    @Comment("Defiance of Destiny OVERALL Efficiency Coefficient (Default: 1F) (Defiance of Destiny healing is (1% of your max health)*(1+(Armor)*(ArmorCoeff)+(Healing Power)*(HealCoeff))*(Effect Amplifier)*(coeff)")
+    public double coeff = 1;
 
 }

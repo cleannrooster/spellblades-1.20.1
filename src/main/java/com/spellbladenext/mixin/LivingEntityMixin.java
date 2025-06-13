@@ -24,6 +24,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.registry.Registry;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.stat.Stat;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.collection.DefaultedList;
@@ -59,6 +60,7 @@ import java.util.function.Predicate;
 
 import static com.extraspellattributes.ReabsorptionInit.*;
 import static com.spellbladenext.Spellblades.*;
+import static com.spellbladenext.Spellblades.DEFIANCE;
 import static com.spellbladenext.Spellblades.MOD_ID;
 import static net.spell_engine.internals.SpellHelper.ammoForSpell;
 import static net.spell_engine.internals.SpellHelper.impactTargetingMode;
@@ -101,14 +103,35 @@ public class LivingEntityMixin {
 
             }
         }
-        if (!living.getWorld().isClient() && living instanceof SpellCasterEntity entity && living instanceof PlayerEntity player && SpellContainerHelper.getEquipped(living.getMainHandStack(),player) != null && SpellContainerHelper.getEquipped(player.getMainHandStack(),player).spell_ids.contains("spellbladenext:combustion") && ammoForSpell(player, SpellRegistry.getSpell(new Identifier(MOD_ID, "combustion")), player.getMainHandStack()).satisfied() && !entity.getCooldownManager().isCoolingDown(new Identifier(MOD_ID, "combustion"))) {
-            if(target instanceof LivingEntity livingEntity && !livingEntity.hasStatusEffect(PHOENIXCURSE)){
-                target.setOnFireFor(2);
-                livingEntity.addStatusEffect(new SpellStatusEffectInstance(PHOENIXCURSE,SpellRegistry.getSpell(new Identifier(Spellblades.MOD_ID,"combustion")), (float) SpellPower.getSpellPower(SpellSchools.FIRE,living).randomValue(),living,40,0,false,false,false,null, Optional.empty()));
-                ((WorldScheduler)livingEntity.getWorld()).schedule(1,()->{
-                    entity.getCooldownManager().set(new Identifier(MOD_ID,"combustion"),(int) (20*SpellHelper.getCooldownDuration(living,SpellRegistry.getSpell(new Identifier(MOD_ID,"combustion")))));
+
+        if (!living.getWorld().isClient() && living instanceof SpellCasterEntity entity && living instanceof PlayerEntity player && SpellContainerHelper.getEquipped(living.getMainHandStack(),player) != null && SpellContainerHelper.getEquipped(player.getMainHandStack(),player).spell_ids.contains("spellbladenext:combustion") && ammoForSpell(player, SpellRegistry.getSpell(Identifier.of(MOD_ID, "combustion")), player.getMainHandStack()).satisfied() && !entity.getCooldownManager().isCoolingDown(Identifier.of(MOD_ID, "combustion"))) {
+        if(target instanceof LivingEntity livingEntity && !livingEntity.hasStatusEffect(PHOENIXCURSE)){
+            target.setOnFireFor(2);
+            for(int i = 0; i < 4 ; i++) {
+                ((WorldScheduler)livingEntity.getWorld()).schedule((i+1)*10,()-> {
+                    if(livingEntity.hasStatusEffect(PHOENIXCURSE)) {
+                        SpellHelper.performImpacts(living.getWorld(), living, target, target, new SpellInfo(SpellRegistry.getSpell(Identifier.of(MOD_ID, "combustion")), Identifier.of(MOD_ID, "combustion")), new SpellHelper.ImpactContext());
+
+                    }
                 });
             }
+            ((LivingEntity) target).addStatusEffect(new StatusEffectInstance(PHOENIXCURSE,2*20+1,0));
+            ((WorldScheduler)livingEntity.getWorld()).schedule(1,()->{
+                entity.getCooldownManager().set(Identifier.of(MOD_ID,"combustion"),(int) (20*SpellHelper.getCooldownDuration(living,SpellRegistry.getSpell(Identifier.of(MOD_ID,"combustion")))));
+            });
+        }
+    }
+        if (!living.getWorld().isClient() && living instanceof SpellCasterEntity entity && living instanceof PlayerEntity player && SpellContainerHelper.getEquipped(living.getMainHandStack(),player) != null && SpellContainerHelper.getEquipped(player.getMainHandStack(),player).spell_ids.contains("spellbladenext:smite")) {
+            int i;
+            if (living.getStatusEffect(Spellblades.FERVOR) != null) {
+                i = living.getStatusEffect(Spellblades.FERVOR).getAmplifier() + 1;
+            } else {
+                i = 0;
+            }
+            ((WorldScheduler) living.getWorld()).schedule(1, () -> {
+                        living.addStatusEffect(new StatusEffectInstance(Spellblades.FERVOR, 80, Math.min(i, 2),false,false,true));
+                    }
+            );
         }
     }
 
@@ -182,6 +205,13 @@ public class LivingEntityMixin {
     private void hurtreal(final DamageSource player, float f, final CallbackInfoReturnable<Boolean> info) {
         LivingEntity player2 = ((LivingEntity) (Object) this);
         Registry<DamageType> registry = ((DamageSourcesAccessor)player2.getDamageSources()).getRegistry();
+        if(player2.getStatusEffect(DEFIANCE) != null && player2 instanceof PlayerEntity playerPlayer && player2 instanceof SpellCasterEntity caster && !caster.getCooldownManager().isCoolingDown(Identifier.of(MOD_ID,"defiance_of_destiny_heal"))){
+            SpellHelper.imposeCooldown(playerPlayer,Identifier.of(MOD_ID,"defiance_of_destiny_heal"),SpellRegistry.getSpell(Identifier.of(MOD_ID,"defiance_of_destiny_heal")),1.0F);
+            player2.heal((float) ( Math.min(f-1,0.01*player2.getMaxHealth()*(
+                                1+Spellblades.config.HealCoeff*SpellPower.getSpellPower(SpellSchools.HEALING,player2).randomValue()+Spellblades.config.ArmorCoeff*player2.getArmor())
+                                *(player2.getStatusEffect(DEFIANCE).getAmplifier()+1))
+                        *Spellblades.config.coeff));
+        }
         if (player.getAttacker() instanceof PlayerEntity player1  && !player1.getWorld().isClient()) {
             ItemStack stack = player1.getMainHandStack();
 
@@ -416,6 +446,25 @@ public class LivingEntityMixin {
                     }
                 }
             });
+        }
+
+        if (!player2.getWorld().isClient() && player2 instanceof SpellCasterEntity entity && player2 instanceof PlayerEntity player3 && SpellContainerHelper.getEquipped(player3.getMainHandStack(),player3) != null && SpellContainerHelper.getEquipped(player3.getMainHandStack(),player3).spell_ids.contains("spellbladenext:defiance_of_destiny")) {
+            int i;
+            if (player2.getStatusEffect(DEFIANCE) != null) {
+                i = player2.getStatusEffect(Spellblades.DEFIANCE).getAmplifier() + 1;
+            } else {
+                i = 0;
+            }
+            int ii;
+            if(player2.getStatusEffect(INEXORABLE) != null){
+                ii = 250;
+            } else {
+                ii = 2;
+            }
+            ((WorldScheduler) player2.getWorld()).schedule(1, () -> {
+                        player2.addStatusEffect(new StatusEffectInstance(Spellblades.DEFIANCE, 80, Math.min(i, ii),false,false,true));
+                    }
+            );
         }
         if((player.getType().equals(registry.entryOf(DamageTypes.MAGIC).value()) || player.getType().equals(registry.entryOf(DamageTypes.INDIRECT_MAGIC).value())) && player.getAttacker() instanceof PlayerEntity player3){
             player3.increaseStat(HEXRAID, (int) Math.ceil(f));

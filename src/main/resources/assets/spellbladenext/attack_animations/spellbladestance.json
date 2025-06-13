@@ -1,0 +1,152 @@
+{
+    "name": "spellbladestance",
+    "author": "me",
+    "description": "doubleslashattack",
+    "emote":{
+        "isLoop": "false",
+        "returnTick": 0,
+        "beginTick":0 ,
+        "endTick":640,
+        "stopTick":640,
+        "degrees":false,
+        "moves":[
+            
+            {
+                "tick":10,
+                "easing": "EASEINOUTSINE",
+                "turn": 0,
+                "head":{
+                    "yaw":-0.8569566607475281
+                }
+            },
+            {
+                "tick":10,
+                "easing": "EASEINOUTSINE",
+                "turn": 0,
+                "torso":{
+                    "yaw":-0.8569566011428833
+                }
+            },
+            {
+                "tick":10,
+                "easing": "EASEINOUTSINE",
+                "turn": 0,
+                "rightArm":{
+                    "yaw":0.5323253870010376
+                }
+            },
+            {
+                "tick":10,
+                "easing": "EASEINOUTSINE",
+                "turn": 0,
+                "rightArm":{
+                    "roll":1.6947145462036133
+                }
+            },
+            {
+                "tick":10,
+                "easing": "EASEINOUTSINE",
+                "turn": 0,
+                "rightArm":{
+                    "z":-2.5199999809265137
+                }
+            },
+            {
+                "tick":10,
+                "easing": "EASEINOUTSINE",
+                "turn": 0,
+                "rightArm":{
+                    "pitch":-1.822123646736145
+                }
+            },
+            {
+                "tick":10,
+                "easing": "EASEINOUTSINE",
+                "turn": 0,
+                "leftArm":{
+                    "roll":0.3316125273704529
+                }
+            },
+            {
+                "tick":10,
+                "easing": "EASEINOUTSINE",
+                "turn": 0,
+                "leftArm":{
+                    "yaw":0.5375614166259766
+                }
+            },
+            {
+                "tick":10,
+                "easing": "EASEINOUTSINE",
+                "turn": 0,
+                "leftArm":{
+                    "pitch":-1.9896752834320068
+                }
+            },
+            {
+                "tick":10,
+                "easing": "EASEINOUTSINE",
+                "turn": 0,
+                "leftArm":{
+                    "y":2.640000343322754
+                }
+            },
+            {
+                "tick":10,
+                "easing": "EASEINOUTSINE",
+                "turn": 0,
+                "leftArm":{
+                    "z":-0.31999993324279785
+                }
+            },
+            {
+                "tick":10,
+                "easing": "EASEINOUTSINE",
+                "turn": 0,
+                "leftArm":{
+                    "x":0.8400001525878906
+                }
+            },
+            {
+                "tick":10,
+                "easing": "EASEINOUTSINE",
+                "turn": 0,
+                "rightItem":{
+                    "z":1.9200000762939453
+                }
+            },
+            {
+                "tick":10,
+                "easing": "EASEINOUTSINE",
+                "turn": 0,
+                "rightItem":{
+                    "y":-2.4000000953674316
+                }
+            },
+            {
+                "tick":10,
+                "easing": "EASEINOUTSINE",
+                "turn": 0,
+                "rightItem":{
+                    "pitch":-0.542797327041626
+                }
+            },
+            {
+                "tick":10,
+                "easing": "EASEINOUTQUAD",
+                "turn": 0,
+                "rightItem":{
+                    "yaw":-0.0890117883682251
+                }
+            },
+            {
+                "tick":10,
+                "easing": "EASEINOUTQUAD",
+                "turn": 0,
+                "rightItem":{
+                    "roll":0.42236965894699097
+                }
+            }
+        ]
+    }
+}

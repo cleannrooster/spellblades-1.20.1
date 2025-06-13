@@ -2,7 +2,7 @@
   "school": "FIRE",
   "range": 16,
   "learn": {
-    "tier": 2
+    "tier": 3
   },
   "cast": {
     "animation": "spellbladenext:phoenixdive",

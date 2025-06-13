@@ -3,12 +3,14 @@ package com.spellbladenext.items.armor;
 import com.spellbladenext.Spellblades;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.attribute.EntityAttributeModifier;
+import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.item.ArmorItem;
 import net.minecraft.item.ArmorMaterials;
 import net.minecraft.item.Item;
 import net.minecraft.item.Items;
 import net.minecraft.recipe.Ingredient;
 import net.minecraft.sound.SoundEvents;
+import net.minecraft.util.Identifier;
 import net.spell_engine.api.item.ItemConfig;
 import net.spell_engine.api.item.armor.Armor;
 import net.spell_power.api.SpellPowerMechanics;
@@ -65,21 +67,25 @@ public class Armors {
                             () -> Ingredient.ofItems(Spellblades.RUNEGLEAM)
                     ),
                     ItemConfig.ArmorSet.with(
-                            new ItemConfig.ArmorSet.Piece(1)
+                            new ItemConfig.ArmorSet.Piece(2)
                                     .addAll(List.of(
-                                            ItemConfig.Attribute.bonus((SpellSchools.ARCANE.id), 1F)
+                                            ItemConfig.Attribute.multiply((SpellSchools.ARCANE).id, 0.15F),
+                                            ItemConfig.Attribute.multiply(new Identifier("minecraft","generic.attack_damage"), 0.03F)
                                     )),
-                            new ItemConfig.ArmorSet.Piece(3)
+                            new ItemConfig.ArmorSet.Piece(5)
                                     .addAll(List.of(
-                                            ItemConfig.Attribute.bonus((SpellSchools.ARCANE.id), 1F)
+                                            ItemConfig.Attribute.multiply((SpellSchools.ARCANE).id, 0.15F),
+                                            ItemConfig.Attribute.multiply(new Identifier("minecraft","generic.attack_damage"), 0.03F)
+                                    )),
+                            new ItemConfig.ArmorSet.Piece(4)
+                                    .addAll(List.of(
+                                            ItemConfig.Attribute.multiply((SpellSchools.ARCANE).id, 0.15F),
+                                            ItemConfig.Attribute.multiply(new Identifier("minecraft","generic.attack_damage"), 0.03F)
                                     )),
                             new ItemConfig.ArmorSet.Piece(2)
                                     .addAll(List.of(
-                                            ItemConfig.Attribute.bonus((SpellSchools.ARCANE.id), 1F)
-                                    )),
-                            new ItemConfig.ArmorSet.Piece(1)
-                                    .addAll(List.of(
-                                            ItemConfig.Attribute.bonus((SpellSchools.ARCANE.id), 1F)
+                                            ItemConfig.Attribute.multiply((SpellSchools.ARCANE).id, 0.15F),
+                                            ItemConfig.Attribute.multiply(new Identifier("minecraft","generic.attack_damage"), 0.03F)
                                     ))
                     ))   .bundle(material -> new Armor.Set(Spellblades.MOD_ID,
                             new RunicArmor(material, ArmorItem.Type.HELMET, new Item.Settings()),
@@ -99,23 +105,27 @@ public class Armors {
                             () -> Ingredient.ofItems(Spellblades.RUNEBLAZE)
                     ),
                     ItemConfig.ArmorSet.with(
-                            new ItemConfig.ArmorSet.Piece(1)
+                            new ItemConfig.ArmorSet.Piece(2)
                                     .addAll(List.of(
-                                            ItemConfig.Attribute.bonus((SpellSchools.FIRE.id), 1F)
+                                            ItemConfig.Attribute.multiply((SpellSchools.FIRE).id, 0.15F),
+                                            ItemConfig.Attribute.multiply(new Identifier("minecraft","generic.attack_damage"), 0.03F)
                                     )),
-                            new ItemConfig.ArmorSet.Piece(3)
+                            new ItemConfig.ArmorSet.Piece(5)
                                     .addAll(List.of(
-                                            ItemConfig.Attribute.bonus((SpellSchools.FIRE.id), 1F)
+                                            ItemConfig.Attribute.multiply((SpellSchools.FIRE).id, 0.15F),
+                                            ItemConfig.Attribute.multiply(new Identifier("minecraft","generic.attack_damage"), 0.03F)
+
+                                    )),
+                            new ItemConfig.ArmorSet.Piece(4)
+                                    .addAll(List.of(
+                                            ItemConfig.Attribute.multiply((SpellSchools.FIRE).id, 0.15F),
+                                            ItemConfig.Attribute.multiply(new Identifier("minecraft","generic.attack_damage"), 0.03F)
 
                                     )),
                             new ItemConfig.ArmorSet.Piece(2)
                                     .addAll(List.of(
-                                            ItemConfig.Attribute.bonus((SpellSchools.FIRE.id), 1F)
-
-                                    )),
-                            new ItemConfig.ArmorSet.Piece(1)
-                                    .addAll(List.of(
-                                            ItemConfig.Attribute.bonus((SpellSchools.FIRE).id, 1F)
+                                            ItemConfig.Attribute.multiply((SpellSchools.FIRE).id, 0.15F),
+                                            ItemConfig.Attribute.multiply(new Identifier("minecraft","generic.attack_damage"), 0.03F)
 
                                     ))
                     ))   .bundle(material -> new Armor.Set(Spellblades.MOD_ID,
@@ -137,24 +147,28 @@ public class Armors {
                             () -> Ingredient.ofItems(Spellblades.RUNEFROST)
                     ),
                     ItemConfig.ArmorSet.with(
-                            new ItemConfig.ArmorSet.Piece(1)
+                            new ItemConfig.ArmorSet.Piece(2)
                                     .addAll(List.of(
-                                            ItemConfig.Attribute.bonus((SpellSchools.FROST).id, 1F)
+                                            ItemConfig.Attribute.multiply((SpellSchools.FROST).id, 0.15F),
+                                            ItemConfig.Attribute.multiply(new Identifier("minecraft","generic.attack_damage"), 0.03F)
 
                                     )),
-                            new ItemConfig.ArmorSet.Piece(3)
+                            new ItemConfig.ArmorSet.Piece(5)
                                     .addAll(List.of(
-                                            ItemConfig.Attribute.bonus((SpellSchools.FROST).id, 1F)
+                                            ItemConfig.Attribute.multiply((SpellSchools.FROST).id, 0.15F),
+                                            ItemConfig.Attribute.multiply(new Identifier("minecraft","generic.attack_damage"), 0.04F)
+
+                                    )),
+                            new ItemConfig.ArmorSet.Piece(4)
+                                    .addAll(List.of(
+                                            ItemConfig.Attribute.multiply((SpellSchools.FROST).id, 0.15F),
+                                            ItemConfig.Attribute.multiply(new Identifier("minecraft","generic.attack_damage"), 0.03F)
 
                                     )),
                             new ItemConfig.ArmorSet.Piece(2)
                                     .addAll(List.of(
-                                            ItemConfig.Attribute.bonus((SpellSchools.FROST.id), 1F)
-
-                                    )),
-                            new ItemConfig.ArmorSet.Piece(1)
-                                    .addAll(List.of(
-                                            ItemConfig.Attribute.bonus((SpellSchools.FROST.id), 1F)
+                                            ItemConfig.Attribute.multiply((SpellSchools.FROST).id, 0.15F),
+                                            ItemConfig.Attribute.multiply(new Identifier("minecraft","generic.attack_damage"), 0.03F)
 
 
                                     ))
@@ -179,26 +193,29 @@ public class Armors {
                     ItemConfig.ArmorSet.with(
                             new ItemConfig.ArmorSet.Piece(2)
                                     .addAll(List.of(
-                                            ItemConfig.Attribute.multiply(SpellPowerMechanics.CRITICAL_DAMAGE.id, 0.4F),
-                                            ItemConfig.Attribute.multiply(SpellPowerMechanics.HASTE.id, 0.12F)
+                                            ItemConfig.Attribute.multiply(SpellPowerMechanics.CRITICAL_DAMAGE.id, 0.2F),
+                                            ItemConfig.Attribute.multiply(SpellPowerMechanics.HASTE.id, 0.06F)
 
 
                                     )),
                             new ItemConfig.ArmorSet.Piece(6)
                                     .addAll(List.of(
-                                            ItemConfig.Attribute.bonus((SpellSchools.ARCANE).id, 2F)
+                                            ItemConfig.Attribute.multiply((SpellSchools.ARCANE).id, 0.2F),
+                                            ItemConfig.Attribute.multiply(new Identifier("minecraft","generic.attack_damage"), 0.04F)
 
 
                                     )),
                             new ItemConfig.ArmorSet.Piece(4)
                                     .addAll(List.of(
-                                            ItemConfig.Attribute.bonus((SpellSchools.ARCANE).id, 2F)
+                                            ItemConfig.Attribute.multiply((SpellSchools.ARCANE).id, 0.2F),
+                                            ItemConfig.Attribute.multiply(new Identifier("minecraft","generic.attack_damage"), 0.04F)
 
 
                                     )),
                             new ItemConfig.ArmorSet.Piece(2)
                                     .addAll(List.of(
-                                            ItemConfig.Attribute.bonus((SpellSchools.ARCANE).id, 2F)
+                                            ItemConfig.Attribute.multiply((SpellSchools.ARCANE).id, 0.2F),
+                                            ItemConfig.Attribute.multiply(new Identifier("minecraft","generic.attack_damage"), 0.04F)
 
 
                                     ))
@@ -222,25 +239,28 @@ public class Armors {
                     ItemConfig.ArmorSet.with(
                             new ItemConfig.ArmorSet.Piece(2)
                                     .addAll(List.of(
-                                            ItemConfig.Attribute.multiply(SpellPowerMechanics.CRITICAL_CHANCE.id, 0.08F),
-                                            ItemConfig.Attribute.multiply(SpellPowerMechanics.HASTE.id, 0.12F)
+                                            ItemConfig.Attribute.multiply(SpellPowerMechanics.CRITICAL_CHANCE.id, 0.04F),
+                                            ItemConfig.Attribute.multiply(SpellPowerMechanics.HASTE.id, 0.06F)
 
 
                                     )),                            new ItemConfig.ArmorSet.Piece(6)
                                     .addAll(List.of(
-                                            ItemConfig.Attribute.bonus((SpellSchools.FIRE).id, 2F)
+                                            ItemConfig.Attribute.multiply((SpellSchools.FIRE).id, 0.2F),
+                                            ItemConfig.Attribute.multiply(new Identifier("minecraft","generic.attack_damage"), 0.04F)
 
 
                                     )),
                             new ItemConfig.ArmorSet.Piece(4)
                                     .addAll(List.of(
-                                            ItemConfig.Attribute.bonus((SpellSchools.FIRE.id), 2F)
+                                            ItemConfig.Attribute.multiply((SpellSchools.FIRE).id, 0.2F),
+                                            ItemConfig.Attribute.multiply(new Identifier("minecraft","generic.attack_damage"), 0.04F)
 
 
                                     )),
                             new ItemConfig.ArmorSet.Piece(2)
                                     .addAll(List.of(
-                                            ItemConfig.Attribute.bonus((SpellSchools.FIRE).id, 2F)
+                                            ItemConfig.Attribute.multiply((SpellSchools.FIRE).id, 0.2F),
+                                            ItemConfig.Attribute.multiply(new Identifier("minecraft","generic.attack_damage"), 0.04F)
 
 
                                     ))
@@ -264,25 +284,28 @@ public class Armors {
                     ItemConfig.ArmorSet.with(
                             new ItemConfig.ArmorSet.Piece(2)
                                     .addAll(List.of(
-                                            ItemConfig.Attribute.multiply(SpellPowerMechanics.CRITICAL_CHANCE.id, 0.08F),
-                                            ItemConfig.Attribute.multiply(SpellPowerMechanics.CRITICAL_DAMAGE.id, 0.4F)
+                                            ItemConfig.Attribute.multiply(SpellPowerMechanics.CRITICAL_CHANCE.id, 0.04F),
+                                            ItemConfig.Attribute.multiply(SpellPowerMechanics.CRITICAL_DAMAGE.id, 0.2F)
 
                                     )),
                             new ItemConfig.ArmorSet.Piece(6)
                                     .addAll(List.of(
-                                            ItemConfig.Attribute.bonus((SpellSchools.FROST.id), 2F)
+                                            ItemConfig.Attribute.multiply((SpellSchools.FROST).id, 0.2F),
+                                            ItemConfig.Attribute.multiply(new Identifier("minecraft","generic.attack_damage"), 0.04F)
 
 
                                     )),
                             new ItemConfig.ArmorSet.Piece(4)
                                     .addAll(List.of(
-                                            ItemConfig.Attribute.bonus((SpellSchools.FROST.id), 2F)
+                                            ItemConfig.Attribute.multiply((SpellSchools.FROST).id, 0.2F),
+                                            ItemConfig.Attribute.multiply(new Identifier("minecraft","generic.attack_damage"), 0.04F)
 
 
                                     )),
                             new ItemConfig.ArmorSet.Piece(2)
                                     .addAll(List.of(
-                                            ItemConfig.Attribute.bonus((SpellSchools.FROST).id, 2F)
+                                            ItemConfig.Attribute.multiply((SpellSchools.FROST).id, 0.2F),
+                                            ItemConfig.Attribute.multiply(new Identifier("minecraft","generic.attack_damage"), 0.04F)
 
 
                                     ))
@@ -304,21 +327,21 @@ public class Armors {
                             () -> Ingredient.ofItems(Spellblades.RUNEBLAZENUGGET)
                     ),
                     ItemConfig.ArmorSet.with(
-                            new ItemConfig.ArmorSet.Piece(3)
+                            new ItemConfig.ArmorSet.Piece(2)
                                     .addAll(List.of(
 
                                     )),
-                            new ItemConfig.ArmorSet.Piece(8)
-                                    .addAll(List.of(
-
-
-                                    )),
-                            new ItemConfig.ArmorSet.Piece(6)
+                            new ItemConfig.ArmorSet.Piece(7)
                                     .addAll(List.of(
 
 
                                     )),
-                            new ItemConfig.ArmorSet.Piece(3)
+                            new ItemConfig.ArmorSet.Piece(5)
+                                    .addAll(List.of(
+
+
+                                    )),
+                            new ItemConfig.ArmorSet.Piece(2)
                                     .addAll(List.of(
 
                                     ))
@@ -340,21 +363,21 @@ public class Armors {
                             () -> Ingredient.ofItems(Spellblades.RUNEGLEAMNUGGET)
                     ),
                     ItemConfig.ArmorSet.with(
-                            new ItemConfig.ArmorSet.Piece(3)
+                            new ItemConfig.ArmorSet.Piece(2)
                                     .addAll(List.of(
 
                                     )),
-                            new ItemConfig.ArmorSet.Piece(8)
-                                    .addAll(List.of(
-
-
-                                    )),
-                            new ItemConfig.ArmorSet.Piece(6)
+                            new ItemConfig.ArmorSet.Piece(7)
                                     .addAll(List.of(
 
 
                                     )),
-                            new ItemConfig.ArmorSet.Piece(3)
+                            new ItemConfig.ArmorSet.Piece(5)
+                                    .addAll(List.of(
+
+
+                                    )),
+                            new ItemConfig.ArmorSet.Piece(2)
                                     .addAll(List.of(
 
                                     ))
@@ -376,21 +399,21 @@ public class Armors {
                             () -> Ingredient.ofItems(Spellblades.RUNEFROSTNUGGET)
                     ),
                     ItemConfig.ArmorSet.with(
-                            new ItemConfig.ArmorSet.Piece(3)
+                            new ItemConfig.ArmorSet.Piece(2)
                                     .addAll(List.of(
 
                                     )),
-                            new ItemConfig.ArmorSet.Piece(8)
-                                    .addAll(List.of(
-
-
-                                    )),
-                            new ItemConfig.ArmorSet.Piece(6)
+                            new ItemConfig.ArmorSet.Piece(7)
                                     .addAll(List.of(
 
 
                                     )),
-                            new ItemConfig.ArmorSet.Piece(3)
+                            new ItemConfig.ArmorSet.Piece(5)
+                                    .addAll(List.of(
+
+
+                                    )),
+                            new ItemConfig.ArmorSet.Piece(2)
                                     .addAll(List.of(
 
                                     ))
@@ -418,35 +441,32 @@ public class Armors {
                     ItemConfig.ArmorSet.with(
                             new ItemConfig.ArmorSet.Piece(2)
                                     .addAll(List.of(
-                                            ItemConfig.Attribute.bonus((SpellSchools.FROST).id, 2F),
-                                            ItemConfig.Attribute.bonus((SpellSchools.FIRE).id, 2F),
-                                            ItemConfig.Attribute.bonus((SpellSchools.ARCANE).id, 2F)
-
-
-                                    )),
-                            new ItemConfig.ArmorSet.Piece(6)
-                                    .addAll(List.of(
-                                            ItemConfig.Attribute.bonus((SpellSchools.FROST).id, 2F),
-                                            ItemConfig.Attribute.bonus((SpellSchools.FIRE).id, 2F),
-                                            ItemConfig.Attribute.bonus((SpellSchools.ARCANE).id, 2F)
-
-
+                                            ItemConfig.Attribute.multiply((SpellSchools.FROST).id, 0.2F),
+                                            ItemConfig.Attribute.multiply((SpellSchools.FIRE).id, 0.2F),
+                                            ItemConfig.Attribute.multiply((SpellSchools.ARCANE).id, 0.2F)
 
                                     )),
                             new ItemConfig.ArmorSet.Piece(4)
                                     .addAll(List.of(
-                                            ItemConfig.Attribute.bonus((SpellSchools.FROST).id, 2F),
-                                            ItemConfig.Attribute.bonus((SpellSchools.FIRE).id, 2F),
-                                            ItemConfig.Attribute.bonus((SpellSchools.ARCANE).id, 2F)
-
+                                            ItemConfig.Attribute.multiply((SpellSchools.FROST).id, 0.2F),
+                                            ItemConfig.Attribute.multiply((SpellSchools.FIRE).id, 0.2F),
+                                            ItemConfig.Attribute.multiply((SpellSchools.ARCANE).id, 0.2F)
 
 
                                     )),
-                            new ItemConfig.ArmorSet.Piece(2)
+                            new ItemConfig.ArmorSet.Piece(3)
                                     .addAll(List.of(
-                                            ItemConfig.Attribute.bonus((SpellSchools.FROST).id, 2F),
-                                            ItemConfig.Attribute.bonus((SpellSchools.FIRE).id, 2F),
-                                            ItemConfig.Attribute.bonus((SpellSchools.ARCANE).id, 2F)
+                                            ItemConfig.Attribute.multiply((SpellSchools.FROST).id, 0.2F),
+                                            ItemConfig.Attribute.multiply((SpellSchools.FIRE).id, 0.2F),
+                                            ItemConfig.Attribute.multiply((SpellSchools.ARCANE).id, 0.2F)
+
+
+                                    )),
+                            new ItemConfig.ArmorSet.Piece(1)
+                                    .addAll(List.of(
+                                            ItemConfig.Attribute.multiply((SpellSchools.FROST).id, 0.2F),
+                                            ItemConfig.Attribute.multiply((SpellSchools.FIRE).id, 0.2F),
+                                            ItemConfig.Attribute.multiply((SpellSchools.ARCANE).id, 0.2F)
 
 
 

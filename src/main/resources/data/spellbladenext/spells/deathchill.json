@@ -1,13 +1,11 @@
 {
   "school": "FROST",
-  "range": 0,
+  "range": 8,
   "learn": {
-    "tier": 1
+    "tier": 2
   },
   "cast": {
-    "duration": 8,
-    "haste_affected": false,
-    "channel_ticks": 1,
+    "duration": 1,
     "animation": "spell_engine:two_handed_channeling",
     "sound": {
       "id": "spell_engine:generic_frost_casting",
@@ -27,33 +25,58 @@
   "release": {
     "custom_impact": true,
     "target": {
-      "type": "SELF"
+      "type": "CURSOR"
     },
     "particles": [
       {
         "particle_id": "spell_engine:snowflake",
-        "shape": "CIRCLE",
-        "origin": "CENTER",
-        "count": 30.0,
-        "min_speed": 0.1,
-        "max_speed": 0.2
-      },
-      {
-        "particle_id": "firework",
-        "shape": "CIRCLE",
-        "origin": "CENTER",
-        "count": 30.0,
-        "min_speed": 0.1,
-        "max_speed": 0.3
+        "shape": "PIPE",
+        "origin": "FEET",
+        "count": 100.0,
+        "min_speed": 0.05,
+        "max_speed": 0.1
       }
     ],
+    "animation": "spell_engine:one_handed_projectile_release",
     "sound": {
       "id": "spell_engine:generic_frost_release"
     }
   },
+  "impact": [
+    {
+      "action": {
+        "type": "DAMAGE",
+        "damage": {
+          "knockback": 0,
+          "spell_power_coefficient": 0.2
+        }
+      },
+      "particles": [
+        {
+          "particle_id": "spell_engine:frost_hit",
+          "shape": "PIPE",
+          "origin": "FEET",
+          "count": 100.0,
+          "min_speed": 0.05,
+          "max_speed": 0.1
+        },
+        {
+          "particle_id": "spell_engine:snowflake",
+          "shape": "CIRCLE",
+          "origin": "FEET",
+          "count": 100.0,
+          "min_speed": 0.1,
+          "max_speed": 0.3
+        }
+      ],
+      "sound": {
+        "id": "spell_engine:generic_frost_release"
+      }
+    }
+  ],
   "cost": {
     "item_id": "runes:frost_stone",
     "rpgmana": 20,
-    "cooldown_duration": 1
+    "cooldown_duration": 2
   }
 }

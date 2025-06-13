@@ -54,7 +54,6 @@ public class Claymore extends SpellWeaponItem implements ConfigurableAttributes 
     }
     @Override
     public void appendTooltip(ItemStack stack, @Nullable World world, List<Text> tooltip, TooltipContext context) {
-        tooltip.add(Text.translatable("spellbladenext.spellbladetext").formatted(Formatting.LIGHT_PURPLE));
 
         super.appendTooltip(stack, world, tooltip, context);
     }

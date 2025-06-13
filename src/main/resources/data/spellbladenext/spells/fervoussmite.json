@@ -66,8 +66,13 @@
           "min_speed": 0.05,
           "max_speed": 0.2
         }
-      ]
+      ],
+      "sound": {
+        "id": "paladins:holy_shock_damage"
+      }
     }
+
+
 
 
   ],

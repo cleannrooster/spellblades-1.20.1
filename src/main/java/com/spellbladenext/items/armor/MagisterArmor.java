@@ -72,7 +72,7 @@ public class MagisterArmor extends CustomArmor implements GeoItem {
         // builder.putAll(super.getAttributeModifiers(this.slot));
         builder.putAll(attributes);
         UUID uuid = (UUID)MODIFIERS.get(this.type);
-        builder.put(WARDING,new EntityAttributeModifier(uuid,"warding",3, EntityAttributeModifier.Operation.ADDITION));
+        builder.put(WARDING,new EntityAttributeModifier(uuid,"warding",2.5, EntityAttributeModifier.Operation.ADDITION));
         this.attributes = builder.build();
     }
 

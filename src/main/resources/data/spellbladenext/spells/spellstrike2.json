@@ -1,0 +1,42 @@
+{
+  "range": 12.0,
+  "school": "PHYSICAL_MELEE",
+  "learn": {
+    "tier": 0
+  },
+  "cast": {
+    "haste_affected": false,
+    "duration": 0
+  },
+  "release": {
+    "custom_impact": true,
+    "target": {
+      "type": "SELF"
+    },
+    "animation": "spell_engine:one_handed_projectile_release",
+    "sound": {
+      "id": "entity.elder_guardian.curse",
+      "volume": 0.5,
+      "pitch": 0.8
+    },
+    "particles": [
+    ]
+  },
+  "impact": [
+    {
+      "action": {
+        "type": "STATUS_EFFECT",
+        "status_effect": {
+          "effect_id": "spellbladenext:spellstrike",
+          "duration": 16,
+          "apply_mode": "SET",
+          "amplifier": 0
+        }
+      }
+    }
+  ],
+  "cost": {
+    "exhaust": 0.3,
+    "cooldown_duration": 16
+  }
+}
